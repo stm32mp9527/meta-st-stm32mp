@@ -62,7 +62,7 @@ If you do not accept the EULA the generated image will be missing some
 components and features.
 
 ## Contributing
-If you want to contribute changes, you can send Github pull requests at
+If you want to contribute changes by proposing a patch, you can send Github pull requests at
 **https://github.com/stmicroelectronics/meta-st-stm32mp/pulls**.
 
 
