@@ -42,14 +42,15 @@ def init_keylist_from(keylist, keyinput, soclist, d):
             # Configure keylist according to STM32MP_SOC_NAME list
             d.setVar(keylist, '')
             for socname in socname_list:
-                key = d.getVar(keyinput + '_' + socname) or ""
-                if key:
+                key_soc = d.getVar(keyinput + '_' + socname) or ""
+                if key_soc:
                     if d.getVar('EXTERNAL_KEY_CONF') == '1':
-                        key = search_path(key, d)
-                    bb.debug(1, "[sign-stm32mp] Append '%s' path to %s (socname %s)." % (key, keylist, socname))
-                    d.appendVar(keylist, key + ',')
+                        key_soc = search_path(key_soc, d)
+                    bb.debug(1, "[sign-stm32mp] Append '%s' path to %s (socname %s)." % (key_soc, keylist, socname))
+                    d.appendVar(keylist, key_soc + ',')
                 else:
-                    bb.fatal("[sign-stm32mp] Please make sure to configure \"%s_%s\" var to key file." % (keyinput, socname))
+                    bb.note("[sign-stm32mp] Please make sure to configure \"%s_%s\" var to key file." % (keyinput, socname))
+                    d.appendVar(keylist, key + ',')
         else:
             # Default to keyinput value setting
             if d.getVar('EXTERNAL_KEY_CONF') == '1':
