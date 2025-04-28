@@ -4,6 +4,8 @@ Date: Fri, 12 Jul 2024 14:43:02 +0200
 Subject: [PATCH] 4.0.0-stm32mp-r1.2
 
 ---
+Upstream-Status: Pending [specific to ST boards]
+
  .github/workflows/ci.yml                      |    1 +
  .gitignore                                    |   21 +-
  CONTRIBUTING.md                               |   30 +

@@ -4,6 +4,8 @@ Date: Tue, 24 Sep 2024 16:54:21 +0200
 Subject: [PATCH] v1.7.0-stm32mp25-r13
 
 ---
+Upstream-Status: Pending [specific to ST boards]
+
  .gitignore                                    |     7 +
  CONTRIBUTING.md                               |    30 +
  SECURITY.md                                   |     8 +
