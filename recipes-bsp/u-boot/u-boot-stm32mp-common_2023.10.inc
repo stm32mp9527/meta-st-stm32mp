@@ -18,6 +18,8 @@ SRCREV  = "4459ed60cb1e0562bc5b40405e2b4b9bbf766d57"
 SRC_URI += "\
     file://0001-v2023.10-stm32mp-r1.2.patch \
     file://0099-Add-external-var-to-allow-build-of-new-devicetree-fi.patch \
+    \
+    file://0002-Fixup-SWIG-4.3-API-changed.patch \
     "
 
 # debug and trace
