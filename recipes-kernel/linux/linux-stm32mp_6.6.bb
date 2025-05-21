@@ -15,11 +15,11 @@ SRC_URI = "https://cdn.kernel.org/pub/linux/kernel/v6.x/${LINUX_TARNAME};name=ke
 SRC_URI[kernel.sha256sum] = "6b16df7b2aba3116b78fdfd8aea0b6cd7abe8f0cb699b04a66d3169141772029"
 
 SRC_URI += " \
-    file://${LINUX_VERSION}/${LINUX_VERSION}${LINUX_SUBVERSION}/0001-v6.6-stm32mp-r1.patch \
+    file://${LINUX_VERSION}/${LINUX_VERSION}${LINUX_SUBVERSION}/0001-v6.6-stm32mp-r1.2.patch \
     "
 
 LINUX_TARGET = "stm32mp"
-LINUX_RELEASE = "r1"
+LINUX_RELEASE = "r1.2"
 
 PV = "${LINUX_VERSION}${LINUX_SUBVERSION}-${LINUX_TARGET}-${LINUX_RELEASE}"
 
@@ -36,7 +36,7 @@ S = "${WORKDIR}/${LINUX_TARBASE}"
 BBCLASSEXTEND = "devupstream:target"
 
 SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/linux.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "3682d604ecbdd233bb7e38b8e18f0496d78a8969"
+SRCREV:class-devupstream = "57d6654e68728d6b6776e688a0f8ece6ecfc1209"
 #FIXME force the PV to avoid build issue:
 #  do_package: ExpansionError('SRCPV', '${@bb.fetch2.get_srcrev(d)}', FetchError('SRCREV was used yet no valid SCM was found in SRC_URI', None))
 PV:class-devupstream = "${LINUX_VERSION}${LINUX_SUBVERSION}-${LINUX_TARGET}.${SRCPV}"
