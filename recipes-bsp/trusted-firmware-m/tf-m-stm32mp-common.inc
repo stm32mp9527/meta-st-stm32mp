@@ -27,6 +27,7 @@ B = "${WORKDIR}/build"
 
 # Configure TFM external sources
 TFM_EXTERNAL_SOURCES ??= "1"
+TFM_EXTERNAL_SOURCES_OECMAKE ??= ""
 
 # Platform must be set, ideally in the machine configuration.
 TFM_PLATFORMS ?= "stm/stm32mp257f_ev1"
@@ -48,7 +49,7 @@ PACKAGECONFIG[test-psa] = "-DTEST_PSA_API=ON,-DTEST_PSA_API=OFF"
 EXTRA_OECMAKE += "-DTFM_TOOLCHAIN_FILE=${S}/toolchain_GNUARM.cmake"
 
 # Don't let FetchContent download more sources during do_configure
-EXTRA_OECMAKE += "${@bb.utils.contains('TFM_EXTERNAL_SOURCES', '1', '-DFETCHCONTENT_FULLY_DISCONNECTED=ON', '', d)}"
+TFM_EXTERNAL_SOURCES_OECMAKE += "-DFETCHCONTENT_FULLY_DISCONNECTED=ON"
 
 # Handle TFM_DEBUG parameter
 EXTRA_OECMAKE += "${@bb.utils.contains('TFM_DEBUG', '1', '-DCMAKE_BUILD_TYPE=Debug', '-DCMAKE_BUILD_TYPE=Relwithdebinfo', d)}"
@@ -57,10 +58,11 @@ EXTRA_OECMAKE += "${@bb.utils.contains('TFM_DEBUG', '1', '-DCMAKE_BUILD_TYPE=Deb
 EXTRA_OECMAKE += "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
 
 # Path to extra components
-EXTRA_OECMAKE += "${@bb.utils.contains('TFM_EXTERNAL_SOURCES', '1', '-DMBEDCRYPTO_PATH=${S}/external/mbedtls ', '', d)}"
-EXTRA_OECMAKE += "${@bb.utils.contains('TFM_EXTERNAL_SOURCES', '1', '-DTFM_TEST_REPO_PATH=${S}/external/tf-m-tests', '', d)}"
-EXTRA_OECMAKE += "${@bb.utils.contains('TFM_EXTERNAL_SOURCES', '1', '-DMCUBOOT_PATH=${S}/external/mcuboot -DQCBOR_PATH=${S}/external/qcbor', '', d)}"
-EXTRA_OECMAKE += "${@bb.utils.contains('TFM_EXTERNAL_SOURCES', '1', '-DDDR_PHY_BIN_SRC_PATH=${S}/external/stm32-ddr-phy-binary ', '', d)}"
+TFM_EXTERNAL_SOURCES_OECMAKE += "-DMBEDCRYPTO_PATH=${S}/external/mbedtls"
+TFM_EXTERNAL_SOURCES_OECMAKE += "-DTFM_TEST_REPO_PATH=${S}/external/tf-m-tests"
+TFM_EXTERNAL_SOURCES_OECMAKE += " -DMCUBOOT_PATH=${S}/external/mcuboot -DQCBOR_PATH=${S}/external/qcbor"
+TFM_EXTERNAL_SOURCES_OECMAKE += "-DDDR_PHY_BIN_SRC_PATH=${S}/external/stm32-ddr-phy-binary"
+EXTRA_OECMAKE += "${TFM_EXTERNAL_SOURCES_OECMAKE}"
 
 # SCP firmware
 SCP_FIRMWARE_OECMAKE = "-DSCP_FW_PATH=${S}/external/scp-firmware"
@@ -85,20 +87,6 @@ LD[unexport] = "1"
 # python3-cryptography needs the legacy provider, so set OPENSSL_MODULES to the
 # right path until this is relocated automatically.
 export OPENSSL_MODULES="${STAGING_LIBDIR_NATIVE}/ossl-modules"
-
-# Configure for external source download directly from cmake compile
-do_compile[network] = "${@bb.utils.contains('TFM_EXTERNAL_SOURCES', '1', '0', '1', d)}"
-do_compile:prepend() {
-    if [ "${TFM_EXTERNAL_SOURCES}" -eq "0" ]; then
-        # Used to download cmake dependencies when behind a proxy
-        if [ -n "${http_proxy}" ]; then
-            export HTTP_PROXY=${http_proxy}
-        fi
-        if [ -n "${https_proxy}" ]; then
-            export HTTPS_PROXY=${https_proxy}
-        fi
-    fi
-}
 
 # TF-M ships patches that it needs applied to mbedcrypto, so apply them
 # as part of do_patch.
