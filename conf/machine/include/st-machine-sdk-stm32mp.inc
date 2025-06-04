@@ -131,3 +131,7 @@ ST_TOOLS_FOR_TARGET_SDK = " \
 
 TOOLCHAIN_TARGET_TASK += " bash-dev libgomp-dev ${ST_TOOLS_FOR_TARGET_SDK}"
 TOOLCHAIN_TARGET_TASK:remove:pn-buildtools-tarball = " bash-dev libgomp-dev ${ST_TOOLS_FOR_TARGET_SDK}"
+
+MACHINE_EXTRA_RRECOMMENDS:append = " \
+    ${@bb.utils.contains('ST_ARCHIVER_ENABLE', '1', 'sdk-infos', '', d)} \
+"
