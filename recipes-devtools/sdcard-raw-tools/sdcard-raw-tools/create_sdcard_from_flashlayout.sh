@@ -145,7 +145,7 @@ function read_flash_layout() {
 	debug "Number of line: $FLASHLAYOUT_number_of_line"
 	while read -ra flashlayout_data; do
 		selected=${flashlayout_data[0]}
-		if selection_test "$selected" P E PD DP PED;
+		if selection_test "$selected" P E PD DP PE PED;
 		then
 			# Selected=
 			FLASHLAYOUT_data[$i,$COL_SELECTED_OPT]=${flashlayout_data[0]}
@@ -198,7 +198,7 @@ function get_last_image_path() {
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
 			case "$selected" in
-			1|P|D|PD|DP|PED)
+			1|P|D|PD|DP|PE|PED)
 				if [ "$partName" == 'rootfs' ];
 				then
 					last_image=$bin2flash
@@ -248,7 +248,7 @@ function calculate_number_of_partition() {
 		ip=${FLASHLAYOUT_data[$i,$COL_IP]}
 		if [ "$ip" == "$SDCARD_TOKEN" ]
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				num=$((num+1))
 			fi
@@ -272,7 +272,7 @@ function move_partition_offset() {
 
 		if [ "$ip" == "$SDCARD_TOKEN" ]
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				#calculate actual size of partition (before update)
 				# in case of last partition, we doesn't take care of tmp_next_offset
@@ -319,7 +319,7 @@ function generate_gpt_partition_table_from_flash_layout() {
 		debug "DUMP Process for $partName partition"
 
 		case "$selected" in
-		P|E|1|PD|DP|PED)
+		P|E|1|PD|DP|PE|PED)
 			# partition are present and must be created
 			;;
 		*)
@@ -443,7 +443,7 @@ function generate_gpt_partition_table_from_flash_layout() {
 			debug "   DUMP image size     $image_size"
 			debug "   DUMP partition size $partition_size"
 			debug "   DUMP free size      $free_size "
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				if [ $free_size -lt 0 ];
 				then
@@ -580,7 +580,7 @@ function populate_gpt_partition_table_from_flash_layout() {
 			#debug "   DUMP ip        $ip"
 			#debug "   DUMP offset    $offset ($data)"
 			#debug "   DUMP bin2flash $bin2flash"
-			if selection_test "$selected" P PD DP PED;
+			if selection_test "$selected" P PD DP PE PED;
 			then
 				# Populate only the partition in "P"
 				if [ -e "$FLASHLAYOUT_prefix_image_path/$bin2flash" ];
@@ -622,7 +622,7 @@ function print_schema_on_infofile() {
 		ip=${FLASHLAYOUT_data[$i,$COL_IP]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				echo -n "==============" >> "$FLASHLAYOUT_infoname"
 			fi
@@ -637,7 +637,7 @@ function print_schema_on_infofile() {
 		ip=${FLASHLAYOUT_data[$i,$COL_IP]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				echo -n "=             " >> "$FLASHLAYOUT_infoname"
 			fi
@@ -652,7 +652,7 @@ function print_schema_on_infofile() {
 		partName=${FLASHLAYOUT_data[$i,$COL_PARTNAME]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				printf "=  %09s  " "$partName" >> "$FLASHLAYOUT_infoname"
 			fi
@@ -666,7 +666,7 @@ function print_schema_on_infofile() {
 		ip=${FLASHLAYOUT_data[$i,$COL_IP]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				echo -n "=             " >> "$FLASHLAYOUT_infoname"
 			fi
@@ -680,7 +680,7 @@ function print_schema_on_infofile() {
 		ip=${FLASHLAYOUT_data[$i,$COL_IP]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				printf "= %09s%-2d " "${DEFAULT_DEVICE_PART}" "$j"  >> "$FLASHLAYOUT_infoname"
 				j=$((j+1))
@@ -695,7 +695,7 @@ function print_schema_on_infofile() {
 		ip=${FLASHLAYOUT_data[$i,$COL_IP]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				printf "=      (%-2d)   " $j>> "$FLASHLAYOUT_infoname"
 				j=$((j+1))
@@ -709,7 +709,7 @@ function print_schema_on_infofile() {
 		ip=${FLASHLAYOUT_data[$i,$COL_IP]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				echo -n "=             " >> "$FLASHLAYOUT_infoname"
 			fi
@@ -722,7 +722,7 @@ function print_schema_on_infofile() {
 		ip=${FLASHLAYOUT_data[$i,$COL_IP]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				echo -n "==============" >> "$FLASHLAYOUT_infoname"
 			fi
@@ -739,7 +739,7 @@ function print_schema_on_infofile() {
 		bin2flash=${FLASHLAYOUT_data[$i,$COL_BIN2FLASH]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				{
 					echo "($j):"
@@ -768,7 +768,7 @@ function print_populate_on_infofile() {
 		bin2flash=${FLASHLAYOUT_data[$i,$COL_BIN2FLASH]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				if selection_test "$selected" E;
 				then
@@ -801,7 +801,7 @@ function print_mount_on_infofile() {
 		bin2flash=${FLASHLAYOUT_data[$i,$COL_BIN2FLASH]}
 		if [ "$ip" == "$SDCARD_TOKEN" ];
 		then
-			if selection_test "$selected" P E PD DP PED;
+			if selection_test "$selected" P E PD DP PE PED;
 			then
 				if selection_test "$partType" "System" "FileSystem";
 				then
