@@ -6,11 +6,11 @@ def partImage2partConfig(d, config, fstype=None):
     PARTITIONS_CONFIG[xxx].
     Manage <image_name> update respect to 'fstype' provided and apply the rootfs
     namming or standard partition image one.
-        FROM: <image_name>,<partition_label>,<mountpoint>,<size>,<type>
-        TO  : <binary_name>,<partition_label>,<size>,<type>
+        FROM: <image_name>,<partition_label>,<mountpoint>,<size>,<type>[,<copy>]
+        TO  : <binary_name>,<partition_label>,<size>,<type>,<copy>
     """
     items = d.getVarFlag('PARTITIONS_IMAGES', config).split(',') or ""
-    if len(items) != 5:
+    if len(items) > 6:
         bb.fatal('[partImage2partConfig] Wrong settings for PARTTIONS_IMAGES[%s] : %s' % (config, items))
     overrides = d.getVar('OVERRIDES')
     if items[2] == '' and 'openstlinuxcommon' not in overrides.split(':'):
@@ -21,8 +21,12 @@ def partImage2partConfig(d, config, fstype=None):
         bin_name = items[0] + bin_suffix + '.' + items[1] + '.' + fstype
     else:
         bin_name = items[0] + bin_suffix + '.' + items[1]
-    # Set string for PARTITIONS_CONFIG item: <binary_name>,<partlabel>,<size>,<type>
-    part_format = bin_name + ',' + items[1] + ',' + items[3] + ',' + items[4]
+    if len(items) == 6:
+        copy = items[5]
+    else:
+        copy = '1'
+    # Set string for PARTITIONS_CONFIG item: <binary_name>,<partlabel>,<size>,<type>,<copy>
+    part_format = bin_name + ',' + items[1] + ',' + items[3] + ',' + items[4] + ',' + copy
     return part_format
 
 # =========================================================================
