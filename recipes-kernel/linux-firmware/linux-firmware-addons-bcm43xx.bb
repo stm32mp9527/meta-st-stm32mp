@@ -1,10 +1,10 @@
 # Copyright (C) 2025 STMicroelectronics - All Rights Reserved#
 SUMMARY = "Addons firmware for BCM4343"
 HOMEPAGE = "https://github.com/murata-wireless"
-LICENSE = "Firmware-cypress-bcm43"
+LICENSE = "Cypress-bcm43xx"
 LIC_FILES_CHKSUM = "file://LICENCE.cypress;md5=cbc5f665d04f741f1e006d2096236ba7"
 
-NO_GENERIC_LICENSE[Firmware-cypress-bcm43] = "LICENCE.cypress"
+NO_GENERIC_LICENSE[Cypress-bcm43xx] = "LICENCE.cypress"
 
 inherit allarch
 
@@ -72,6 +72,7 @@ do_install() {
    sed -i "s/muxenab=\(.*\)$/#muxenab=\1/g" ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac4373-sdio.txt
    # Install calibration file (stm32mp25)
    install -m 0644 ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac4373-sdio.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac4373-sdio.st,stm32mp215f-dk.txt
+   install -m 0644 ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac4373-sdio.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac4373-sdio.st,stm32mp215f-dk-ca35tdcid-ostl.txt
 
    # Take newest murata firmware
    install -m 0644 ${WORKDIR}/murata/cyfmac4373-sdio.2AE.bin ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac4373-sdio.bin
@@ -80,6 +81,7 @@ do_install() {
    # Add symlinks for newest kernel compatibility
    cd ${D}${nonarch_base_libdir}/firmware/brcm/
    ln -sf brcmfmac4373-sdio.bin brcmfmac4373-sdio.st,stm32mp215f-dk.bin
+   ln -sf brcmfmac4373-sdio.bin brcmfmac4373-sdio.st,stm32mp215f-dk-ca35tdcid-ostl.bin
 }
 
 do_install:append:stm32mp1common() {
@@ -117,8 +119,8 @@ do_install:append:stm32mp21common() {
 
 PACKAGES =+ "${PN}-cypress-license"
 
-LICENSE:${PN} = "Firmware-cypress-bcm43"
-LICENSE:${PN}-cypress-license = "Firmware-cypress-bcm43"
+LICENSE:${PN} = "Cypress-bcm43xx"
+LICENSE:${PN}-cypress-license = "Cypress-bcm43xx"
 
 FILES:${PN}-cypress-license = "${nonarch_base_libdir}/firmware/LICENCE.cypress*"
 FILES:${PN} = "${nonarch_base_libdir}/firmware/"
