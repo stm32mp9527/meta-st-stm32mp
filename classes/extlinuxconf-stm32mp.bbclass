@@ -264,9 +264,10 @@ python do_create_multiextlinux_config() {
                 for f, v in extra_extlinuxtargetconfigflag.items():
                     if config == f:
                         bb.note(">>> Loop for '%s' extra target config." % config)
-                        if len(v.split()) > 0:
-                            bb.note(">>> Set '%s' to extra_extlinuxlabels." % v)
-                            extra_extlinuxlabels = labels + ' ' + v
+                        v_expanded = d.expand(v)
+                        if len(v_expanded.split()) > 0:
+                            bb.note(">>> Set '%s' to extra_extlinuxlabels." % v_expanded)
+                            extra_extlinuxlabels = labels + ' ' + v_expanded
                             extra_cfile = os.path.join(d.getVar('B'), subdir , config + '_' + 'extlinux.conf')
                         else:
                             bb.note(">>> No extra labels defined, no new config file to create")
