@@ -15,8 +15,6 @@ EXTERNALSRC_BUILD:pn-${PN} = "${WORKDIR}/build"
 SRC_URI:append = " ${@bb.utils.contains_any('BOOTSCHEME_LABELS', 'fastboot fastboot-opteemin', 'file://fragment-04-fastboot_mmc0.fb_cfg;subdir=fragments/features', '', d)}"
 SRC_URI:append = " ${@bb.utils.contains_any('BOOTSCHEME_LABELS', 'fastboot fastboot-opteemin', 'file://fragment-05-fastboot_mmc1.fb_cfg;subdir=fragments/features', '', d)}"
 
-EXTRA_OEMAKE += "${@bb.utils.contains('EXTERNAL_DT_ENABLED', '1', 'EXT_DTS=${STAGING_EXTDT_DIR}/${EXTDT_DIR_UBOOT}', '', d)}"
-
 # Configure for debug elf
 ELF_DEBUG_ENABLE ?= "1"
 UBOOT_ELF = "${@'u-boot' if d.getVar('ELF_DEBUG_ENABLE') == '1' else ''}"
@@ -133,6 +131,7 @@ do_compile:append() {
             i=$(expr $i + 1);
             # Initialize devicetree list
             uboot_devicetree=$(echo ${UBOOT_DEVICETREE} | cut -d',' -f${i})
+            uboot_extra_oemake=$(echo ${UBOOT_MAKE_OPT} | cut -d',' -f${i})
             for type in ${UBOOT_CONFIG}; do
                 j=$(expr $j + 1);
                 if [ $j -eq $i ]; then
@@ -142,13 +141,13 @@ do_compile:append() {
                         # Cleanup previous build artifact
                         [ -f "${B}/${config}/dts/dt.dtb" ] && rm "${B}/${config}/dts/dt.dtb"
                         # Build target
-                        oe_runmake -C ${S} O=${B}/${config} DEVICE_TREE=${devicetree} DEVICE_TREE_EXT=${devicetree}.dtb
+                        oe_runmake -C ${S} O=${B}/${config} $uboot_extra_oemake DEVICE_TREE=${devicetree} DEVICE_TREE_EXT=${devicetree}.dtb
                         # Install specific binary
                         for binary in ${UBOOT_BINARIES}; do
                             k=$(expr $k + 1);
                             if [ $k -eq $i ]; then
                                 binarysuffix=$(echo ${binary} | cut -d'.' -f2)
-                                install -m 644 ${B}/${config}/${binary} ${B}/${config}/u-boot-${devicetree}.${binarysuffix}
+                                install -m 644 ${B}/${config}/${binary} ${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}
                             fi
                         done
                         unset k
@@ -167,9 +166,6 @@ export_binaries() {
     local dest="${1}"
 
     if [ -n "${UBOOT_CONFIG}" ]; then
-        # Clean deploydir from any available binary first
-        # This allows to only install the devicetree binary ones
-
         unset i j k
         for config in ${UBOOT_MACHINE}; do
             i=$(expr $i + 1)
@@ -187,9 +183,10 @@ export_binaries() {
                             [ -n "${ELF_DEBUG_ENABLE}" ] && install -d ${dest}/debug
                             # Get short suffix for current type
                             type_suffix=$(echo ${type} | cut -d'_' -f1)
+                            install -m 0644  ${B}/${config}/.config ${dest}/configuration-${config}
                             for devicetree in ${uboot_devicetree}; do
                                 # Install u-boot binary
-                                install -m 644 ${B}/${config}/u-boot-${devicetree}.${binarysuffix} ${dest}
+                                install -m 644 ${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix} ${dest}
                                 # Init soc suffix
                                 soc_suffix=""
                                 if [ -n "${STM32MP_SOC_NAME}" ]; then
@@ -207,16 +204,15 @@ export_binaries() {
 
                                 if [ "${UBOOT_SIGN_ENABLE}" = "1" ] && [ "${UBOOT_SIGN_DEPLOY}" = "1" ]; then
                                     # Prepare original binary for signature
-                                    mkdir -p "${B}/${config}/${type}"
-                                    cp -f ${B}/${config}/u-boot-${devicetree}.${binarysuffix} ${B}/${config}/${type}/u-boot-${devicetree}.${binarysuffix}
+                                    cp -f ${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix} ${B}/${config}/${type}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}
                                     ${UBOOT_MKIMAGE_SIGN} \
                                             ${@'-D "${UBOOT_MKIMAGE_DTCOPTS}"' if len('${UBOOT_MKIMAGE_DTCOPTS}') else ''} \
                                             -F -k "${UBOOT_SIGN_KEYDIR}" \
-                                            -K "${B}/${config}/${type}/u-boot-${devicetree}.${binarysuffix}" \
+                                            -K "${B}/${config}/${type}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}" \
                                             ${UBOOT_MKIMAGE_SIGN_ARGS} \
                                             -r ${B}/fitImage-linux
                                     # Install signed binary
-                                    install -m 644 ${B}/${config}/${type}/u-boot-${devicetree}.${binarysuffix} ${dest}/u-boot-${devicetree}-with-signature.${binarysuffix}
+                                    install -m 644 ${B}/${config}/${type}/u-boot-${devicetree}-${type_suffix}.${binarysuffix} ${dest}/u-boot-${devicetree}-${type_suffix}-with-signature.${binarysuffix}
                                 fi
                             done
                         fi
@@ -231,12 +227,10 @@ export_binaries() {
 
 do_deploy[sstate-outputdirs] = "${DEPLOY_DIR_IMAGE}${FIP_DIR_UBOOT}"
 do_deploy() {
+    export UBOOT_SIGN_DEPLOY=1
     export_binaries ${DEPLOYDIR}
 }
 addtask deploy before do_build after do_install
-
-# do not populate image directory during install
-do_install[noexec] = "1"
 
 u_boot_sysroot_populate() {
     export_binaries ${SYSROOT_DESTDIR}/${FIP_DIR_UBOOT}
