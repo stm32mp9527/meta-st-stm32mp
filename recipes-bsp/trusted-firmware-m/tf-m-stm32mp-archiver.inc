@@ -15,7 +15,7 @@ inherit archiver_stm32mp_clean
 do_archiver_git_uri:append() {
     if [ -e "${ARCHIVER_OUTDIR}/${ARCHIVER_README}.${MACHINE}" ]; then
         sed -i \
-            -e "s|##TF_M_PATH_PATH_MBEDCRYPTO##|${TF_M_PATH_PATH_MBEDCRYPTO}|g" \
+            -e "s|##TF_M_PATH_MBEDCRYPTO##|${TF_M_PATH_MBEDCRYPTO}|g" \
             -e "s|##TF_M_PATH_MCUBOOT##|${TF_M_PATH_MCUBOOT}|g" \
             -e "s|##TF_M_PATH_QCBOR##|${TF_M_PATH_QCBOR}|g" \
             -e "s|##TF_M_PATH_CMSIS##|${TF_M_PATH_CMSIS}|g" \
@@ -90,7 +90,7 @@ EOF
 # Init external source use
 TF_M_EXTERNAL_SOURCES ?= ${TFM_EXTERNAL_SOURCES}
 # Path to extra components
-TF_M_PATH_PATH_MBEDCRYPTO ?= \$(SRC_PATH)/${TF_M_PATH_PATH_MBEDCRYPTO}
+TF_M_PATH_MBEDCRYPTO ?= \$(SRC_PATH)/${TF_M_PATH_MBEDCRYPTO}
 TF_M_PATH_MCUBOOT ?= \$(SRC_PATH)/${TF_M_PATH_MCUBOOT}
 TF_M_PATH_QCBOR ?= \$(SRC_PATH)/${TF_M_PATH_QCBOR}
 TF_M_PATH_CMSIS ?= \$(SRC_PATH)/${TF_M_PATH_CMSIS}
@@ -103,7 +103,7 @@ EXTRA_OECMAKE ?= $(echo "${EXTRA_OECMAKE}" | sed 's#-DCONFIG_TFM_SOURCE_PATH=[^[
 EXTRA_OECMAKE +=  -DTFM_VERSION='${TF_M_VERSION}'
 EXTRA_OECMAKE +=  -DCONFIG_TFM_SOURCE_PATH=\$(SRC_PATH)
 EXTRA_OECMAKE += \$(if \$(findstring 1,\$(TF_M_EXTERNAL_SOURCES)), -DFETCHCONTENT_FULLY_DISCONNECTED=ON)
-EXTRA_OECMAKE += \$(if \$(findstring 1,\$(TF_M_EXTERNAL_SOURCES)), -DMBEDCRYPTO_PATH=\$(TF_M_PATH_PATH_MBEDCRYPTO))
+EXTRA_OECMAKE += \$(if \$(findstring 1,\$(TF_M_EXTERNAL_SOURCES)), -DMBEDCRYPTO_PATH=\$(TF_M_PATH_MBEDCRYPTO))
 EXTRA_OECMAKE += \$(if \$(findstring 1,\$(TF_M_EXTERNAL_SOURCES)), -DMCUBOOT_PATH=\$(TF_M_PATH_MCUBOOT))
 EXTRA_OECMAKE += \$(if \$(findstring 1,\$(TF_M_EXTERNAL_SOURCES)), -DQCBOR_PATH=\$(TF_M_PATH_QCBOR))
 EXTRA_OECMAKE += \$(if \$(findstring 1,\$(TF_M_EXTERNAL_SOURCES)), -DCMSIS_PATH=\$(TF_M_PATH_CMSIS))
@@ -203,7 +203,7 @@ deploy-\$(1)-\$(2)-\$(3): tfm-\$(1)-\$(2)-\$(3)
 	@mkdir -p \$(DEPLOYDIR)
 	if [ -e "\$(BLD_PATH)/\$(1)-\$(2)-\$(3)/spe/bin/${FWDDR_NAME}.${FWDDR_SUFFIX}" ]; then \\
 		cp -f "\$(BLD_PATH)/\$(1)-\$(2)-\$(3)/spe/bin/${FWDDR_NAME}.${FWDDR_SUFFIX}" \\
-			"\$(DEPLOYDIR)/${FWDDR_NAME}-\$(3)-\$(1).${FWDDR_SUFFIX}" ; \\
+			"\$(DEPLOYDIR)/${FWDDR_NAME}-\$(3)\$(if \$(TF_M_BOOT_SUFFIX_M33),-\$(TF_M_BOOT_SUFFIX_M33),-\$(TF_M_BOOT_SUFFIX_M33_\$(1))).${FWDDR_SUFFIX}" ; \\
 	fi;
 	if [ -e "\$(BLD_PATH)/\$(1)-\$(2)-\$(3)/spe/bin/${BL2_NAME}.${BL2_SUFFIX}" ]; then \\
 		cp -f "\$(BLD_PATH)/\$(1)-\$(2)-\$(3)/spe/bin/${BL2_NAME}.${BL2_SUFFIX}" \\
@@ -260,14 +260,14 @@ help: \$(tfm-check-config)
 	@echo "  TFM_TESTS_DIR = \$(TFM_TESTS_DIR)"
 	@echo ""
 	@if [ -n  "\$(EXTDT_DIR)" ]; then \\
-		@echo "TF-M external dt sub configuration:" \
+		echo "TF-M external dt sub configuration:"; \\
 		echo "  EXTDT_DIR/EXTDT_DIR_TF_M = \$(EXTDT_DIR)/\$(EXTDT_DIR_TF_M)"; \\
 		echo "  EXTDT_DIR/EXTDT_DIR_MCU = \$(EXTDT_DIR)/\$(EXTDT_DIR_MCU)"; \\
 	fi
 	@echo "TF-M external source configuration:"
 	@echo "  TF_M_EXTERNAL_SOURCES = \$(TF_M_EXTERNAL_SOURCES)"
 	@if [ "\$(TF_M_EXTERNAL_SOURCES)" -eq "1" ]; then \\
-		echo "  TF_M_PATH_PATH_MBEDCRYPTO = \$(TF_M_PATH_PATH_MBEDCRYPTO)"; \\
+		echo "  TF_M_PATH_MBEDCRYPTO = \$(TF_M_PATH_MBEDCRYPTO)"; \\
 		echo "  TF_M_PATH_MCUBOOT         = \$(TF_M_PATH_MCUBOOT)"; \\
 		echo "  TF_M_PATH_QCBOR           = \$(TF_M_PATH_QCBOR)"; \\
 		echo "  TF_M_PATH_CMSIS           = \$(TF_M_PATH_CMSIS)"; \\

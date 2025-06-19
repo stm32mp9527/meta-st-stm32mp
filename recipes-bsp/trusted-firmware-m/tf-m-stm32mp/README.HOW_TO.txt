@@ -53,15 +53,15 @@ you have one TF-M source tarball, the patches as diff tarball and one Makefile:
    - ##BP##-##PR##-diff.gz
    - Makefile.sdk.##MACHINE##
 
-If you would like to have a git management for the source code move to
+If you would like to have a full git management for the source code move to
 to section 4 [Management of TF-M source code with GIT].
 
-Otherwise, to manage TF-M source code without git, you must extract the
-tarball now and apply the patch:
+Otherwise, you must simply extract the tarball now:
 
     $> tar xf ##BP##-##PR##.tar.xz
     $> cd ##BP##
-    $> test -d .git || git init . && git add . && git commit -m "TF-M source code" && git gc
+    $> test -d .git || git init . && git add . && git commit -m "TF-M source code"
+    $> git gc
 
 You can now move to section 5 [Compile TF-M source code].
 
@@ -69,7 +69,7 @@ You can now move to section 5 [Compile TF-M source code].
 4. Manage TF-M source code with GIT
 -----------------------------------
 If you like to have a better management of change made on TF-M source, you
-have 3 solutions to use git:
+have 2 solutions to use git:
 
 4.1 Get STMicroelectronics TF-M source from GitHub
 --------------------------------------------------
@@ -84,13 +84,7 @@ With this configuration, we recommend to enable external source code download fr
 TF-M build process through TFM_EXTERNAL_SOURCES var:
     $ export TF_M_EXTERNAL_SOURCES=0
 
-4.2 Create Git from tarball
----------------------------
-    $ tar xf ##BP##-##PR##.tar.xz
-    $ cd ##BP##
-    $ test -d .git || git init . && git add . && git commit -m "TF-M source code" && git gc
-
-4.3 Get Git from Arm Software community and apply STMicroelectronics patches
+4.2 Get Git from Arm Software community and apply STMicroelectronics patches
 ---------------------------------------------------------------
     URL: git://git.trustedfirmware.org/TF-M/trusted-firmware-m.git
     Branch: ##ARCHIVER_COMMUNITY_BRANCH##
@@ -102,8 +96,8 @@ TF-M build process through TFM_EXTERNAL_SOURCES var:
 
 Add external TF-M source code:
     $ cd arm-trusted-firmware-m
-    $ git clone https://github.com/Mbed-TLS/mbedtls.git ##TF_M_PATH_PATH_MBEDCRYPTO##
-    $ cd ##TF_M_PATH_PATH_MBEDCRYPTO##
+    $ git clone https://github.com/Mbed-TLS/mbedtls.git ##TF_M_PATH_MBEDCRYPTO##
+    $ cd ##TF_M_PATH_MBEDCRYPTO##
     $ git checkout -b WORKING ##ARCHIVER_REVISION_MBEDCRYPTO##
     $ cd arm-trusted-firmware-m
     $ git clone https://github.com/mcu-tools/mcuboot.git ##TF_M_PATH_MCUBOOT##
