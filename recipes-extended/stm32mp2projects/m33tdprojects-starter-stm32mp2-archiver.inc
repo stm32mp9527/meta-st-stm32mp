@@ -122,6 +122,32 @@ DEPS = \$(m33td-deploy)
 help: \$(tfm-check-config)
 	@echo ""
 	@echo "TF-M configuration:"
+	@echo "  TF_M_CONFIG = \$(TF_M_CONFIG)"
+	@echo "  TF_M_CONFIG = \$(TF_M_CONFIG)"
+	@echo "Config details:"
+	@\$(foreach config, \$(TF_M_CONFIG), \\
+		\$(call tfm-configs,\$(config)) \\
+		echo "    plateform optionflags:"; \\
+		\$(foreach plt, \$(if \$(TF_M_PLATFORM),\$(TF_M_PLATFORM),\$(TF_M_PLATFORM_\$(config))), \\
+			\$(call tfm-plt-configs,\$(shell echo \$(plt) | awk -F'/' '{print \$\$NF}')) \\
+		) \\
+	)
+	@echo "Note that each TF-M configuration settings can be updated through overall or specific config var:"
+	@echo "  TF_M_DEVICETREE"
+	@echo "  TF_M_PLATFORM"
+	@echo "  TF_M_PLATFORM_OPTFLAGS"
+	@echo "  TF_M_EXTRA_OPTFLAGS"
+	@echo "  TF_M_BOOTDEV"
+	@echo "  TF_M_BOOT_SUFFIX_M33"
+	@echo "  TF_M_BOOT_SUFFIX_A35"
+	@echo "  TF_M_DT_BL2_SUFFIX"
+	@echo "  TF_M_DT_TFM_SUFFIX"
+	@echo ""
+	@echo "M33TD_FIRMWARE_CONFIG folder configuration:"
+	@echo "  SRC_PATH  = \$(SRC_PATH)"
+	@echo "  DEPLOYDIR = \$(DEPLOYDIR)"
+	@echo "  EXTDT_DIR = \$(EXTDT_DIR)"
+	@echo "  TF_M_BUILD_PATH = \$(TF_M_BUILD_PATH)"
 	@echo ""
 	@echo "Available targets:"
 	@echo "  all   : default target to build all binaries for defined config(s)"
