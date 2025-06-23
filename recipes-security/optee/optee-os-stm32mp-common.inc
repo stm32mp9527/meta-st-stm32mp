@@ -8,7 +8,7 @@ PROVIDES += "virtual-optee-os-ta-remoteproc virtual-optee-os-ta-stm32mp-nvmem"
 PROVIDES += "virtual-optee-os-ta-trusted-keys"
 RPROVIDES:${PN} += "virtual-optee-os virtual-systemd-bootconf"
 
-CVE_PRODUCT = "op-tee:op-tee_os"
+CVE_PRODUCT = "linaro:op-tee op-tee:op-tee_os_os mbed_tls"
 
 inherit external-dt
 inherit fip-utils-stm32mp
