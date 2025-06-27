@@ -1,3 +1,5 @@
+PACKAGE_ARCH:stm32mpcommon = "${MACHINE_ARCH}"
+
 # Add stm32mp1 support
 SRC_URI:append:stm32mpcommon = " file://STM32MP13xx.svd;subdir=git/data/STMicro"
 SRC_URI:append:stm32mpcommon = " file://STM32MP151x.svd;subdir=git/data/STMicro"

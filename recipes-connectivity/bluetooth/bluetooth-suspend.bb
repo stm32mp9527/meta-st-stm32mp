@@ -9,6 +9,8 @@ SRC_URI = " \
     file://bluetooth-brcmfmac-sleep.service \
     "
 
+PACKAGE_ARCH:stm32mpcommon = "${MACHINE_ARCH}"
+
 inherit systemd
 SYSTEMD_PACKAGES += "${PN}"
 SYSTEMD_SERVICE:${PN} = "bluetooth-brcmfmac-sleep.service"

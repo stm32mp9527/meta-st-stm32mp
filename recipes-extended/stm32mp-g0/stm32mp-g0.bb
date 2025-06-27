@@ -18,6 +18,8 @@ PV = "v1.0.0"
 
 S = "${WORKDIR}/git"
 
+PACKAGE_ARCH:stm32mpcommon = "${MACHINE_ARCH}"
+
 STM32MP_G0_FW ?= "stm32g0-ucsi.mp135f-dk.fw"
 STM32MP_G0_PROJECT = "${@bb.utils.contains('MACHINE_FEATURES', 'usbg0', 'Projects/STM32MP135F-DK/Applications/USB_PD/UCSI_DRP', '', d)}"
 
