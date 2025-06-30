@@ -16,7 +16,7 @@ SRC_URI:append = " gitsm://github.com/mcu-tools/mcuboot.git;protocol=https;branc
 SRC_URI:append = " git://github.com/laurencelundblade/QCBOR.git;protocol=https;branch=master;name=qcbor;destsuffix=${TFM_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_QCBOR}"
 SRC_URI:append = " git://github.com/ARM-software/CMSIS_6.git;protocol=https;nobranch=1;name=cmsis;destsuffix=${TFM_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_CMSIS}"
 SRC_URI:append = " git://github.com/STMicroelectronics/stm32-ddr-phy-binary;protocol=https;branch=main;name=ddr-phy;destsuffix=${TFM_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_DDR_PHY_BIN_SRC}"
-SRC_URI:append = " gitsm://github.com/STMicroelectronics/SCP-firmware.git;protocol=ssh;name=scp-firmware;destsuffix=${TFM_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_SCP_FW};branch=v2.13.0-stm32mp"
+SRC_URI:append = " gitsm://github.com/STMicroelectronics/SCP-firmware.git;protocol=https;name=scp-firmware;destsuffix=${TFM_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_SCP_FW};branch=v2.13.0-stm32mp"
 
 # The required dependencies are documented in tf-m/config/config_base.cmake
 # TF-Mv 2.1.0
@@ -87,8 +87,9 @@ include ${@oe.utils.ifelse(d.getVar('ST_ARCHIVER_ENABLE') == '1', 'tf-m-stm32mp-
 # ---------------------------------
 BBCLASSEXTEND = "devupstream:target"
 
-SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/arm-trusted-firmware-m.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
+SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/trusted-firmware-m.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
 SRCREV:class-devupstream = "e1278028d2c5a6d1dc85a47d0cff86f180a616f9"
+
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github
