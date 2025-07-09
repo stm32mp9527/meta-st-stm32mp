@@ -214,7 +214,10 @@ Then the new Starter Package is ready to use for "Image flashing" on board (more
 
 ##CASE_stm32mp1##    "your_board_name" is like stm32mp157f-dk2 or stm32mp135f-mx-mycustomboard
 ##CASE_stm32mp1##    "your_storage_boot_scheme_security" is like optee or opteemin or optee-programmer or opteemin-programmer
+##CASE_stm32mp1##    For runtime binaries
 ##CASE_stm32mp1##    $@C> make -f $PWD/../Makefile.sdk.stm32mp1 OPTEE_CONFIG=<your_storage_boot_scheme_security> CFG_EMBED_DTB_SOURCE_FILE=<your_board_name> DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee EXTDT_DIR=<externaldt_path> EXTDT_DIR_OPTEE=<externaldt_optee_path> optee
+##CASE_stm32mp1##    For flashing binaries
+##CASE_stm32mp1##    $@PC> make -f $PWD/../Makefile.sdk.stm32mp1 OPTEE_CONFIG=optee-programmer CFG_EMBED_DTB_SOURCE_FILE=<your_board_name> DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee EXTDT_DIR=<externaldt_path> EXTDT_DIR_OPTEE=<externaldt_optee_path> optee
 ##CASE_stm32mp1##    Example with external dt:
 ##CASE_stm32mp1##      Example for runtime binaries
 ##CASE_stm32mp1##        $MP13> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee OPTEE_CONFIG=optee    CFG_EMBED_DTB_SOURCE_FILE=stm32mp135f-dk  EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_OPTEE=ca7-td/optee optee
@@ -231,7 +234,10 @@ Then the new Starter Package is ready to use for "Image flashing" on board (more
 ##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee OPTEE_CONFIG=opteemin-programmer CFG_EMBED_DTB_SOURCE_FILE=<your_CUBE_MX_board_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_OPTEE_SERIAL=CA7/DeviceTree/<your_cubemx_project_name>/optee optee
 ##CASE_stm32mp2##    "your_board_name" is like stm32mp257f-dk or stm32mp215f-mx-mycustomboard
 ##CASE_stm32mp2##    "your_storage_boot_scheme_security" is like optee or opteemin
+##CASE_stm32mp2##    For runtime binaries
 ##CASE_stm32mp2##    $@C> make -f $PWD/../Makefile.sdk.stm32mp2 OPTEE_CONFIG=<your_storage_boot_scheme_security> CFG_EMBED_DTB_SOURCE_FILE=<your_board_name> DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee EXTDT_DIR=<externaldt_path> EXTDT_DIR_OPTEE=<externaldt_optee_path>  optee
+##CASE_stm32mp2##    For flashing binaries
+##CASE_stm32mp2##    $@PC> make -f $PWD/../Makefile.sdk.stm32mp2 OPTEE_CONFIG=optee-programmer CFG_EMBED_DTB_SOURCE_FILE=<your_board_name> DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee EXTDT_DIR=<externaldt_path> EXTDT_DIR_OPTEE=<externaldt_optee_path>  optee
 ##CASE_stm32mp2##    Support of both type of TA: TA_arm64 and TA_arm32
 ##CASE_stm32mp2##    $ make -f $PWD/../Makefile.sdk.stm32mp2 OPTEE_CONFIG=optee TA32_64=1 CFG_EMBED_DTB_SOURCE_FILE=<your_board_name> DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee optee
 ##CASE_stm32mp2##    Example with external dt:
