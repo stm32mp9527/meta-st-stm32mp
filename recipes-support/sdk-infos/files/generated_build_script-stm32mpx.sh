@@ -98,7 +98,7 @@ function config_stm32mp1_externaldt() {
     echo "tfa_dt_programmer_name=\$your_board_name"
     echo "# Linux kernel dt name"
     echo "# linux"
-    echo "externaldt_linux_path=\$your_board_name"
+    echo "linux_dtb_name=\$your_board_name"
 }
 function config_stm32mp1_mx() {
     echo "# define the cube mx project name"
@@ -150,7 +150,7 @@ function config_stm32mp1_mx() {
     echo "tfa_dt_programmer_name=\$your_board_name"
     echo "# Linux kernel dt name"
     echo "# linux"
-    echo "externaldt_linux_path=\$your_board_name"
+    echo "linux_dtb_name=\$your_board_name"
 }
 function config_stm32mp1() {
     local mx=$1
@@ -262,7 +262,7 @@ function config_stm32mp2_externaldt() {
     echo "tfa_dt_programmer_name=\$your_board_name"
     echo "# Linux kernel dt name"
     echo "# linux"
-    echo "externaldt_linux_path=\$your_board_name"
+    echo "linux_dtb_name=\$your_board_name"
 }
 function config_stm32mp2_mx() {
     echo "# define the cube mx project name"
@@ -313,7 +313,7 @@ function config_stm32mp2_mx() {
     echo "tfa_dt_programmer_name=\$your_board_name"
     echo "# Linux kernel dt name"
     echo "# linux"
-    echo "externaldt_linux_path=\$your_board_name"
+    echo "linux_dtb_name=\$your_board_name"
 }
 function config_stm32mp2() {
     local mx=$1
@@ -764,11 +764,11 @@ function generate_action_programmer() {
     echo "    action_set"
     for c in ${COMPONENTS_FIP};
     do
-        echo "    ${c}_compile"
+        echo "    ${c}_programmer_compile"
     done
     for c in ${COMPONENTS_FIP};
     do
-        echo "    ${c}_deploy"
+        echo "    ${c}_programmer_deploy"
     done
 }
 function generate_action_set() {
@@ -827,6 +827,18 @@ function generate_action_component() {
         echo "${c}-clean)"
         echo "    ${c}_clean"
         echo "    ;;"
+
+        # case of linux-stm32mp
+        if [ "${c}" = "linux-stm32mp" ]; then
+            echo "${c}-dtb)"
+            echo "    action_set"
+            echo "    ${c}_dtb"
+            echo "    ;;"
+            echo "${c}-dts)"
+            echo "    action_set"
+            echo "    ${c}_dts"
+            echo "    ;;"
+        fi
     done
 }
 function generate_component_list() {
@@ -1032,8 +1044,8 @@ function generate_component_function() {
         echo "    echo \"**** ${c}_deploy ****END****\""
         echo "}"
 
-        echo "function ${c}_programmer-compile {"
-        echo "    echo \"**** ${c}_programmer-compile ****START****\""
+        echo "function ${c}_programmer_compile {"
+        echo "    echo \"**** ${c}_programmer_compile ****START****\""
         if [ $programmer_compile_nb -gt 0 ]; then
             echo "    localpath=\$PWD"
             old_IFS=$IFS
@@ -1046,7 +1058,7 @@ function generate_component_function() {
                     echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
-            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    export BLD_PATH=\${your_build_subdir_path}-programmer"
             for d in ${data};
             do
                 if $(echo ${d} | grep -q '@PC') ; then
@@ -1058,11 +1070,11 @@ function generate_component_function() {
             IFS=$old_IFS
             echo "    cd \$localpath"
         fi
-        echo "    echo \"**** ${c}_programmer-compile ****END****\""
+        echo "    echo \"**** ${c}_programmer_compile ****END****\""
         echo "}"
 
-        echo "function ${c}_programmer-deploy {"
-        echo "    echo \"**** ${c}_programmer-deploy ****START****\""
+        echo "function ${c}_programmer_deploy {"
+        echo "    echo \"**** ${c}_programmer_deploy ****START****\""
         if [ $programmer_fip_nb -gt 0 ]; then
             echo "    localpath=\$PWD"
             old_IFS=$IFS
@@ -1075,7 +1087,7 @@ function generate_component_function() {
                     echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
-            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    export BLD_PATH=\${your_build_subdir_path}-programmer"
             for d in ${data};
             do
                 if $(echo ${d} | grep -q '@PF') ; then
@@ -1087,7 +1099,7 @@ function generate_component_function() {
             IFS=$old_IFS
             echo "    cd \$localpath"
         fi
-        echo "    echo \"**** ${c}_programmer-deploy ****END****\""
+        echo "    echo \"**** ${c}_programmer_deploy ****END****\""
         echo "}"
 
         echo "function ${c}_clean {"
@@ -1126,6 +1138,56 @@ function generate_component_function() {
         echo "    echo \"**** ${c}_clean ****END****\""
         echo "}"
 
+        # case of linux-stm32mp
+        if [ "${c}" = "linux-stm32mp" ]; then
+            echo "function ${c}_dtb {"
+            echo "    echo \"**** ${c}_compile ****START****\""
+            echo "    localpath=\$PWD"
+            old_IFS=$IFS
+            IFS=$'\n'
+            for d in ${data};
+            do
+                if $(echo ${d} | grep -q '@P>') ; then
+                    local_tmp_data=$(process_data ${d})
+                    echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
+                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                fi
+            done
+            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd  export OUTPUT_BUILD_DIR=\$PWD/../build"
+            echo "    export OUTPUT_BUILD_DIR=\$PWD/../build"
+            local_tmp_data=" make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} st/\${linux_dtb_name}.dtb KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
+            echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@C>||"
+            echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
+            IFS=$old_IFS
+            echo "    cd \$localpath"
+            echo "    echo \"**** ${c}_dtb ****END****\""
+            echo "}"
+
+            echo "function ${c}_dtbs {"
+            echo "    echo \"**** ${c}_dtbs ****START****\""
+            echo "    localpath=\$PWD"
+            old_IFS=$IFS
+            IFS=$'\n'
+            for d in ${data};
+            do
+                if $(echo ${d} | grep -q '@P>') ; then
+                    local_tmp_data=$(process_data ${d})
+                    echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
+                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                fi
+            done
+            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd  export OUTPUT_BUILD_DIR=\$PWD/../build"
+            echo "    export OUTPUT_BUILD_DIR=\$PWD/../build"
+            local_tmp_data=" make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} dtbs KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
+            echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@C>||"
+            echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
+            IFS=$old_IFS
+            echo "    cd \$localpath"
+            echo "    echo \"**** ${c}_dtbs ****END****\""
+            echo "}"
+        fi
     done
 }
 
@@ -1277,6 +1339,9 @@ $(generate_action_component)
     echo "         -programmer-compile"
     echo "         -programmer-deploy"
     echo "         -clean"
+    echo "    for linux-stm32mp there is to more possible action (already included on compil)"
+    echo "         -dtb"
+    echo "         -dtbs"
     echo "component:"
 $(generate_component_list)
     ;;
