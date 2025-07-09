@@ -855,7 +855,7 @@ To change kernel and devicetree, you can copy the file on this partitions:
 - copy kernel uImage on SDCARD
    sudo cp uImage /media/\$USER/bootfs/
 - copy devicetree uImage on SDCARD
-   sudo cp stm32mp1*.dtb /media/\$USER/bootfs/
+   sudo cp stm32mp*.dtb /media/\$USER/bootfs/
 - umount partitions of SDCARD
    sudo umount /media/\$USER/bootfs/
    (dont't forget to umount the other partitions of SDCARD:
