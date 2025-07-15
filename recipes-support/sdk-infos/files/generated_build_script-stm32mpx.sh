@@ -40,6 +40,9 @@ function config_stm32mp1_common() {
     echo "#    optee-emmc"
     echo "#    optee-sdcard"
     echo "#    optee-nor"
+    echo "#    opteemin-emmc"
+    echo "#    opteemin-sdcard"
+    echo "#    opteemin-nor"
     echo "#    ... (for other boot storage see ST Yocto BSP)"
     echo "your_storage_boot_scheme_cortex_a=\"<your_storage_boot_scheme_cortex_a>\""
     echo ""
@@ -54,6 +57,7 @@ function config_stm32mp1_common() {
     echo "# paralelle make for linux kernel:"
     echo "# ex.: "
     echo "# PARALLEL_MAKE=-j8"
+    echo ""
 }
 function config_stm32mp1_externaldt() {
     echo "# ----------------------------------------------------------------"
@@ -102,7 +106,7 @@ function config_stm32mp1_externaldt() {
 }
 function config_stm32mp1_mx() {
     echo "# define the cube mx project name"
-    echo "# ex.: for <path>/cube_mx_project/CA7/DeviceTree/cube_mx_project/kernel/<cube mx dt>"
+    echo "# ex.: for <path>/CA7/DeviceTree/cube_mx_project/kernel/<cube mx dt>"
     echo "#      your_cubemx_project_name=cube_mx_project"
     echo "#      externaldt_path=path"
     echo "your_cubemx_project_name=<cubemx project name>"
@@ -122,9 +126,9 @@ function config_stm32mp1_mx() {
 
     echo "# ------------------------------"
     echo "# Via CubeMx dt"
-    echo "# force external dt path to CubeMx path"
+    echo "# force external dt path to CubeMx project path"
     echo "# ex.: externaldt_path=my_project_path"
-    echo "externaldt_path=<Path to Cubemx dt>"
+    echo "externaldt_path=<Path to Cubemx project path>"
     echo "# external dt subpath for Optee"
     echo "externaldt_optee_path=CA7/DeviceTree/\${your_cubemx_project_name}/optee-os"
     echo "externaldt_optee_programmer_path=CA7/DeviceTree/\${your_cubemx_project_name}/optee-os"
@@ -216,6 +220,7 @@ function config_stm32mp2_common() {
     echo "# paralelle make for linux kernel:"
     echo "# ex.: "
     echo "# PARALLEL_MAKE=-j8"
+    echo ""
 
 }
 function config_stm32mp2_externaldt() {
@@ -266,7 +271,7 @@ function config_stm32mp2_externaldt() {
 }
 function config_stm32mp2_mx() {
     echo "# define the cube mx project name"
-    echo "# ex.: for <path>/cube_mx_project/CA7/DeviceTree/cube_mx_project/kernel/<cube mx dt>"
+    echo "# ex.: for <path>/CA35/DeviceTree/cube_mx_project/kernel/<cube mx dt>"
     echo "#      your_cubemx_project_name=cube_mx_project"
     echo "#      externaldt_path=path"
     echo "your_cubemx_project_name=<cubemx project name>"
@@ -285,9 +290,9 @@ function config_stm32mp2_mx() {
     echo ""
     echo "# ------------------------------"
     echo "# Via CubeMx dt"
-    echo "# force external dt path to CubeMx path"
+    echo "# force external dt path to CubeMx project path"
     echo "# ex.: externaldt_path=my_project_path/"
-    echo "externaldt_path=<Path to Cubemx dt>"
+    echo "externaldt_path=<Path to Cubemx project path>"
     echo "# external dt subpath for Optee"
     echo "externaldt_optee_path=CA35/DeviceTree/\${your_cubemx_project_name}/optee-os"
     echo "externaldt_optee_programmer_path=CA35/DeviceTree/\${your_cubemx_project_name}/optee-os"
@@ -405,7 +410,7 @@ function config_stm32mp2-m33td_common() {
     echo "# paralelle make for linux kernel:"
     echo "# ex.: "
     echo "# PARALLEL_MAKE=-j8"
-
+    echo ""
 }
 function config_stm32mp2-m33td_externaldt() {
     echo "# ----------------------------------------------------------------"
@@ -459,7 +464,7 @@ function config_stm32mp2-m33td_externaldt() {
 }
 function config_stm32mp2-m33td_mx() {
     echo "# define the cube mx project name"
-    echo "# ex.: for <path>/cube_mx_project/CA7/DeviceTree/cube_mx_project/kernel/<cube mx dt>"
+    echo "# ex.: for <path>/C35/DeviceTree/cube_mx_project/kernel/<cube mx dt>"
     echo "#      your_cubemx_project_name=cube_mx_project"
     echo "#      externaldt_path=path"
     echo "your_cubemx_project_name=<cubemx project name>"
@@ -486,8 +491,8 @@ function config_stm32mp2-m33td_mx() {
 
     echo "# ------------------------------"
     echo "# Via CubeMx dt"
-    echo "# force external dt path to CubeMx path"
-    echo "externaldt_path=<Path to Cubemx dt>"
+    echo "# force external dt path to CubeMx project path"
+    echo "externaldt_path=<Path to Cubemx project path>"
     echo "# external dt subpath for Optee"
     echo "externaldt_optee_path=CA35/DeviceTree/\${your_cubemx_project_name}/optee-os"
     echo "externaldt_optee_programmer_path=ExtMemLoader/DeviceTree/\${your_cubemx_project_name}/optee-os"
@@ -1208,6 +1213,7 @@ if [ $# -eq 0 ]; then
 fi
 MX_NAME=""
 while [[ $# -gt 0 ]]; do
+  GLOBAL_CONFIGURATION=$1
   case $1 in
     stm32mp1-mx)
       MACHINE=stm32mp1
@@ -1248,6 +1254,7 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
 info "MACHINE=$MACHINE"
 
 # generate list of components
@@ -1258,13 +1265,23 @@ COMPONENTS_FIP=$(cat README.HOW_TO.txt.${MACHINE} | grep ^@F | sed "s/^@[A-Z]* /
 
 OUTPUT_SCRIPT=../sdk_compilation-${MACHINE}${MX_NAME}-my-custom-board.sh
 
+COMMON_SCRIPT_NAME=sdk_action-common-for-${GLOBAL_CONFIGURATION}.source
+OUTPUT_COMMON_SCRIPT=../${COMMON_SCRIPT_NAME}
+
 debug "Machine $MACHINE"
 debug "is MX machine = $MX"
+
 
 cat << EOF > $OUTPUT_SCRIPT
 #!/bin/bash
 
 $(config_stm32mp $MACHINE $MX)
+
+source $COMMON_SCRIPT_NAME
+EOF
+
+cat << EOF > $OUTPUT_COMMON_SCRIPT
+#!/bin/bash
 
 # ----------------------------------------
 die() {
@@ -1348,3 +1365,4 @@ $(generate_component_list)
 esac
 EOF
 
+chmod +x $OUTPUT_SCRIPT

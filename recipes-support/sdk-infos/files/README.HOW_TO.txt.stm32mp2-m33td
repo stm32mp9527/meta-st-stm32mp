@@ -139,15 +139,17 @@ Ex. with CubeMx board with project name 'cube_mx_project :
         your_soc_name="stm32mp21"
         your_storage_boot_scheme_security="optee"
         your_storage_boot_scheme_cortex_a="optee-sdcard"
-        your_deploy_dir_path="<your location>/ouput-sdk-stm32mp2-m33td"
+        your_storage_boot_scheme_cortex_m="m33td_sdcard"
+        your_m33_profile="stm/stm32mp215f_dk"
         your_cube_m33td_project="Projects/STM32MP215F-DK/Demonstrations/StarterApp_M33TD"
+        your_deploy_dir_path="<your location>/ouput-sdk-stm32mp2-m33td"
         your_build_subdir_path=../build-my-project
         your_cubemx_project_name="cubemx project name"
         externaldt_path=<path to cube mx project>/
         # at least to have
-        #     ${externaldt_path}/${your_cubemx_project_name}/CA35/DeviceTree/${your_cubemx_project_name}/optee
-        #     ${externaldt_path}/${your_cubemx_project_name}/CM33/DeviceTree/${your_cubemx_project_name}/mcuboot
-        #     ${externaldt_path}/${your_cubemx_project_name}/ExtMemLoader/DeviceTree/${your_cubemx_project_name}/optee
+        #     ${externaldt_path}/CA35/DeviceTree/${your_cubemx_project_name}/optee
+        #     ${externaldt_path}/CM33/DeviceTree/${your_cubemx_project_name}/mcuboot
+        #     ${externaldt_path}/ExtMemLoader/DeviceTree/${your_cubemx_project_name}/optee
 
 ---------------------------------
 5. Example of script usage

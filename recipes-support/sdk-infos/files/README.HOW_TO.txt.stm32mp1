@@ -85,6 +85,9 @@ your_storage_boot_scheme_cortex_a="<your_storage_boot_scheme_cortex_a>"
         optee-emmc
         optee-sdcard
         optee-nor
+        opteemin-emmc
+        opteemin-sdcard
+        opteemin-nor
 
 your_deploy_dir_path="<your_deploy_dir_path>"
   Location to store all the binaries generated
@@ -97,8 +100,8 @@ your_build_subdir_path=<your_build_subdir_path>
 Ex. for St board with external dt :
         your_board_name="stm32mp157f-dk"
         your_soc_name="stm32mp15"
-        your_storage_boot_scheme_security="optee"
-        your_storage_boot_scheme_cortex_a="optee-sdcard"
+        your_storage_boot_scheme_security="opteemin"
+        your_storage_boot_scheme_cortex_a="opteemin-sdcard"
         your_deploy_dir_path="<your location>/ouput-sdk-stm32mp1"
         your_build_subdir_path=../build-stm32mp1
         externaldt_path=<path to ST external dt>
@@ -106,15 +109,15 @@ NOTE: externaldt_path can be not set, in this case use:
         externaldt_path=
 
 Ex. with CubeMx board with project name 'cube_mx_project :
-        your_board_name="stm32mp157f-cube_mx_project-mx"
-        your_soc_name="stm32mp15"
+        your_board_name="stm32mp135f-cube_mx_project-mx"
+        your_soc_name="stm32mp13"
         your_storage_boot_scheme_security="optee"
         your_storage_boot_scheme_cortex_a="optee-sdcard"
         your_deploy_dir_path="<your location>/ouput-sdk-stm32mp1"
         your_build_subdir_path=../build-stm32mp1-mx
         your_cubemx_project_name="cubemx project name"
         externaldt_path=<path to cube mx project>/
-        # at least to have ${externaldt_path}/${your_cubemx_project_name}/CA7/DeviceTree/${your_cubemx_project_name}/optee
+        # at least to have ${externaldt_path}/CA7/DeviceTree/${your_cubemx_project_name}/optee
         # for optee devicetree path
 
 ---------------------------------

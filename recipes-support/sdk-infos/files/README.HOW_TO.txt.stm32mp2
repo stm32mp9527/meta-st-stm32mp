@@ -113,7 +113,7 @@ Ex. with CubeMx board with project name 'cube_mx_project :
         your_build_subdir_path=../build-my-project
         your_cubemx_project_name="cubemx project name"
         externaldt_path=<path to cube mx project>/
-        # at least to have ${externaldt_path}/${your_cubemx_project_name}/CA35/DeviceTree/${your_cubemx_project_name}/optee
+        # at least to have ${externaldt_path}/CA35/DeviceTree/${your_cubemx_project_name}/optee
         # for optee devicetree path
 
 ---------------------------------
