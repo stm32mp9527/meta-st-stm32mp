@@ -55,7 +55,7 @@ Information about usage of stm32mp2-m33td developer package
 -----------------------
 3.Generate a specific configuration
 -----------------------
-The script "generated_build_script-stm32mpx.sh" permit to parse all the redme and generate a
+The script "generated_build_script-stm32mpx.sh" permit to parse all the readme and generate a
 script to help to compile the component needed for your target.
 Several option are possible:
         $ cd sdk-infos-1.0-r0
@@ -66,14 +66,13 @@ For stm32mp2-m33td, external-dt or cubeMx configuration can be generated:
 
         For external-dt configuration (default)
         $ ./generated_build_script-stm32mpx.sh stm32mp2
-        => generate a scrip on root directory (sdk-infos-1.0-r0/../sdk_compilation-stm32mp2-m33td-my-custom-board.sh)
+        => generate a script on root directory (sdk-infos-1.0-r0/../sdk_compilation-stm32mp2-m33td-my-custom-board.sh)
         For cubeMx devicetree configuration (mx)
         $ ./generated_build_script-stm32mpx.sh stm32mp2-mx
-        => generate a scrip on root directory (sdk-infos-1.0-r0/../sdk_compilation-stm32mp2-m33td-mx-my-custom-board.sh)
+        => generate a script on root directory (sdk-infos-1.0-r0/../sdk_compilation-stm32mp2-m33td-mx-my-custom-board.sh)
 
 NOTE:
  * the script MUST be renamed for your specific usage and the content configured on consequence (see next section for an example of configuration
- * the right of the script must be changed to be on execution
 
 -----------------------
 4. Example of configuration and explanation of parameters
@@ -123,7 +122,7 @@ your_build_subdir_path=<your_build_subdir_path>
   ex.: your_build_subdir_path=../build
 
 Ex. for St board with external dt :
-        your_board_name="stm32mp215f-ev1"
+        your_board_name="stm32mp215f-dk"
         your_soc_name="stm32mp21"
         your_storage_boot_scheme_security="optee"
         your_storage_boot_scheme_cortex_a="optee-sdcard"
