@@ -232,9 +232,9 @@ Then the new Starter Package is ready to use for "Image flashing" on board (more
 ##CASE_stm32mp1##    For runtime FIP binaries
 ##CASE_stm32mp1##    $@F> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=<your_storage_boot_scheme_cortex_a> TF_A_DEVICETREE=<your_board_name> FIP_CONFIG=<your_storage_boot_scheme_cortex_a> EXTDT_DIR=<externaldt_path> EXTDT_DIR_TF_A=<externaldt_tfa_path> fip
 ##CASE_stm32mp1##    For flashing binaries
-##CASE_stm32mp1##    $@PC> make -f $PWD/../Makefile.sdk.stm32mp2 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-usb TF_A_DEVICETREE=<your_board_name> EXTDT_DIR=<externaldt_path> EXTDT_DIR_TF_A_SERIAL=<externaldt_tfa_programmer_path> stm32
+##CASE_stm32mp1##    $@PC> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-usb TF_A_DEVICETREE=<your_board_name> EXTDT_DIR=<externaldt_path> EXTDT_DIR_TF_A_SERIAL=<externaldt_tfa_programmer_path> stm32
 ##CASE_stm32mp1##    For flashing FIP binaries
-##CASE_stm32mp1##    $@PF> make -f $PWD/../Makefile.sdk.stm32mp2 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-usb TF_A_DEVICETREE=<your_board_name> EXTDT_DIR=<externaldt_path> FIP_CONFIG=optee-programmer-usb EXTDT_DIR_TF_A_SERIAL=<externaldt_tfa_programmer_path> fip
+##CASE_stm32mp1##    $@PF> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-usb TF_A_DEVICETREE=<your_board_name> EXTDT_DIR=<externaldt_path> FIP_CONFIG=optee-programmer-usb EXTDT_DIR_TF_A_SERIAL=<externaldt_tfa_programmer_path> fip
 ##CASE_stm32mp1##    Example with external dt:
 ##CASE_stm32mp1##      Example for runtime binaries
 ##CASE_stm32mp1##        $MP13> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=stm32mp135f-dk EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_TF_A=ca7-td/tf-a metadata stm32
@@ -250,17 +250,17 @@ Then the new Starter Package is ready to use for "Image flashing" on board (more
 ##CASE_stm32mp1##        $MP13> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-serial TF_A_DEVICETREE=stm32mp135f-dk  EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_TF_A_SERIAL=ca7-td/tf-a fip
 ##CASE_stm32mp1##    Example with CubeMx devicetree:
 ##CASE_stm32mp1##      Example for runtime binaries
-##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A=CA7/DeviceTree/<your_cubemx_project_name>/tf-a metadata stm32
-##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-emmc   TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A=CA7/DeviceTree/<your_cubemx_project_name>/tf-a metadata stm32
+##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A=DeviceTree/<your_cubemx_project_name>/tf-a metadata stm32
+##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-emmc   TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A=DeviceTree/<your_cubemx_project_name>/tf-a metadata stm32
 ##CASE_stm32mp1##      Example for runtime FIP binaries
-##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A=CA7/DeviceTree/<your_cubemx_project_name>/tf-a fip
-##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-emmc   TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A=CA7/DeviceTree/<your_cubemx_project_name>/tf-a fip
+##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A=DeviceTree/<your_cubemx_project_name>/tf-a fip
+##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-emmc   TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A=DeviceTree/<your_cubemx_project_name>/tf-a fip
 ##CASE_stm32mp1##      Example for flashing binaries
-##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-usb    TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A_SERIAL=CA7/DeviceTree/<your_cubemx_project_name>/tf-a stm32
-##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-serial TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A_SERIAL=CA7/DeviceTree/<your_cubemx_project_name>/tf-a stm32
+##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-usb    TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A_SERIAL=DeviceTree/<your_cubemx_project_name>/tf-a stm32
+##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-serial TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A_SERIAL=DeviceTree/<your_cubemx_project_name>/tf-a stm32
 ##CASE_stm32mp1##      Example for flashing FIP binaries
-##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-usb    TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A_SERIAL=CA7/DeviceTree/<your_cubemx_project_name>/tf-a fip
-##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-serial TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A_SERIAL=CA7/DeviceTree/<your_cubemx_project_name>/tf-a fip
+##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-usb    TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A_SERIAL=DeviceTree/<your_cubemx_project_name>/tf-a fip
+##CASE_stm32mp1##        $MP1x> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-programmer-serial TF_A_DEVICETREE=<tfa_dt_programmer_name> EXTDT_DIR=<cubemx_output_dir> EXTDT_DIR_TF_A_SERIAL=DeviceTree/<your_cubemx_project_name>/tf-a fip
 
 ##CASE_stm32mp2##    "your_board_name" is like stm32mp257f-dk or stm32mp215f-mx-mycustomboard
 ##CASE_stm32mp2##    "your_storage_boot_scheme_cortex_a" is like optee-emmc, optee-sdcard, optee-nor, optee-nand, opteemin-emmc, opteemin-sdcard, opteemin-nor, opteemin-nand
@@ -275,7 +275,7 @@ Then the new Starter Package is ready to use for "Image flashing" on board (more
 ##CASE_stm32mp2##    Example with external dt:
 ##CASE_stm32mp2##      Example for runtime binaries
 ##CASE_stm32mp2##        $MP21> make -f $PWD/../Makefile.sdk.stm32mp2 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=stm32mp215f-dk  EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_TF_A=ca35-td/tf-a metadata stm32
-##CASE_stm32mp2##        $MP23> make -f $PWD/../Makefile.sdk.stm32mp2 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=stm32mp235f-dk  EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_TF_A_=ca35-td/tf-a metadata stm32
+##CASE_stm32mp2##        $MP23> make -f $PWD/../Makefile.sdk.stm32mp2 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=stm32mp235f-dk  EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_TF_A=ca35-td/tf-a metadata stm32
 ##CASE_stm32mp2##        $MP25> make -f $PWD/../Makefile.sdk.stm32mp2 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-nor    TF_A_DEVICETREE=stm32mp257f-ev1 EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_TF_A=ca35-td/tf-a metadata stm32
 ##CASE_stm32mp2##      Example for runtime FIP binaries
 ##CASE_stm32mp2##        $MP21> make -f $PWD/../Makefile.sdk.stm32mp2 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/arm-trusted-firmware TF_A_CONFIG=optee-sdcard TF_A_DEVICETREE=stm32mp215f-dk  FIP_CONFIG=optee-sdcard EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_TF_A=ca35-td/tf-a fip
