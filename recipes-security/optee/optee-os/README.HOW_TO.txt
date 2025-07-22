@@ -217,7 +217,7 @@ Then the new Starter Package is ready to use for "Image flashing" on board (more
 ##CASE_stm32mp1##    For runtime binaries
 ##CASE_stm32mp1##    $@C> make -f $PWD/../Makefile.sdk.stm32mp1 OPTEE_CONFIG=<your_storage_boot_scheme_security> CFG_EMBED_DTB_SOURCE_FILE=<your_board_name> DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee EXTDT_DIR=<externaldt_path> EXTDT_DIR_OPTEE=<externaldt_optee_path> optee
 ##CASE_stm32mp1##    For flashing binaries
-##CASE_stm32mp1##    $@PC> make -f $PWD/../Makefile.sdk.stm32mp1 OPTEE_CONFIG=optee-programmer CFG_EMBED_DTB_SOURCE_FILE=<your_board_name> DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee EXTDT_DIR=<externaldt_path> EXTDT_DIR_OPTEE=<externaldt_optee_path> optee
+##CASE_stm32mp1##    $@PC> make -f $PWD/../Makefile.sdk.stm32mp1 OPTEE_CONFIG=optee-programmer CFG_EMBED_DTB_SOURCE_FILE=<your_board_name> DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee EXTDT_DIR=<externaldt_path> EXTDT_DIR_OPTEE_SERIAL=<externaldt_optee_path> optee
 ##CASE_stm32mp1##    Example with external dt:
 ##CASE_stm32mp1##      Example for runtime binaries
 ##CASE_stm32mp1##        $MP13> make -f $PWD/../Makefile.sdk.stm32mp1 DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/optee OPTEE_CONFIG=optee    CFG_EMBED_DTB_SOURCE_FILE=stm32mp135f-dk  EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_OPTEE=ca7-td/optee optee
