@@ -730,9 +730,9 @@ function generate_action_extract() {
 }
 function generate_action_compile() {
     info "** generate_action_compile"
+    echo "    action_set"
     for c in ${COMPONENTS};
     do
-        echo "    ${c}_set"
         echo "    ${c}_configure"
         echo "    ${c}_compile"
     done
@@ -790,9 +790,18 @@ function generate_action_clean() {
     info "** generate_action_deploy"
     for c in ${COMPONENTS};
     do
-        echo "    ${c}_clean"
+        echo "    ${c}_clean_build"
     done
 }
+function generate_action_cleanall() {
+    info "** generate_action_deploy"
+    for c in ${COMPONENTS};
+    do
+        echo "    ${c}_clean_build"
+        echo "    ${c}_clean_src_extracted"
+    done
+}
+
 function generate_action_component() {
     info "** generate_action_component"
     for c in ${COMPONENTS};
@@ -830,7 +839,12 @@ function generate_action_component() {
         echo "    ;;"
 
         echo "${c}-clean)"
-        echo "    ${c}_clean"
+        echo "    ${c}_clean_build"
+        echo "    ;;"
+
+        echo "${c}-cleanall)"
+        echo "    ${c}_clean_build"
+        echo "    ${c}_clean_src_extracted"
         echo "    ;;"
 
         # case of linux-stm32mp
@@ -839,10 +853,15 @@ function generate_action_component() {
             echo "    action_set"
             echo "    ${c}_dtb"
             echo "    ;;"
-            echo "${c}-dts)"
+            echo "${c}-dtbs)"
             echo "    action_set"
-            echo "    ${c}_dts"
+            echo "    ${c}_dtbs"
             echo "    ;;"
+            echo "${c}-modules)"
+            echo "    action_set"
+            echo "    ${c}_modules"
+            echo "    ;;"
+
         fi
     done
 }
@@ -915,7 +934,7 @@ function generate_component_function() {
             echo "        cd \$localpath"
             echo "        touch source_code_extracted-${c}"
             echo "    else"
-            echo "        echo \"source coed for ${c} not extracted\""
+            echo "        echo \"source code for ${c} not extracted\""
             echo "    fi"
             echo "    cd \$localpath"
         fi
@@ -942,7 +961,8 @@ function generate_component_function() {
             for d in ${data};
             do
                 if $(echo ${c} | grep -q "external-dt") ; then
-                    [  $MX -eq 0 ] || continue
+                    # set is not use and overwrited by externaldt_path
+                    continue
                 fi
                 if $(echo ${d} | grep -q '@S') ; then
                     local_tmp_data=$(process_data ${d})
@@ -971,7 +991,7 @@ function generate_component_function() {
             done
             echo "    export BLD_PATH=\${your_build_subdir_path}"
             if $(echo ${c} | grep -q "linux-stm32mp") ; then
-                echo "    if [ ! -e ../source_code_configured-${c} ]; then"
+                echo "    if [ ! -e ../source_code_configured-${c}-for-\${your_board_name} ]; then"
             fi
             for d in ${data};
             do
@@ -981,7 +1001,7 @@ function generate_component_function() {
                 fi
             done
             if $(echo ${c} | grep -q "linux-stm32mp") ; then
-                echo "        touch ../source_code_configured-${c}"
+                echo "        touch ../source_code_configured-${c}-for-\${your_board_name}"
                 echo "    fi"
             fi
 
@@ -1107,8 +1127,44 @@ function generate_component_function() {
         echo "    echo \"**** ${c}_programmer_deploy ****END****\""
         echo "}"
 
-        echo "function ${c}_clean {"
-        echo "    echo \"**** ${c}_clean ****START****\""
+        echo "function ${c}_clean_build {"
+        echo "    echo \"**** ${c}_clean_buid ****START****\""
+        if [ $extract_nb -gt 0 ]; then
+            echo "    localpath=\$PWD"
+            echo "    if [ -e source_code_extracted-${c} ]; then"
+            old_IFS=$IFS
+            IFS=$'\n'
+            for d in ${data};
+            do
+                if $(echo ${d} | grep -q '@P>') ; then
+                    local_tmp_data=$(process_data ${d})
+                    echo "        cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
+                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|       |"
+                fi
+            done
+            IFS=$old_IFS
+            if $(echo ${c} | grep -q "linux-stm32mp") ; then
+                echo "        dir=\$(find .. -maxdepth 1 -type d | grep linux | tail -n 1)"
+            else
+                echo "        dir=\$(find .. -maxdepth 1 -type d | grep ${c} | tail -n 1)"
+            fi
+            echo "        # remove configured file step"
+            echo "        [ -e ../source_code_configured-${c}-for-\${your_board_name} ] && cmd rm ../source_code_configured-${c}-for-\${your_board_name}"
+            echo "        [ -e ../source_code_configured-${c}-for-\${your_board_name} ] && rm ../source_code_configured-${c}-for-\${your_board_name}"
+
+            echo "        # remove build directory"
+            echo "        [ -d \${your_build_subdir_path} ] && cmd rm -rf \${your_build_subdir_path}"
+            echo "        [ -d \${your_build_subdir_path} ] && rm -rf \${your_build_subdir_path}"
+            echo "        [ -d \${your_build_subdir_path}-programmer ] && cmd rm -rf \${your_build_subdir_path}-programmer"
+            echo "        [ -d \${your_build_subdir_path}-programmer ] && rm -rf \${your_build_subdir_path}-programmer"
+            echo "    fi"
+            echo "    cd \$localpath"
+        fi
+        echo "    echo \"**** ${c}_clean_build ****END****\""
+        echo "}"
+
+        echo "function ${c}_clean_src_extracted {"
+        echo "    echo \"**** ${c}_clean_src_extracted ****START****\""
         if [ $extract_nb -gt 0 ]; then
             echo "    localpath=\$PWD"
             echo "    if [ -e source_code_extracted-${c} ]; then"
@@ -1132,15 +1188,10 @@ function generate_component_function() {
             fi
             echo "        [ -d \$dir ] && cmd \"rm -rf \$dir\" ../source_code_extracted-${c}"
             echo "        [ -d \$dir ] && rm -rf \$dir ../source_code_extracted-${c}"
-            echo "        [ -e source_code_configured-${c} ] && cmd rm source_code_configured-${c}"
-            echo "        [ -e source_code_configured-${c} ] && rm source_code_configured-${c}"
-            echo "        [ -d \${your_build_subdir_path} ] && cmd rm -rf \${your_build_subdir_path}"
-            echo "        [ -d \${your_build_subdir_path} ] && rm -rf \${your_build_subdir_path}"
-
             echo "    fi"
             echo "    cd \$localpath"
         fi
-        echo "    echo \"**** ${c}_clean ****END****\""
+        echo "    echo \"**** ${c}_clean_src_extracted ****END****\""
         echo "}"
 
         # case of linux-stm32mp
@@ -1158,13 +1209,13 @@ function generate_component_function() {
                     echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
+            IFS=$old_IFS
             echo "    export BLD_PATH=\${your_build_subdir_path}"
             echo "    cmd  export OUTPUT_BUILD_DIR=\$PWD/../build"
             echo "    export OUTPUT_BUILD_DIR=\$PWD/../build"
-            local_tmp_data=" make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} st/\${linux_dtb_name}.dtb KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
-            echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@C>||"
-            echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
-            IFS=$old_IFS
+            local_tmp_data="    make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} st/\${linux_dtb_name}.dtb KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
+            echo "    cmd \"${local_tmp_data}\""
+            echo "${local_tmp_data} || die ${c}"
             echo "    cd \$localpath"
             echo "    echo \"**** ${c}_dtb ****END****\""
             echo "}"
@@ -1182,16 +1233,55 @@ function generate_component_function() {
                     echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
+            IFS=$old_IFS
             echo "    export BLD_PATH=\${your_build_subdir_path}"
             echo "    cmd  export OUTPUT_BUILD_DIR=\$PWD/../build"
             echo "    export OUTPUT_BUILD_DIR=\$PWD/../build"
-            local_tmp_data=" make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} dtbs KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
-            echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@C>||"
-            echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
-            IFS=$old_IFS
+            local_tmp_data="    make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} dtbs KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
+            echo "    cmd \"${local_tmp_data}\""
+            echo "${local_tmp_data} || die ${c}"
             echo "    cd \$localpath"
             echo "    echo \"**** ${c}_dtbs ****END****\""
             echo "}"
+
+            echo "function ${c}_modules {"
+            echo "    echo \"**** ${c}_modules ****START****\""
+            echo "    localpath=\$PWD"
+            old_IFS=$IFS
+            IFS=$'\n'
+            for d in ${data};
+            do
+                if $(echo ${d} | grep -q '@P>') ; then
+                    local_tmp_data=$(process_data ${d})
+                    echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
+                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                fi
+            done
+            IFS=$old_IFS
+            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd  export OUTPUT_BUILD_DIR=\$PWD/../build"
+            echo "    export OUTPUT_BUILD_DIR=\$PWD/../build"
+            local_tmp_data="    make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} modules modules_install INSTALL_MOD_PATH=\"\${OUTPUT_BUILD_DIR}/install_artifact\" KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
+            echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@C>||"
+            echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
+
+            echo "    cmd \" mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules\""
+            echo "    mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules || die linux-stm32mp"
+            echo "    cmd \" mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped\""
+            echo "    mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped || die linux-stm32mp"
+            echo "    cmd \" rm \${OUTPUT_BUILD_DIR}/install_artifact/lib/modules/*/build\""
+            echo "    rm \${OUTPUT_BUILD_DIR}/install_artifact/lib/modules/*/build || die linux-stm32mp"
+            echo "    cmd \" cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules\""
+            echo "    cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules || die linux-stm32mp"
+            echo "    cmd \" cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped\""
+            echo "    cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped || die linux-stm32mp"
+            echo "    cmd \" find \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped -name "*.ko" | xargs \$STRIP --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates\""
+            echo "    find \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped -name \"*.ko\" | xargs \$STRIP --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates || die linux-stm32mp"
+
+            echo "    cd \$localpath"
+            echo "    echo \"**** ${c}_modules ****END****\""
+            echo "}"
+
         fi
     done
 }
@@ -1255,7 +1345,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-info "MACHINE=$MACHINE"
+if [ $MX ]; then
+    info "MACHINE=$MACHINE MX"
+else
+    info "MACHINE=$MACHINE"
+fi
 
 # generate list of components
 COMPONENTS=$(cat README.HOW_TO.txt.${MACHINE} | grep ^@ | sed "s/^@[A-Z]* //g")
@@ -1302,7 +1396,7 @@ $(generate_action_set)
 # -----------------------------------------
 if [ \$# -ne 1 ];
 then
-    action=all
+    action=help
 else
     action=\$1
 fi
@@ -1334,18 +1428,23 @@ $(generate_action_programmer)
 clean)
 $(generate_action_clean)
     ;;
+cleanall)
+$(generate_action_cleanall)
+    ;;
 $(generate_action_component)
 *)
     echo "Help:"
     echo "\$0 [extract|compile|compile-for-fip|deploy|programmer|<component>-<action>]"
     echo "action:"
     echo "    extract: extract the source for all components"
-    echo "    compile-for-fip: compile all the component needed to geenrated fip"
-    echo "    deploy-for-fip:  deploy all the component needed to geenrated fip and generate fip"
-    echo "    compile:     compile all the component"
+    echo "    compile-for-fip: compile all the component needed to generated fip"
+    echo "    deploy-for-fip:  deploy all the component needed to generated fip and generate fip"
+    echo "    compile:     compile all the component for runtime"
     echo "    deploy:     generate the deploy with input of each components (need to have made compile of component before)"
     echo "    programmer: binaries for programmer usage"
-    echo "    clean:      clean all components"
+    echo "    clean:      clean all components (remove all build directory, keep extracted source code)"
+    echo "    cleanall:   clean all components (remove all build directory and extracted source code)"
+
     echo ""
     echo "    <component>: make all step for a specific component (if is needed)"
     echo "         -extract"
@@ -1356,11 +1455,24 @@ $(generate_action_component)
     echo "         -programmer-compile"
     echo "         -programmer-deploy"
     echo "         -clean"
+    echo "         -cleanall"
     echo "    for linux-stm32mp there is to more possible action (already included on compil)"
     echo "         -dtb"
     echo "         -dtbs"
+    echo "         -modules"
     echo "component:"
 $(generate_component_list)
+    echo ""
+    echo "Preconize step:"
+    echo "    \$0  extract"
+    echo "    \$0  compile-for-fip"
+    echo "    \$0  deploy-for-fip"
+    echo "   for flashing:"
+    echo "    \$0  programmer"
+    echo "   kernel"
+    echo "    \$0  linux-stm32mp"
+    echo "   if your have a gpu on soc"
+    echo "    \$0  gcnano-driver-stm32mp"
     ;;
 esac
 EOF
