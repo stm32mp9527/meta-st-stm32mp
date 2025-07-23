@@ -414,7 +414,7 @@ Update Starter Package bootfs with new generated dtb and uImage or Image.gz
     $@P> cd ##BP##-##PR##
     $@P> cd ##LINUX_TARBASE##
 
-    $@c> export OUTPUT_BUILD_DIR=$PWD/../build
+    $@c> export OUTPUT_BUILD_DIR=<your_build_subdir_path>
     $@c> mkdir -p $OUTPUT_BUILD_DIR
     $@c> echo "" > $OUTPUT_BUILD_DIR/.scmversion
 
@@ -425,7 +425,7 @@ Update Starter Package bootfs with new generated dtb and uImage or Image.gz
     $@c> for f in `ls -1 ../fragment*.config`; do scripts/kconfig/merge_config.sh -m -r -O ${OUTPUT_BUILD_DIR} ${OUTPUT_BUILD_DIR}/.config $f; done
     $@c> (yes '' || true) | make oldconfig O="${OUTPUT_BUILD_DIR}"
 
-    $@C> export OUTPUT_BUILD_DIR=$PWD/../build
+    $@C> export OUTPUT_BUILD_DIR=<your_build_subdir_path>
 ##CASE_stm32mp1##    $@C> make O="${OUTPUT_BUILD_DIR}" ${PARALLEL_MAKE} uImage vmlinux dtbs LOADADDR=##LOADADDR## KBUILD_EXTDTS=<externaldt_path>/<externaldt_linux_path>
 ##CASE_stm32mp2##    $@C> make O="${OUTPUT_BUILD_DIR}" ${PARALLEL_MAKE} Image.gz vmlinux dtbs KBUILD_EXTDTS=<externaldt_path>/<externaldt_linux_path>
 ##CASE_stm32mp2-m33td##    $@C> make O="${OUTPUT_BUILD_DIR}" ${PARALLEL_MAKE} Image.gz vmlinux dtbs KBUILD_EXTDTS=<externaldt_path>/<externaldt_linux_path>
@@ -445,7 +445,7 @@ Update Starter Package bootfs with new generated dtb and uImage or Image.gz
 
 # to deploy
    $@F> export FIP_DEPLOYDIR_ROOT=<your_deploy_dir_path>
-   $@F> export OUTPUT_BUILD_DIR=$PWD/../build
+   $@F> export OUTPUT_BUILD_DIR=<your_build_subdir_path>
 
    $@F> mkdir -p ${FIP_DEPLOYDIR_ROOT}/kernel
 ##CASE_stm32mp1##    $@F> cp ${OUTPUT_BUILD_DIR}/install_artifact/boot/uImage ${FIP_DEPLOYDIR_ROOT}/kernel
@@ -461,7 +461,7 @@ Update Starter Package bootfs with new generated dtb and uImage or Image.gz
    $@F> mkdir -p ${FIP_DEPLOYDIR_ROOT}/kernel/modules
    $@F> mkdir -p ${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped
    # cleanup kernel modules tree
-   $@F> rm ${OUTPUT_BUILD_DIR}/install_artifact/lib/modules/*/build
+   $@F> rm ${OUTPUT_BUILD_DIR}/install_artifact/lib/modules/*/build; echo ""
    $@F> cp -ar ${OUTPUT_BUILD_DIR}/install_artifact/* ${FIP_DEPLOYDIR_ROOT}/kernel/modules
    $@F> cp -ar ${OUTPUT_BUILD_DIR}/install_artifact/* ${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped
    $@F> find ${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped -name "*.ko" | xargs $STRIP --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates
