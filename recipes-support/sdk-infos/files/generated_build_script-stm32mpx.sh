@@ -708,7 +708,7 @@ function process_data() {
 }
 
 function generate_action_all() {
-    info "** generate_action_all"
+    debug "** generate_action_all"
     for c in ${COMPONENTS};
     do
         echo "    ${c}_extract"
@@ -722,14 +722,14 @@ function generate_action_all() {
     done
 }
 function generate_action_extract() {
-    info "** generate_action_extract"
+    debug "** generate_action_extract"
     for c in ${COMPONENTS};
     do
         echo "    ${c}_extract"
     done
 }
 function generate_action_compile() {
-    info "** generate_action_compile"
+    debug "** generate_action_compile"
     echo "    action_set"
     for c in ${COMPONENTS};
     do
@@ -738,7 +738,7 @@ function generate_action_compile() {
     done
 }
 function generate_action_compile_for_deploy() {
-    info "** generate_action_compile_for_deploy"
+    debug "** generate_action_compile_for_deploy"
     echo "    action_set"
     for c in ${COMPONENTS_FIP};
     do
@@ -747,7 +747,7 @@ function generate_action_compile_for_deploy() {
     done
 }
 function generate_action_deploy_for_fip() {
-    info "** generate_action_deploy_for_fip"
+    debug "** generate_action_deploy_for_fip"
     echo "    action_set"
     for c in ${COMPONENTS_FIP};
     do
@@ -756,7 +756,7 @@ function generate_action_deploy_for_fip() {
 }
 
 function generate_action_deploy() {
-    info "** generate_action_deploy"
+    debug "** generate_action_deploy"
     echo "    action_set"
     for c in ${COMPONENTS};
     do
@@ -765,7 +765,7 @@ function generate_action_deploy() {
 }
 
 function generate_action_programmer() {
-    info "** generate_action_programmer"
+    debug "** generate_action_programmer"
     echo "    action_set"
     for c in ${COMPONENTS_FIP};
     do
@@ -777,7 +777,7 @@ function generate_action_programmer() {
     done
 }
 function generate_action_set() {
-    info "** generate_action_extract"
+    debug "** generate_action_extract"
     echo "function action_set {"
     for c in ${COMPONENTS};
     do
@@ -787,14 +787,14 @@ function generate_action_set() {
 
 }
 function generate_action_clean() {
-    info "** generate_action_deploy"
+    debug "** generate_action_deploy"
     for c in ${COMPONENTS};
     do
         echo "    ${c}_clean_build"
     done
 }
 function generate_action_cleanall() {
-    info "** generate_action_deploy"
+    debug "** generate_action_deploy"
     for c in ${COMPONENTS};
     do
         echo "    ${c}_clean_build"
@@ -803,7 +803,7 @@ function generate_action_cleanall() {
 }
 
 function generate_action_component() {
-    info "** generate_action_component"
+    debug "** generate_action_component"
     for c in ${COMPONENTS};
     do
         echo "${c})"
@@ -866,7 +866,7 @@ function generate_action_component() {
     done
 }
 function generate_component_list() {
-    info "** generate_action_compenent_list"
+    debug "** generate_action_compenent_list"
     for c in ${COMPONENTS};
     do
         echo "    echo \"    ${c}\""
@@ -1345,7 +1345,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [ $MX ]; then
+if [ $MX -eq 1 ]; then
     info "MACHINE=$MACHINE MX"
 else
     info "MACHINE=$MACHINE"
@@ -1476,5 +1476,16 @@ $(generate_component_list)
     ;;
 esac
 EOF
+
+info ""
+info "******************************************"
+info "This script generated two files:"
+info "* one with all the command for compiling the components: $OUTPUT_COMMON_SCRIPT"
+info "* one for your custom configuration: $OUTPUT_SCRIPT"
+info ""
+info "You MUST fill the information on the custom file to match with your need "
+info "and it is preferable to rename the file to match with your need"
+info " (and not to be overwrited by a new launch of this script $0"
+info "******************************************"
 
 chmod +x $OUTPUT_SCRIPT
