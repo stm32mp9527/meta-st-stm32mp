@@ -79,6 +79,19 @@ fi
 _COMPRESS_RAW_IMAGE=0
 _FORCE_ROOTFS_SIZE=0
 
+# -----------------------------------
+die(){
+	echo "$1" 1>&2
+	exit 1
+}
+
+_REDIRECT="/dev/stdout"
+if [ ! "$DEBUG" ];
+then
+	_REDIRECT="/dev/null"
+	exec 2> /dev/null
+fi
+
 debug() {
 	if [ "$DEBUG" ];
 	then
@@ -92,19 +105,6 @@ function exec_print() {
 	then
 		echo ""
 		echo "[DEBUG EXEC]: $*"
-		eval "$@"
-	else
-		eval "$@" 2> /dev/null > /dev/null
-	fi
-}
-function exec_display_print() {
-	if [ "$DEBUG" ];
-	then
-		echo ""
-		echo "[DEBUG EXEC]: $*"
-		eval "$@"
-	else
-		eval "$@" 2> /dev/null
 	fi
 }
 
@@ -303,7 +303,8 @@ function generate_gpt_partition_table_from_flash_layout() {
 	new_next_partition_offset_b=0
 	number_of_partition=$( calculate_number_of_partition )
 
-	exec_print "sgdisk -og -a 1 $FLASHLAYOUT_rawname"
+	exec_print "sgdisk -og -a 1 '$FLASHLAYOUT_rawname'"
+	sgdisk -og -a 1 "$FLASHLAYOUT_rawname" &> ${_REDIRECT} || die "SGDISK: generate gpt partition table"
 
 	echo "Create partition table:"
 
@@ -523,7 +524,8 @@ function generate_gpt_partition_table_from_flash_layout() {
 				esac
 
 				printf "part %d: %8s ..." $j "$partName"
-				exec_print "sgdisk -a 1 -n $j:$offset:$next_offset -c $j:$partName -t $j:$gpt_code $extrafs_param $FLASHLAYOUT_rawname"
+				exec_print "sgdisk -a 1 -n $j:$offset:$next_offset -c $j:$partName -t $j:$gpt_code $extrafs_param '$FLASHLAYOUT_rawname'"
+				sgdisk -a 1 -n $j:$offset:$next_offset -c $j:$partName -t $j:$gpt_code $extrafs_param "$FLASHLAYOUT_rawname" &> ${_REDIRECT} || die "SGDISK: create gpt parition $$partName"
 				partition_size=$(sgdisk -p "$FLASHLAYOUT_rawname" | grep "$partName" | grep -v "\-$partName" | grep -v "First usable" | awk '{ print $4}')
 				partition_size_type=$(sgdisk -p "$FLASHLAYOUT_rawname" | grep "$partName" | grep -v "\-$partName" | grep -v "First usable" | awk '{ print $5}')
 				printf "\r[CREATED] part %02d: %10s [partition size %s %s]\n" $j "$partName"  "$partition_size" "$partition_size_type"
@@ -535,20 +537,23 @@ function generate_gpt_partition_table_from_flash_layout() {
 	done
 
 	echo ""
-	echo "Partition table from $FLASHLAYOUT_rawname"
-	exec_display_print "sgdisk -p $FLASHLAYOUT_rawname"
+	echo "Partition table from '$FLASHLAYOUT_rawname'"
+	exec_print "sgdisk -p '$FLASHLAYOUT_rawname'"
+	sgdisk -p "$FLASHLAYOUT_rawname" &> ${_REDIRECT}
 	for info in $display_info;
 	do
 		echo ""
-		exec_display_print "sgdisk $FLASHLAYOUT_rawname -i $info"
+		exec_print "sgdisk '$FLASHLAYOUT_rawname' -i $info"
+		sgdisk "$FLASHLAYOUT_rawname" -i $info
 	done
 	echo ""
 }
 
 function generate_empty_raw_image() {
 	# Initialize image file (due to bs we force seek on K)
-	echo "Create Raw empty image: $FLASHLAYOUT_rawname of ${DEFAULT_RAW_SIZE}MB"
-	exec_print "dd if=/dev/zero of=$FLASHLAYOUT_rawname bs=1024 count=0 seek=${DEFAULT_RAW_SIZE}K"
+	echo "Create Raw empty image: '$FLASHLAYOUT_rawname' of ${DEFAULT_RAW_SIZE}MB"
+	exec_print "dd if=/dev/zero of='$FLASHLAYOUT_rawname' bs=1024 count=0 seek=${DEFAULT_RAW_SIZE}K"
+	dd if=/dev/zero of="$FLASHLAYOUT_rawname" bs=1024 count=0 seek=${DEFAULT_RAW_SIZE}K &> ${_REDIRECT} || die "DD: error during creation of empty raw image"
 }
 
 function populate_gpt_partition_table_from_flash_layout() {
@@ -586,10 +591,11 @@ function populate_gpt_partition_table_from_flash_layout() {
 				if [ -e "$FLASHLAYOUT_prefix_image_path/$bin2flash" ];
 				then
 					printf "part %02d: %10s, image: %s ..." $j "$partName" "$bin2flash"
-					exec_print "dd if=$FLASHLAYOUT_prefix_image_path/$bin2flash of=$FLASHLAYOUT_rawname conv=fdatasync,notrunc seek=1 bs=$offset"
+					exec_print "dd if=$FLASHLAYOUT_prefix_image_path/$bin2flash of='$FLASHLAYOUT_rawname' conv=fdatasync,notrunc seek=1 bs=$offset"
+					dd if="$FLASHLAYOUT_prefix_image_path/$bin2flash" of="$FLASHLAYOUT_rawname" conv=fdatasync,notrunc seek=1 bs=$offset &> ${_REDIRECT}
 					printf "\r[ FILLED ] part %02d: %10s, image: %s \n" $j "$partName" "$bin2flash"
 				else
-					if [ ! "$(basename $FLASHLAYOUT_prefix_image_path/"$bin2flash")" = "none" ];
+					if [ ! "$(basename "$FLASHLAYOUT_prefix_image_path/$bin2flash")" = "none" ];
 					then
 						printf "\r[UNFILLED] part %02d: %10s, image: %s (not present) \n" $j "$partName" "$bin2flash"
 						echo "   [WARNING]: THE FILE $FLASHLAYOUT_prefix_image_path/$bin2flash ARE NOT PRESENT."
@@ -873,14 +879,14 @@ function print_info() {
 	echo "###########################################################################"
 	echo "###########################################################################"
 	echo ""
-	echo "RAW IMAGE generated: $FLASHLAYOUT_rawname"
+	echo "RAW IMAGE generated: '$FLASHLAYOUT_rawname'"
 	echo ""
 	echo "WARNING: before to use the command dd, please umount all the partitions"
 	echo "	associated to SDCARD."
 	echo "    sudo umount \`lsblk --list | grep ${DEFAULT_DEVICE} | grep part | gawk '{ print \$7 }' | tr '\\n' ' '\`"
 	echo ""
 	echo "To put this raw image on sdcard:"
-	echo "    sudo dd if=$FLASHLAYOUT_rawname of=/dev/${DEFAULT_DEVICE} bs=8M conv=fdatasync status=progress"
+	echo "    sudo dd if='$FLASHLAYOUT_rawname' of=/dev/${DEFAULT_DEVICE} bs=8M conv=fdatasync status=progress"
 	echo ""
 	echo "(${DEFAULT_DEVICE} can be replaced by:"
 	echo "     sdX if it's a device dedicated to receive the raw image "
@@ -932,7 +938,7 @@ function usage() {
 	echo "By setting SDCARD_SIZE on shell environment or calling the script with it you can limit the size of RAW sdcard"
 	echo "SDCARD_SIZE=<value on MB>"
 	echo "ex.: SDCARD_SIZE=2048 ./script/create_sdcard_from_flashlayout.sh <flashlayout>"
-	echo " this exemple limit the size of sdcard to 2GB (2048MB)"
+	echo " this example limit the size of sdcard to 2GB (2048MB)"
 	echo ""
 	echo "By setting DEVICE on shell environment or calling the script with it you can customize the command"
 	echo "ex.: DEVICE=sdb ./script/create_sdcard_from_flashlayout.sh <flashlayout>"
@@ -1042,15 +1048,15 @@ else
 	get_last_image_path
 
 	#put the raw image generate near the binaries images
-	FLASHLAYOUT_rawname=$FLASHLAYOUT_prefix_image_path/$FLASHLAYOUT_rawname
-	FLASHLAYOUT_infoname=$FLASHLAYOUT_prefix_image_path/$FLASHLAYOUT_infoname
+	FLASHLAYOUT_rawname="$FLASHLAYOUT_prefix_image_path/$FLASHLAYOUT_rawname"
+	FLASHLAYOUT_infoname="$FLASHLAYOUT_prefix_image_path/$FLASHLAYOUT_infoname"
 
 	# erase previous raw image
 	if [ -f "$FLASHLAYOUT_rawname" ];
 	then
 		echo ""
 		echo "[WARNING]: A previous raw image are present on this directory"
-		echo "[WARNING]:    $FLASHLAYOUT_rawname"
+		echo "[WARNING]:    '$FLASHLAYOUT_rawname'"
 		echo "[WARNING]: would you like to erase it: [Y/n]"
 		read -r answer
 		if [[ "$answer" =~ ^[Yy]+[ESes]* ]]; then
