@@ -112,11 +112,11 @@ Add external TF-M source code:
     $ cd ##TF_M_PATH_CMSIS##
     $ git checkout -b WORKING ##ARCHIVER_REVISION_CMSIS##
     $ cd arm-trusted-firmware-m
-    $ git clone https://github.com/STMicroelectronics/stm32-ddr-phy-binary ##TF_M_PATH_DDR_PHY_BIN_SRC##
+    $ git clone https://github.com/STMicroelectronics/stm32-ddr-phy-binary.git ##TF_M_PATH_DDR_PHY_BIN_SRC##
     $ cd ##TF_M_PATH_DDR_PHY_BIN_SRC##
     $ git checkout -b WORKING ##ARCHIVER_REVISION_DDR_PHY_BIN_SRC##
     $ cd arm-trusted-firmware-m
-    $ git clone ssh://gerrit.st.com:29418/mpu/oe/optee/SCP-firmware.git ##TF_M_PATH_SCP_FW##
+    $ git clone https://github.com/STMicroelectronics/SCP-firmware.git ##TF_M_PATH_SCP_FW##
     $ cd ##TF_M_PATH_SCP_FW##
     $ git checkout -b WORKING ##ARCHIVER_REVISION_SCP_FW##
 
