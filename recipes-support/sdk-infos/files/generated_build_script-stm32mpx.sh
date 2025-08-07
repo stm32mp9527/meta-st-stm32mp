@@ -125,10 +125,10 @@ function config_stm32mp1_mx() {
     echo ""
 
     echo "# ------------------------------"
-    echo "# Via CubeMx dt"
-    echo "# force external dt path to CubeMx project path"
+    echo "# Via CubeMX dt"
+    echo "# force external dt path to CubeMX project path"
     echo "# ex.: externaldt_path=my_project_path"
-    echo "externaldt_path=<Path to Cubemx project path>"
+    echo "externaldt_path=<Path to CubeMX project path>"
     echo "# external dt subpath for Optee"
     echo "externaldt_optee_path=CA7/DeviceTree/\${your_cubemx_project_name}/optee-os"
     echo "externaldt_optee_programmer_path=CA7/DeviceTree/\${your_cubemx_project_name}/optee-os"
@@ -289,10 +289,10 @@ function config_stm32mp2_mx() {
     echo "#    └── u-boot"
     echo ""
     echo "# ------------------------------"
-    echo "# Via CubeMx dt"
-    echo "# force external dt path to CubeMx project path"
+    echo "# Via CubeMX dt"
+    echo "# force external dt path to CubeMX project path"
     echo "# ex.: externaldt_path=my_project_path/"
-    echo "externaldt_path=<Path to Cubemx project path>"
+    echo "externaldt_path=<Path to CubeMX project path>"
     echo "# external dt subpath for Optee"
     echo "externaldt_optee_path=CA35/DeviceTree/\${your_cubemx_project_name}/optee-os"
     echo "externaldt_optee_programmer_path=CA35/DeviceTree/\${your_cubemx_project_name}/optee-os"
@@ -490,9 +490,9 @@ function config_stm32mp2-m33td_mx() {
     echo ""
 
     echo "# ------------------------------"
-    echo "# Via CubeMx dt"
-    echo "# force external dt path to CubeMx project path"
-    echo "externaldt_path=<Path to Cubemx project path>"
+    echo "# Via CubeMX dt"
+    echo "# force external dt path to CubeMX project path"
+    echo "externaldt_path=<Path to CubeMX project path>"
     echo "# external dt subpath for Optee"
     echo "externaldt_optee_path=CA35/DeviceTree/\${your_cubemx_project_name}/optee-os"
     echo "externaldt_optee_programmer_path=ExtMemLoader/DeviceTree/\${your_cubemx_project_name}/optee-os"
@@ -655,6 +655,9 @@ function process_data() {
     fi
     if $(echo $localdata | grep -q optee_dt_programmer_name) ; then
         localdata=$(echo $localdata |sed "s|<optee_dt_programmer_name>|\${optee_dt_programmer_name}|g")
+    fi
+    if $(echo $localdata | grep -q externaldt_optee_programmer_path) ; then
+        localdata=$(echo $localdata |sed "s|<externaldt_optee_programmer_path>|\${externaldt_optee_programmer_path}|g")
     fi
     # u-boot
     if $(echo $localdata | grep -q uboot_defconfig) ; then
@@ -1288,7 +1291,7 @@ function generate_component_function() {
 
 function usage() {
     echo "generated_build_script <machine name>"
-    echo "  <machine name>: name of the machine whcih can be use for sdk compilation"
+    echo "  <machine name>: name of the machine which can be use for sdk compilation"
     echo "      stm32mp1 or stm32mp1-mx"
     echo "      stm32mp2 or stm32mp2-mx"
     echo "      stm32mp2-m33td or stm32mp2-m33td-mx"
