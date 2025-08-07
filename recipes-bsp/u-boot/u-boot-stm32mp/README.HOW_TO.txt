@@ -284,7 +284,7 @@ Then the new Starter Package is ready to use for "Image flashing" on board (more
 ##CASE_stm32mp2-m33td##    For runtime binaries
 ##CASE_stm32mp2-m33td##    $@C> make -f $PWD/../Makefile.sdk.stm32mp2-m33td DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/u-boot UBOOT_CONFIG=default UBOOT_DEFCONFIG=<uboot_defconfig> DEVICE_TREE=<uboot_dt_name> EXTDT_DIR=<externaldt_path> EXTDT_DIR_UBOOT=<externaldt_uboot_path> uboot
 ##CASE_stm32mp2-m33td##    For flashing binaries
-##CASE_stm32mp2-m33td##    $@PC> make -f $PWD/../Makefile.sdk.stm32mp2-m33td DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/u-boot UBOOT_CONFIG=programmer UBOOT_DEFCONFIG=<uboot_defconfig>_defconfig DEVICE_TREE=<uboot_programmer_dt_name> EXTDT_DIR=<externaldt_path> EXTDT_DIR_UBOOT_SERIAL=<externaldt_uboot_programmer_path> uboot
+##CASE_stm32mp2-m33td##    $@PC> make -f $PWD/../Makefile.sdk.stm32mp2-m33td DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/u-boot UBOOT_CONFIG=programmer UBOOT_DEFCONFIG=<uboot_defconfig> DEVICE_TREE=<uboot_programmer_dt_name> EXTDT_DIR=<externaldt_path> EXTDT_DIR_UBOOT_SERIAL=<externaldt_uboot_programmer_path> uboot
 ##CASE_stm32mp2-m33td##    Example with external dt:
 ##CASE_stm32mp2-m33td##      Example for runtime binaries
 ##CASE_stm32mp2-m33td##        $MP21> make -f $PWD/../Makefile.sdk.stm32mp2-m33td DEPLOYDIR=$FIP_DEPLOYDIR_ROOT/u-boot UBOOT_CONFIG=default UBOOT_DEFCONFIG=stm32mp21_defconfig DEVICE_TREE=stm32mp215f-dk-cm33tdcid-ostl-sdcard  EXTDT_DIR=$EXTDT_DIR EXTDT_DIR_UBOOT=cm33-td/u-boot uboot
