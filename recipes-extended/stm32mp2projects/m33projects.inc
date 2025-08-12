@@ -56,9 +56,6 @@ M33_OPTEE_KEYNAME ?= "default.pem"
 
 M33_ELF_NOT_STRIPPED ??= "0"
 
-# Configure single TF-M binary for secure signature
-M33_TFM_BIN ??= ""
-
 do_compile() {
     unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
     for BIN_MACHINE in ${M33_BOARDS}; do
@@ -189,27 +186,30 @@ do_install() {
             fi
 
             if [ "${M33PROJECT_TF_M_TRUSTZONE}" -eq 1 ]; then
-                board_lower=$(echo $BIN_MACHINE | tr '[:upper:]' '[:lower:]')
-                tfm_secure_binary_name="tfm-${board_lower}_s.elf"
-                if [ -n "${M33_TFM_BIN}" ]; then
-                    bbnote "Override 'tfm_secure_binary_name' with configured one: ${M33_TFM_BIN}"
-                    tfm_secure_binary_name="${M33_TFM_BIN}"
+                if [ "$(echo "${TF_M_CONFIG}" | wc -w)" -gt 1 ]; then
+                    bbwarn "Skip '*_tfm_sing.bin' creation: multiple TF_M_CONFIG set"
+                    continue
                 fi
-                if [ "$(echo "${TF_M_CONFIG}" | wc -w)" -eq 1 ]; then
-                    bbnote "Use TF_M_CONFIG as subfolder for 'tfm_secure_binary_name' location"
-                    # Generate ${BIN_NAME_NS}_tfm_sign.bin
-                    if [ -e ${RECIPE_SYSROOT}/firmware/${TF_M_CONFIG}/$tfm_secure_binary_name ]; then
-                        ${STAGING_BINDIR_NATIVE}/st_copro_firmware_signature.sh \
-                                --input-nsecure ${D}${M33_OUTPUT_4USERFS}/${INSTALL_PROJ}/lib/firmware/${BIN_NAME_NS_ELF} \
-                                --input-secure ${RECIPE_SYSROOT}/firmware/${TF_M_CONFIG}/$tfm_secure_binary_name \
-                                --signature-key ${TA_DEV_KIT_DIR}/keys/${M33_OPTEE_KEYNAME} \
-                                --output ${D}${M33_OUTPUT_4USERFS}/${INSTALL_PROJ}/lib/firmware/${BIN_NAME_NS}
-                    else
-                        bbwarn "The TFM firmware doesn't exist in sysroot: firmware/${TF_M_CONFIG}/$tfm_secure_binary_name"
+                tfm_unitary_config=$(echo ${TF_M_CONFIG} | sed "s| ||g")
+                bbnote "Use TF_M_CONFIG '${tfm_unitary_config}' as subfolder for 'tfm_secure_binary_name' location"
+                # Init devicetree list for single TF_M_CONFIG
+                dt_config=$(echo ${TF_M_DEVICETREE} | cut -d',' -f1)
+                bbnote "Use TF-M devicetree list: ${dt_config}"
+                for dt in ${dt_config}; do
+                    [ -n "$(echo ${dt} | grep ${board_lower})" ] || continue
+                    # Init tfm_secure_binary_name
+                    tfm_secure_binary_name="tfm-${dt}_s.elf"
+                    if ! [ -e ${RECIPE_SYSROOT}/firmware/${tfm_unitary_config}/${tfm_secure_binary_name} ]; then
+                        bbwarn "Skip '*_tfm_sign.bin' creation: '${tfm_secure_binary_name}' not found in sysroot: firmware/${tfm_unitary_config}/"
+                        continue
                     fi
-                else
-                    bbwarn "Multiple TF_M_CONFIG set: not able to select the correct one to generate ${BIN_NAME_NS}_tfm_sign.bin"
-                fi
+                    # Generate ${BIN_NAME_NS}-${dt}_tfm_sign.bin
+                    ${STAGING_BINDIR_NATIVE}/st_copro_firmware_signature.sh \
+                            --input-nsecure ${D}${M33_OUTPUT_4USERFS}/${INSTALL_PROJ}/lib/firmware/${BIN_NAME_NS_ELF} \
+                            --input-secure ${RECIPE_SYSROOT}/firmware/${tfm_unitary_config}/${tfm_secure_binary_name} \
+                            --signature-key ${TA_DEV_KIT_DIR}/keys/${M33_OPTEE_KEYNAME} \
+                            --output ${D}${M33_OUTPUT_4USERFS}/${INSTALL_PROJ}/lib/firmware/${BIN_NAME_NS}-${dt}
+                done
             fi
 
             #temporary: add firmware to permit to load the project at runtime

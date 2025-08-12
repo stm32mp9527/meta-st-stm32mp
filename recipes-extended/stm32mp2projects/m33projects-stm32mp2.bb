@@ -2,6 +2,8 @@ SUMMARY = "STM32MP2 Firmware examples for CM33"
 LICENSE = "Apache-2.0 & MIT & BSD-3-Clause"
 
 require recipes-extended/stm32mp2projects/mxxprojects-stm32mp2-common.inc
+# to get tf-m parameters
+require recipes-bsp/trusted-firmware-m/tf-m-stm32mp-config.inc
 require recipes-extended/stm32mp2projects/m33projects.inc
 
 PROJECTS_LIST_M33 = " \
