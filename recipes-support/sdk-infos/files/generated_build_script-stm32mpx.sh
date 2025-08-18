@@ -581,19 +581,25 @@ function dump_stm32mp_config() {
     case $machine in
     stm32mp1)
         dump_stm32mp1_config $mx
+        echo "[ \$DRY_RUN -eq 1 ] &&  echo \"     ***DRY RUN***\""
+        echo "[ \$DRY_RUN -eq 1 ] &&  echo \"\""
         ;;
     stm32mp2)
         dump_stm32mp2_config $mx
+        echo "[ \$DRY_RUN -eq 1 ] &&  echo \"     ***DRY RUN***\""
+        echo "[ \$DRY_RUN -eq 1 ] &&  echo \"\""
         ;;
     stm32mp2-m33td)
         dump_stm32mp2-m33td_config $mx
+        echo "[ \$DRY_RUN -eq 1 ] &&  echo \"     ***DRY RUN***\""
+        echo "[ \$DRY_RUN -eq 1 ] &&  echo \"\""
         ;;
     *)
         ;;
     esac
 }
 ########################################################
-
+SCRIPT_PATH=$(dirname ${BASH_SOURCE})
 
 PRINT_DEBUG=${DEBUG:-0}
 function debug() {
@@ -891,11 +897,11 @@ function generate_component_function() {
     do
         info "** generate_component_function for ${c}"
         # search readme
-        #debug "CMD: find ./${c}* ../${c}* -name README.HOW_TO.txt.${MACHINE}"
-        readme=$(find ./${c}* ../${c}* -name README.HOW_TO.txt.${MACHINE} 2>/dev/null)
+        #debug "CMD: find ./${c}* ../${c}* ${SCRIPT_PATH}/../${c}* -name README.HOW_TO.txt.${MACHINE}"
+        readme=$(find ./${c}* ../${c}* ${SCRIPT_PATH}/../${c}* -name README.HOW_TO.txt.${MACHINE} 2>/dev/null | head -n 1)
         #debug "CMD result: $readme"
         if [ -z "$readme" ]; then
-            error "README.HOW_TO.Txt for ${c} not found"
+            error "README.HOW_TO.txt for ${c} not found"
             continue
         fi
         debug "README: $readme"
@@ -930,6 +936,7 @@ function generate_component_function() {
             do
                 if $(echo ${d} | grep -q '@E') ; then
                     local_tmp_data=$(process_data ${d})
+                    echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@E>||"
                     echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@E>|       |"
                 fi
             done
@@ -959,7 +966,7 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
             for d in ${data};
@@ -970,7 +977,8 @@ function generate_component_function() {
                 fi
                 if $(echo ${d} | grep -q '@S') ; then
                     local_tmp_data=$(process_data ${d})
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@S>|   |"
+                    echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@S>||"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@S>|   |"
                 fi
             done
             IFS=$old_IFS
@@ -990,10 +998,11 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
-            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    [ \$DRY_RUN -eq 0 ] && export BLD_PATH=\${your_build_subdir_path}"
             if $(echo ${c} | grep -q "linux-stm32mp") ; then
                 echo "    if [ ! -e ../source_code_configured-${c}-for-\${your_board_name} ]; then"
             fi
@@ -1001,11 +1010,11 @@ function generate_component_function() {
             do
                 if $(echo ${d} | grep -q '@c') ; then
                     local_tmp_data=$(process_data ${d})
-                    echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@c>|       |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@c>|       |"
                 fi
             done
             if $(echo ${c} | grep -q "linux-stm32mp") ; then
-                echo "        touch ../source_code_configured-${c}-for-\${your_board_name}"
+                echo "        [ \$DRY_RUN -eq 0 ] && touch ../source_code_configured-${c}-for-\${your_board_name}"
                 echo "    fi"
             fi
 
@@ -1026,16 +1035,17 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
-            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    [ \$DRY_RUN -eq 0 ] && export BLD_PATH=\${your_build_subdir_path}"
             for d in ${data};
             do
                 if $(echo ${d} | grep -q '@C') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@C>||"
-                    echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
                 fi
             done
             IFS=$old_IFS
@@ -1055,16 +1065,17 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
-            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    [ \$DRY_RUN -eq 0 ] && export BLD_PATH=\${your_build_subdir_path}"
             for d in ${data};
             do
                 if $(echo ${d} | grep -q '@F') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@F>||"
-                    echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@F>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@F>|   |"
                 fi
             done
             IFS=$old_IFS
@@ -1084,16 +1095,17 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
-            echo "    export BLD_PATH=\${your_build_subdir_path}-programmer"
+            echo "    cmd    export BLD_PATH=\${your_build_subdir_path}-programmer"
+            echo "    [ \$DRY_RUN -eq 0 ] && export BLD_PATH=\${your_build_subdir_path}-programmer"
             for d in ${data};
             do
                 if $(echo ${d} | grep -q '@PC') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@PC>||"
-                    echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@PC>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@PC>|   |"
                 fi
             done
             IFS=$old_IFS
@@ -1113,16 +1125,17 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
-            echo "    export BLD_PATH=\${your_build_subdir_path}-programmer"
+            echo "    cmd    export BLD_PATH=\${your_build_subdir_path}-programmer"
+            echo "    [ \$DRY_RUN -eq 0 ] && export BLD_PATH=\${your_build_subdir_path}-programmer"
             for d in ${data};
             do
                 if $(echo ${d} | grep -q '@PF') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@PF>||"
-                    echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@PF>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@PF>|   |"
                 fi
             done
             IFS=$old_IFS
@@ -1143,7 +1156,7 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "        cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|       |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|       |"
                 fi
             done
             IFS=$old_IFS
@@ -1154,13 +1167,13 @@ function generate_component_function() {
             fi
             echo "        # remove configured file step"
             echo "        [ -e ../source_code_configured-${c}-for-\${your_board_name} ] && cmd rm ../source_code_configured-${c}-for-\${your_board_name}"
-            echo "        [ -e ../source_code_configured-${c}-for-\${your_board_name} ] && rm ../source_code_configured-${c}-for-\${your_board_name}"
+            echo "        [ \$DRY_RUN -eq 0 ] && [ -e ../source_code_configured-${c}-for-\${your_board_name} ] && rm ../source_code_configured-${c}-for-\${your_board_name}"
 
             echo "        # remove build directory"
             echo "        [ -d \${your_build_subdir_path} ] && cmd rm -rf \${your_build_subdir_path}"
-            echo "        [ -d \${your_build_subdir_path} ] && rm -rf \${your_build_subdir_path}"
+            echo "        [ \$DRY_RUN -eq 0 ] && [ -d \${your_build_subdir_path} ] && rm -rf \${your_build_subdir_path}"
             echo "        [ -d \${your_build_subdir_path}-programmer ] && cmd rm -rf \${your_build_subdir_path}-programmer"
-            echo "        [ -d \${your_build_subdir_path}-programmer ] && rm -rf \${your_build_subdir_path}-programmer"
+            echo "        [ \$DRY_RUN -eq 0 ] && [ -d \${your_build_subdir_path}-programmer ] && rm -rf \${your_build_subdir_path}-programmer"
             echo "    fi"
             echo "    cd \$localpath"
         fi
@@ -1179,7 +1192,7 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "        cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|       |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|       |"
                 fi
             done
             IFS=$old_IFS
@@ -1191,7 +1204,7 @@ function generate_component_function() {
                 echo "        dir=\$(find . -maxdepth 1 -type d | grep ${c} | tail -n 1)"
             fi
             echo "        [ -d \$dir ] && cmd \"rm -rf \$dir\" ../source_code_extracted-${c}"
-            echo "        [ -d \$dir ] && rm -rf \$dir ../source_code_extracted-${c}"
+            echo "        [ \$DRY_RUN -eq 0 ] && [ -d \$dir ] && rm -rf \$dir ../source_code_extracted-${c}"
             echo "    fi"
             echo "    cd \$localpath"
         fi
@@ -1210,16 +1223,17 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
             IFS=$old_IFS
-            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    [ \$DRY_RUN -eq 0 ] && export BLD_PATH=\${your_build_subdir_path}"
             echo "    cmd  export OUTPUT_BUILD_DIR=\$PWD/../build"
-            echo "    export OUTPUT_BUILD_DIR=\$PWD/../build"
+            echo "    [ \$DRY_RUN -eq 0 ] && export OUTPUT_BUILD_DIR=\$PWD/../build"
             local_tmp_data="    make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} st/\${linux_dtb_name}.dtb KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
             echo "    cmd \"${local_tmp_data}\""
-            echo "${local_tmp_data} || die ${c}"
+            echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data} || die ${c}"
             echo "    cd \$localpath"
             echo "    echo \"**** ${c}_dtb ****END****\""
             echo "}"
@@ -1234,16 +1248,17 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
             IFS=$old_IFS
-            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    [ \$DRY_RUN -eq 0 ] && export BLD_PATH=\${your_build_subdir_path}"
             echo "    cmd  export OUTPUT_BUILD_DIR=\$PWD/../build"
-            echo "    export OUTPUT_BUILD_DIR=\$PWD/../build"
+            echo "    [ \$DRY_RUN -eq 0 ] && export OUTPUT_BUILD_DIR=\$PWD/../build"
             local_tmp_data="    make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} dtbs KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
             echo "    cmd \"${local_tmp_data}\""
-            echo "${local_tmp_data} || die ${c}"
+            echo "[ \$DRY_RUN -eq 0 ] && {local_tmp_data} || die ${c}"
             echo "    cd \$localpath"
             echo "    echo \"**** ${c}_dtbs ****END****\""
             echo "}"
@@ -1258,29 +1273,30 @@ function generate_component_function() {
                 if $(echo ${d} | grep -q '@P>') ; then
                     local_tmp_data=$(process_data ${d})
                     echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@P>||"
-                    echo "${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
+                    echo "[ \$DRY_RUN -eq 0 ] &&  ${local_tmp_data}" | sed "s|[[:space:]]*\$@P>|   |"
                 fi
             done
             IFS=$old_IFS
-            echo "    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    cmd    export BLD_PATH=\${your_build_subdir_path}"
+            echo "    [ \$DRY_RUN -eq 0 ] && export BLD_PATH=\${your_build_subdir_path}"
             echo "    cmd  export OUTPUT_BUILD_DIR=\$PWD/../build"
-            echo "    export OUTPUT_BUILD_DIR=\$PWD/../build"
+            echo "    [ \$DRY_RUN -eq 0 ] && export OUTPUT_BUILD_DIR=\$PWD/../build"
             local_tmp_data="    make O=\"\${OUTPUT_BUILD_DIR}\" \${PARALLEL_MAKE} modules modules_install INSTALL_MOD_PATH=\"\${OUTPUT_BUILD_DIR}/install_artifact\" KBUILD_EXTDTS=\${externaldt_path}/\${externaldt_linux_path}"
             echo "    cmd \"${local_tmp_data}\"" | sed "s|[[:space:]]*\$@C>||"
-            echo "${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
+            echo "[ \$DRY_RUN -eq 0 ] && ${local_tmp_data} || die ${c}" | sed "s|[[:space:]]*\$@C>|   |"
 
             echo "    cmd \" mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules\""
-            echo "    mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules || die linux-stm32mp"
+            echo "    [ \$DRY_RUN -eq 0 ] &&  mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules || die linux-stm32mp"
             echo "    cmd \" mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped\""
-            echo "    mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped || die linux-stm32mp"
+            echo "    [ \$DRY_RUN -eq 0 ] && mkdir -p \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped || die linux-stm32mp"
             echo "    cmd \" rm \${OUTPUT_BUILD_DIR}/install_artifact/lib/modules/*/build\""
-            echo "    rm \${OUTPUT_BUILD_DIR}/install_artifact/lib/modules/*/build || die linux-stm32mp"
+            echo "    [ \$DRY_RUN -eq 0 ] && rm \${OUTPUT_BUILD_DIR}/install_artifact/lib/modules/*/build || die linux-stm32mp"
             echo "    cmd \" cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules\""
-            echo "    cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules || die linux-stm32mp"
+            echo "    [ \$DRY_RUN -eq 0 ] && cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules || die linux-stm32mp"
             echo "    cmd \" cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped\""
-            echo "    cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped || die linux-stm32mp"
+            echo "    [ \$DRY_RUN -eq 0 ] && cp -ar \${OUTPUT_BUILD_DIR}/install_artifact/* \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped || die linux-stm32mp"
             echo "    cmd \" find \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped -name "*.ko" | xargs \$STRIP --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates\""
-            echo "    find \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped -name \"*.ko\" | xargs \$STRIP --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates || die linux-stm32mp"
+            echo "    [ \$DRY_RUN -eq 0 ] && find \${FIP_DEPLOYDIR_ROOT}/kernel/modules_stripped -name \"*.ko\" | xargs \$STRIP --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates || die linux-stm32mp"
 
             echo "    cd \$localpath"
             echo "    echo \"**** ${c}_modules ****END****\""
@@ -1360,15 +1376,16 @@ else
 fi
 
 # generate list of components
-COMPONENTS=$(cat README.HOW_TO.txt.${MACHINE} | grep ^@ | sed "s/^@[A-Z]* //g")
+COMPONENTS=$(cat ${SCRIPT_PATH}/README.HOW_TO.txt.${MACHINE} | grep ^@ | sed "s/^@[A-Z]* //g")
+debug "COMPONENT LIST=>$COMPONENTS<"
 # generate list of components used for fip generation
-COMPONENTS_FIP=$(cat README.HOW_TO.txt.${MACHINE} | grep ^@F | sed "s/^@[A-Z]* //g")
+COMPONENTS_FIP=$(cat ${SCRIPT_PATH}/README.HOW_TO.txt.${MACHINE} | grep ^@F | sed "s/^@[A-Z]* //g")
 # create file name for outpu script file
 
-OUTPUT_SCRIPT=../sdk_compilation-${MACHINE}${MX_NAME}-my-custom-board.sh
+OUTPUT_SCRIPT=${SCRIPT_PATH}/../sdk_compilation-${MACHINE}${MX_NAME}-my-custom-board.sh
 
 COMMON_SCRIPT_NAME=sdk_action-common-for-${GLOBAL_CONFIGURATION}.source
-OUTPUT_COMMON_SCRIPT=../${COMMON_SCRIPT_NAME}
+OUTPUT_COMMON_SCRIPT=${SCRIPT_PATH}/../${COMMON_SCRIPT_NAME}
 
 debug "Machine $MACHINE"
 debug "is MX machine = $MX"
@@ -1385,10 +1402,15 @@ EOF
 cat << EOF > $OUTPUT_COMMON_SCRIPT
 #!/bin/bash
 
+# do not execute the command, only display command if equal to 1
+DRY_RUN=0
+
 # ----------------------------------------
 die() {
-    >&2 echo "FAILED > BUILD ISSUE on \$*"
-    exit 1
+    if [ \$DRY_RUN -eq 0 ]; then
+        >&2 echo "FAILED > BUILD ISSUE on \$*"
+        exit 1
+    fi
 }
 cmd(){
     echo "[CMD]:> \$@"
@@ -1404,7 +1426,18 @@ $(generate_action_set)
 # -----------------------------------------
 if [ \$# -ne 1 ];
 then
-    action=help
+    if [ "\$1" = "--dry-run" ]; then
+        DRY_RUN=1
+        shift
+        if [ \$# -ne 1 ];
+        then
+            action=help
+        else
+            action=\$1
+        fi
+    else
+        action=\$1
+    fi
 else
     action=\$1
 fi
@@ -1481,6 +1514,17 @@ $(generate_component_list)
     echo "    \$0  linux-stm32mp"
     echo "   if your have a gpu on soc"
     echo "    \$0  gcnano-driver-stm32mp"
+EOF
+
+    if $(echo $MACHINE  | grep -q stm32mp2-m33td) ; then
+cat << EOF >> $OUTPUT_COMMON_SCRIPT
+    echo "   For stm32mp2-m33td machine, the M33 part"
+    echo "    \$0  tf-m-stm32mp"
+    echo "    \$0  m33tdprojects-starter-stm32mp2"
+EOF
+    fi
+
+cat << EOF >> $OUTPUT_COMMON_SCRIPT
     ;;
 esac
 EOF
