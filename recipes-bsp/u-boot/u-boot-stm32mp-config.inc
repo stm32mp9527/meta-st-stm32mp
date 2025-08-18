@@ -104,14 +104,14 @@ UBOOT_DEVICETREE[programmer_stm32mp23] ?= "${@' '.join(dt for dt in '${STM32MP_D
 UBOOT_DEVICETREE[programmer_stm32mp25] ?= "${@' '.join(dt for dt in '${STM32MP_DEVICETREE_PROGRAMMER}'.split() if 'stm32mp25' in dt)}"
 UBOOT_DEVICETREE[fastboot-sdcard_stm32mp13] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_SDCARD}'.split() if 'stm32mp13' in dt)}"
 UBOOT_DEVICETREE[fastboot-sdcard_stm32mp15] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_SDCARD}'.split() if 'stm32mp15' in dt)}"
-UBOOT_DEVICETREE[fastboot-sdcard_stm32mp21] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_SDCARD}'.split() if 'stm32mp21' in dt)}"
-UBOOT_DEVICETREE[fastboot-sdcard_stm32mp23] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_SDCARD}'.split() if 'stm32mp23' in dt)}"
-UBOOT_DEVICETREE[fastboot-sdcard_stm32mp25] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_SDCARD}'.split() if 'stm32mp25' in dt)}"
+UBOOT_DEVICETREE[fastboot-sdcard_stm32mp21] ?= "${@' '.join(dt for dt in '${STM32MP_DEVICETREE_PROGRAMMER}'.split() if 'stm32mp21' in dt)}"
+UBOOT_DEVICETREE[fastboot-sdcard_stm32mp23] ?= "${@' '.join(dt for dt in '${STM32MP_DEVICETREE_PROGRAMMER}'.split() if 'stm32mp23' in dt)}"
+UBOOT_DEVICETREE[fastboot-sdcard_stm32mp25] ?= "${@' '.join(dt for dt in '${STM32MP_DEVICETREE_PROGRAMMER}'.split() if 'stm32mp25' in dt)}"
 UBOOT_DEVICETREE[fastboot-emmc_stm32mp13] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_EMMC}'.split() if 'stm32mp13' in dt)}"
 UBOOT_DEVICETREE[fastboot-emmc_stm32mp15] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_EMMC}'.split() if 'stm32mp15' in dt)}"
-UBOOT_DEVICETREE[fastboot-emmc_stm32mp21] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_EMMC}'.split() if 'stm32mp21' in dt)}"
-UBOOT_DEVICETREE[fastboot-emmc_stm32mp23] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_EMMC}'.split() if 'stm32mp23' in dt)}"
-UBOOT_DEVICETREE[fastboot-emmc_stm32mp25] ?= "${@' '.join(dt for dt in '${STM32MP_DT_FILES_EMMC}'.split() if 'stm32mp25' in dt)}"
+UBOOT_DEVICETREE[fastboot-emmc_stm32mp21] ?= "${@' '.join(dt for dt in '${STM32MP_DEVICETREE_PROGRAMMER}'.split() if 'stm32mp21' in dt)}"
+UBOOT_DEVICETREE[fastboot-emmc_stm32mp23] ?= "${@' '.join(dt for dt in '${STM32MP_DEVICETREE_PROGRAMMER}'.split() if 'stm32mp23' in dt)}"
+UBOOT_DEVICETREE[fastboot-emmc_stm32mp25] ?= "${@' '.join(dt for dt in '${STM32MP_DEVICETREE_PROGRAMMER}'.split() if 'stm32mp25' in dt)}"
 
 # -----------------------------------------------
 # Define U-Boot device tree to select for each U-Boot config
