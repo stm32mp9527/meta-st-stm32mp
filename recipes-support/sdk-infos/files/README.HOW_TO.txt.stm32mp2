@@ -128,6 +128,11 @@ Ex. with CubeMX board with project name 'cube_mx_project :
         externaldt_path=<path to cube mx project>/
         # at least to have ${externaldt_path}/CA35/DeviceTree/${your_cubemx_project_name}/optee
         # for optee devicetree path
+        # if is not the case, please adapt the following variables to match with your sub-path:
+        #    externaldt_optee_path, externaldt_optee_programmer_path,
+        #    externaldt_uboot_path, externaldt_uboot_programmer_path,
+        #    externaldt_tfa_path, externaldt_tfa_programmer_path,
+        #    externaldt_linux_path
 
 NOTE: some examples files are available to show how to configure a build for ST boards:
  * examples/sdk_compilation_stm32mp2_stm32mp215f-dk.example
@@ -187,6 +192,8 @@ For CubeMX
     ├── optee-os
     ├── tf-a
     └── u-boot
+ <CUBMEMX project path>/CM33/DeviceTree/<your_cubemx_project_name>/
+    └── tf-m
 
 ---------------------------------
 8. Information about token present on README

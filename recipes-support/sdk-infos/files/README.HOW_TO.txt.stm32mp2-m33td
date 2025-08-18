@@ -162,7 +162,13 @@ Ex. with CubeMX board with project name 'cube_mx_project :
         # at least to have
         #     ${externaldt_path}/CA35/DeviceTree/${your_cubemx_project_name}/optee
         #     ${externaldt_path}/CM33/DeviceTree/${your_cubemx_project_name}/mcuboot
-        #     ${externaldt_path}/ExtMemLoader/DeviceTree/${your_cubemx_project_name}/optee
+        #     ${externaldt_path}/ExtMemLoader/DeviceTree/optee
+        # if is not the case, please adapt the following variables to match with your sub-path:
+        #    externaldt_optee_path, externaldt_optee_programmer_path,
+        #    externaldt_uboot_path, externaldt_uboot_programmer_path,
+        #    externaldt_tfa_path, externaldt_tfa_programmer_path,
+        #    externaldt_linux_path,
+        #    externaldt_tfm_path, externaldt_mcuboot_path
 
 NOTE: some examples files are available to show how to configure a build for ST boards:
  * examples/sdk_compilation_stm32mp2-m33td_stm32mp215f-dk.example
@@ -234,7 +240,7 @@ For CubeMX
  <CUBMEMX project path>/CM33/DeviceTree/<your_cubemx_project_name>/"
    ├── tf-m"
    └── mcuboot"
- <CUBMEMX project path>/ExtMemLoader/DeviceTree/<your_cubemx_project_name>/"
+ <CUBMEMX project path>/ExtMemLoader/DeviceTree/"
    ├── optee-os"
    ├── tf-a"
    └── u-boot"
