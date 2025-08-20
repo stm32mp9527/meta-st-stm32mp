@@ -36,7 +36,6 @@ Information about usage of stm32mp1 developer package
 -----------------------
 2. Preconize build order for building:
 -----------------------
-@F stm32mp-ddr-phy
 @F external-dt
 @F optee-os-stm32mp
 @F u-boot-stm32mp
