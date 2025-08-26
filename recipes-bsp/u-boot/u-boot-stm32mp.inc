@@ -148,6 +148,9 @@ do_compile:append() {
                             if [ $k -eq $i ]; then
                                 binarysuffix=$(echo ${binary} | cut -d'.' -f2)
                                 install -m 644 ${B}/${config}/${binary} ${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}
+                                if [ "${binarysuffix}" = "dtb" ]; then
+                                    install -m 644 ${B}/${config}/u-boot-nodtb.bin ${B}/${config}/u-boot-nodtb-${type_suffix}.bin
+                                fi
                             fi
                         done
                         unset k
@@ -164,6 +167,7 @@ do_compile:append() {
 #
 export_binaries() {
     local dest="${1}"
+    local fit_uboot_sign_deploy="${2}"
 
     if [ -n "${UBOOT_CONFIG}" ]; then
         unset i j k
@@ -196,23 +200,41 @@ export_binaries() {
                                 fi
                                 # Install 'u-boot-nodtb.bin' binary in case '*.dtb' binary installation configured
                                 if [ "${binarysuffix}" = "dtb" ]; then
-                                    install -m 644 ${B}/${config}/u-boot-nodtb.bin ${dest}/u-boot-nodtb${soc_suffix}-${type_suffix}.bin
+                                    install -m 644 ${B}/${config}/u-boot-nodtb-${type_suffix}.bin ${dest}/u-boot-nodtb${soc_suffix}-${type_suffix}.bin
                                 fi
                                 if [ -n "${UBOOT_ELF}" ]; then
                                     install -m 644 ${B}/${config}/${UBOOT_ELF} ${dest}/debug/u-boot${soc_suffix}-${type_suffix}.${UBOOT_ELF_SUFFIX}
                                 fi
 
-                                if [ "${UBOOT_SIGN_ENABLE}" = "1" ] && [ "${UBOOT_SIGN_DEPLOY}" = "1" ]; then
+                                if [ "${UBOOT_SIGN_ENABLE}" = "1" ] && [ "${fit_uboot_sign_deploy}" = "1" ]; then
                                     # Prepare original binary for signature
-                                    cp -f ${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix} ${B}/${config}/${type}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}
+                                    cp -f ${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix} ${dest}/u-boot-${devicetree}-${type_suffix}-without-signature.${binarysuffix}
+                                    # Sign dummy image images in order to add the image signing keys to our dtb
                                     ${UBOOT_MKIMAGE_SIGN} \
                                             ${@'-D "${UBOOT_MKIMAGE_DTCOPTS}"' if len('${UBOOT_MKIMAGE_DTCOPTS}') else ''} \
-                                            -F -k "${UBOOT_SIGN_KEYDIR}" \
-                                            -K "${B}/${config}/${type}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}" \
+                                            -f auto \
+                                            -k "${UBOOT_SIGN_KEYDIR}" \
+                                            -o "${FIT_HASH_ALG},${FIT_SIGN_ALG}" \
+                                            -g "${UBOOT_SIGN_IMG_KEYNAME}" \
+                                            -K "${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}" \
+                                            -d /dev/null \
                                             ${UBOOT_MKIMAGE_SIGN_ARGS} \
-                                            -r ${B}/fitImage-linux
+                                            -r ${B}/${config}/unused.itb
+                                    # Sign dummy image configurations in order to add the configuration signing keys to our dtb
+                                    ${UBOOT_MKIMAGE_SIGN} \
+                                            ${@'-D "${UBOOT_MKIMAGE_DTCOPTS}"' if len('${UBOOT_MKIMAGE_DTCOPTS}') else ''} \
+                                            -f auto-conf \
+                                            -k "${UBOOT_SIGN_KEYDIR}" \
+                                            -o "${FIT_HASH_ALG},${FIT_SIGN_ALG}" \
+                                            -g "${UBOOT_SIGN_IMG_KEYNAME}" \
+                                            -K "${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}" \
+                                            -d /dev/null \
+                                            ${UBOOT_MKIMAGE_SIGN_ARGS} \
+                                            -r ${B}/${config}/unused.itb
+
                                     # Install signed binary
-                                    install -m 644 ${B}/${config}/${type}/u-boot-${devicetree}-${type_suffix}.${binarysuffix} ${dest}/u-boot-${devicetree}-${type_suffix}-with-signature.${binarysuffix}
+                                    install -m 644 ${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix} ${dest}/u-boot-${devicetree}-${type_suffix}.${binarysuffix}
+                                    install -m 644 ${B}/${config}/u-boot-${devicetree}-${type_suffix}.${binarysuffix} ${dest}/u-boot-${devicetree}-${type_suffix}-with-signature.${binarysuffix}
                                 fi
                             done
                         fi
@@ -227,13 +249,12 @@ export_binaries() {
 
 do_deploy[sstate-outputdirs] = "${DEPLOY_DIR_IMAGE}${FIP_DIR_UBOOT}"
 do_deploy() {
-    export UBOOT_SIGN_DEPLOY=1
-    export_binaries ${DEPLOYDIR}
+    export_binaries ${DEPLOYDIR} 1
 }
 addtask deploy before do_build after do_install
 
 u_boot_sysroot_populate() {
-    export_binaries ${SYSROOT_DESTDIR}/${FIP_DIR_UBOOT}
+    export_binaries ${SYSROOT_DESTDIR}/${FIP_DIR_UBOOT} 0
 }
 SYSROOT_PREPROCESS_FUNCS =+ "u_boot_sysroot_populate"
 SYSROOT_DIRS:append = " ${FIP_DIR_UBOOT}"
