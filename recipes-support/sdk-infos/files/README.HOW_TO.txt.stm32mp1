@@ -69,7 +69,7 @@ NOTE:
 4. Example of configuration and explanation of parameters
 -----------------------
 your_board_name="<Your board name>"
-  Name for devicetree name, ex: stm32mp257f-ev1, stm215f-dk, stm32mp215f-mx-mycustom-board
+  Name for devicetree name, ex: stm32mp157f-ev1, stm32mp135f-dk, stm32mp157f-mx-mycustom-board
 
 your_soc_name="<Your soc name>"
   Name of soc used, ex:
