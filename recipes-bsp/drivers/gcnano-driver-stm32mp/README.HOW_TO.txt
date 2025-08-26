@@ -136,13 +136,9 @@ Cleanup Starter Package from original gcnano kernel module artifacts first
     $ cd ..
     $@P> cd ##BP##-##PR##
     $@P> cd ##BP##
-
-    $@C> KERNEL_COMPONENT_VERSION=$(ls -1 ../../ | grep linux-stm32mp | head -n1)
-    $@C> KERNEL_BUILDDIR="../../$KERNEL_COMPONENT_VERSION/build"
-
-##CASE_stm32mp1##    $@C> make SOC_PLATFORM=st-mp1 DEBUG=0 O="../../$KERNEL_COMPONENT_VERSION/build" M="${PWD}" AQROOT="${PWD}" -C ${KERNEL_BUILDDIR}
-##CASE_stm32mp2##    $@C> make SOC_PLATFORM=st-mp2 DEBUG=0 O="../../$KERNEL_COMPONENT_VERSION/build" M="${PWD}" AQROOT="${PWD}" -C ${KERNEL_BUILDDIR}
-##CASE_stm32mp2-m33td##    $@C> make SOC_PLATFORM=st-mp2 DEBUG=0 O="../../$KERNEL_COMPONENT_VERSION/build" M="${PWD}" AQROOT="${PWD}" -C ${KERNEL_BUILDDIR}
+##CASE_stm32mp1##    $@C> make SOC_PLATFORM=st-mp1 DEBUG=0 O="${KERNEL_BUILDDIR}" M="${PWD}" AQROOT="${PWD}" -C ${KERNEL_BUILDDIR}
+##CASE_stm32mp2##    $@C> make SOC_PLATFORM=st-mp2 DEBUG=0 O="${KERNEL_BUILDDIR}" M="${PWD}" AQROOT="${PWD}" -C ${KERNEL_BUILDDIR}
+##CASE_stm32mp2-m33td##    $@C> make SOC_PLATFORM=st-mp2 DEBUG=0 O="${KERNEL_BUILDDIR}" M="${PWD}" AQROOT="${PWD}" -C ${KERNEL_BUILDDIR}
 
     To strip the kernel modules (Optionally):
     @> find . -name "*.ko" | xargs $STRIP --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates galcore.ko

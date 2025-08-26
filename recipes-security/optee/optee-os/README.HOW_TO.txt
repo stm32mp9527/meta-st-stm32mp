@@ -41,7 +41,7 @@ README_HOW_TO.txt in ../external-dt.
 3. Prepare optee-os source
 --------------------------
 If not already done, extract the sources from Developer Package tarball, for example:
-    $ tar xf en.SOURCES-stm32mp1-*.tar.xz
+    $ tar xf en.SOURCES-stm32mp*-*.tar.xz
 
 In the optee-os source directory (sources/*/##BP##-##PR##),
 you have one optee-os source tarball, the patches and one Makefile:

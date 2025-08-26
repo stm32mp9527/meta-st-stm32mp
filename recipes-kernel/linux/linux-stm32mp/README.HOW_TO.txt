@@ -409,6 +409,7 @@ Update Starter Package bootfs with new generated dtb and uImage or Image.gz
     $@E> cd  ##LINUX_TARBASE##
     $@E> for p in `ls -1 ../*.patch`; do patch -p1 < $p; done
     $@E> echo "" > .scmversion
+    $@S> export KERNEL_BUILDDIR=$(readlink -e <your_build_subdir_path>)
     $ cd ..
     $ cd ..
     $@P> cd ##BP##-##PR##

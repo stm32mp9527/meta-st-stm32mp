@@ -1305,6 +1305,10 @@ MX_NAME=""
 while [[ $# -gt 0 ]]; do
   GLOBAL_CONFIGURATION=$1
   case $1 in
+    help)
+      usage
+      exit 0
+      ;;
     stm32mp1-mx)
       MACHINE=stm32mp1
       MX=1

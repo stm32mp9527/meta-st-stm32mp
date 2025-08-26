@@ -2,11 +2,12 @@ Information about usage of stm32mp2 developer package
 
 1. Link between partitions and binaries/components
 2. Preconize build order
-3. Generate a specific configuration
-4. Example of configuration and explanation of parameters
-5. Example of script usage
-6. DeviceTree structure
-7. Information about token present on README
+3. Prepare source
+4. Generate a specific configuration
+5. Example of configuration and explanation of parameters
+6. Example of script usage
+7. DeviceTree structure
+8. Information about token present on README
 
 -----------------------
 1. Link between partitions and binaries/components:
@@ -43,33 +44,46 @@ Information about usage of stm32mp2 developer package
 @ linux-stm32mp
 @ gcnano-driver-stm32mp
 
------------------------
-3.Generate a specific configuration
------------------------
-The script "generated_build_script-stm32mpx.sh" permit to parse all the readme and generate a
-script to help to compile the component needed for your target.
-Several option are possible:
- $ cd sdk-infos-1.0-r0
- $ ./generated_build_script-stm32mpx.sh help
-For stm32mp2, external-dt or cubeMx configuration can be generated:
- * stm32mp2: for compiling ST board via devicetree on component or on external-dt
- * stm32mp2-mx: for compiling ST board via devicetree on component  or external board via cubeMx devicetree
+--------------------------
+3. Prepare source
+--------------------------
+If not already done, extract the sources from Developer Package tarball, for example:
+    $ tar xf en.SOURCES-stm32mp*-*.tar.xz
 
- For external-dt configuration (default)
-  $ ./generated_build_script-stm32mpx.sh stm32mp2
-  => generate a script on root directory (sdk-infos-1.0-r0/../sdk_compilation-stm32mp2-my-custom-board.sh)
- For cubeMx devicetree configuration (mx)
-  $ ./generated_build_script-stm32mpx.sh stm32mp2-mx
-  => generate a script on root directory (sdk-infos-1.0-r0/../sdk_compilation-stm32mp2-mx-my-custom-board.sh)
+In the sdk-infos directory (sources/*/##BP##-##PR##),
+you have one folder with board configuration examples and one script to generate dedicated compile script:
+   - examples/
+   - generated_build_script-stm32mpx.sh
+
+-----------------------
+4.Generate a specific configuration
+-----------------------
+The script "generated_build_script-stm32mpx.sh" uses the whole "README.HOW_TO.txt" files to generate an
+helper script to compile the component needed for your target.
+Different options are supported and can be accessed through script help:
+ $> ./generated_build_script-stm32mpx.sh help
+
+For stm32mp2 case, external-dt or CubeMX configuration can be generated:
+ * stm32mp2   : to compile ST board via device tree from components themselves or external-dt source
+ * stm32mp2-mx: to compile ST board via device tree from components themselves or external board provided by CubeMX device tree
+
+For external-dt configuration (default)
+ $> ./generated_build_script-stm32mpx.sh stm32mp2
+    => generate a script on root directory for all source codes from Developer Package:
+       sources/*/sdk_compilation-stm32mp2-my-custom-board.sh
+For CubeMX devicetree configuration (mx)
+ $> ./generated_build_script-stm32mpx.sh stm32mp2-mx
+    => generate a script on root directory for all source codes from Developer Package:
+       sources/*/sdk_compilation-stm32mp2-mx-my-custom-board.sh
 
 NOTE:
  * the script MUST be renamed for your specific usage and the content configured on consequence (see next section for an example of configuration)
 
 -----------------------
-4. Example of configuration and explanation of parameters
+5. Example of configuration and explanation of parameters
 -----------------------
 your_board_name="<Your board name>"
-  Name for devicetree name, ex: stm32mp257f-ev1, stm215f-dk, stm32mp215f-mx-mycustom-board
+  Name for devicetree name, ex: stm32mp257f-ev1, stm32mp215f-dk, stm32mp215f-mx-mycustom-board
 
 your_soc_name="<Your soc name>"
   Name of soc used, ex:
@@ -94,7 +108,7 @@ your_build_subdir_path=<your_build_subdir_path>
   directory on which build artifactory will be generated on each component
   ex.: your_build_subdir_path=../build
 
-Ex. for St board with external dt :
+Ex. for ST board with external dt :
         your_board_name="stm32mp215f-dk"
         your_soc_name="stm32mp21"
         your_storage_boot_scheme_security="optee"
@@ -103,55 +117,61 @@ Ex. for St board with external dt :
         your_build_subdir_path=../build-stm32mp2
         externaldt_path=<path to ST external dt>
 
-Ex. with CubeMx board with project name 'cube_mx_project :
+Ex. with CubeMX board with project name 'cube_mx_project :
         your_board_name="stm32mp257f-cube_mx_project-mx"
         your_soc_name="stm32mp25"
         your_storage_boot_scheme_security="optee"
         your_storage_boot_scheme_cortex_a="optee-emmc"
         your_deploy_dir_path="<your location>/ouput-sdk-stm32mp2"
         your_build_subdir_path=../build-my-project
-        your_cubemx_project_name="cubemx project name"
+        your_cubemx_project_name="CubeMX project name"
         externaldt_path=<path to cube mx project>/
         # at least to have ${externaldt_path}/CA35/DeviceTree/${your_cubemx_project_name}/optee
         # for optee devicetree path
 
 NOTE: some examples files are available to show how to configure a build for ST boards:
-* examples/sdk_compilation_stm32mp2_stm32mp215f-dk.example
-* examples/sdk_compilation_stm32mp2_stm32mp235f-dk.example
-* examples/sdk_compilation_stm32mp2_stm32mp257f-dk.example
-* examples/sdk_compilation_stm32mp2_stm32mp257f-ev1.example
+ * examples/sdk_compilation_stm32mp2_stm32mp215f-dk.example
+ * examples/sdk_compilation_stm32mp2_stm32mp235f-dk.example
+ * examples/sdk_compilation_stm32mp2_stm32mp257f-dk.example
+ * examples/sdk_compilation_stm32mp2_stm32mp257f-ev1.example
 
 ---------------------------------
-5. Example of script usage
+6. Example of script usage
 ---------------------------------
+Move to directory where the geneated script is (it should be the root directory
+where all source codes from Developer Package are accessible)
+ $> cd <source_root_directory_path>
+
 Extract the source code:
- $ ./sdk_compilation-stm32mp-xxx.sh extract
+ $> ./sdk_compilation-stm32mp-xxx.sh extract
 
 For generation boot stage of cortexA
- $ ./sdk_compilation-stm32mp-xxx.sh compile-for-fip
- $ ./sdk_compilation-stm32mp-xxx.sh deploy-for-fip
- => bl2 and fip binaries are generated for CortexA
+ $> ./sdk_compilation-stm32mp-xxx.sh compile-for-fip
+ $> ./sdk_compilation-stm32mp-xxx.sh deploy-for-fip
+    => bl2 and fip binaries are generated for CortexA
 
 For generation binary to flashing via CortexA
- $ ./sdk_compilation-stm32mp-xxx.sh programmer
- => bl2 and fip binaries for flashing are generated for CortexA
+ $> ./sdk_compilation-stm32mp-xxx.sh programmer
+    => bl2 and fip binaries for flashing are generated for CortexA
 
- For generation of kernel and kernel modules:
- $ ./sdk_compilation-stm32mp-xxx.sh linux-stm32mp-configure
- $ ./sdk_compilation-stm32mp-xxx.sh linux-stm32mp-compile
- $ ./sdk_compilation-stm32mp-xxx.sh linux-stm32mp-compile
- $ ./sdk_compilation-stm32mp-xxx.sh linux-stm32mp-deploy
-=> kernel image and devicetree are generated and kernel modules are exported (stripped and not stripped) on deploy directory
- $ ./sdk_compilation-stm32mp-xxx.sh gcnano-driver-stm32mp-compile
- $ ./sdk_compilation-stm32mp-xxx.sh gcnano-driver-stm32mp-deploy
+For generation of kernel and kernel modules:
+ $> ./sdk_compilation-stm32mp-xxx.sh linux-stm32mp-configure
+ $> ./sdk_compilation-stm32mp-xxx.sh linux-stm32mp-compile
+ $> ./sdk_compilation-stm32mp-xxx.sh linux-stm32mp-compile
+ $> ./sdk_compilation-stm32mp-xxx.sh linux-stm32mp-deploy
+    => kernel image and devicetree are generated and kernel modules are exported
+       (stripped and not stripped) on deploy directory
+ $> ./sdk_compilation-stm32mp-xxx.sh gcnano-driver-stm32mp-compile
+ $> ./sdk_compilation-stm32mp-xxx.sh gcnano-driver-stm32mp-deploy
 
-To clean all the build of component:
+To clean the whole build artefacts:
  $ ./sdk_compilation-stm32mp-xxx.sh clean
-To clean a specific component (to know the list of component name: "./sdk_compilation-stm32mp-xxx.sh help"):
+To clean the specific artefacts from one component (to know the list of
+component name: "./sdk_compilation-stm32mp-xxx.sh help"):
  $ ./sdk_compilation-stm32mp-xxx.sh <component-name>-clean
 
 ---------------------------------
-6. DeviceTree structure
+7. DeviceTree structure
 ---------------------------------
 For External-dt
  <external dt path>/stm32mp2/a35-td"
@@ -161,7 +181,7 @@ For External-dt
    ├── tfm
    └── u-boot
 
-For CubeMx
+For CubeMX
  <CUBMEMX project path>/CA35/DeviceTree/<your_cubemx_project_name>/"
     ├── kernel
     ├── optee-os
@@ -169,7 +189,7 @@ For CubeMx
     └── u-boot
 
 ---------------------------------
-7. Information about token present on README
+8. Information about token present on README
 ---------------------------------
 This README and the script can be use to generate a script to help to generate binaries to start a
 stm32mpu.
@@ -192,6 +212,4 @@ The script use the token present on the different readme of components:
 Others
 ---------------------------------
 Nothing to do
-
     #> echo "*** Nothing to test ***"
-    $> echo "*** Nothing to build ***"
