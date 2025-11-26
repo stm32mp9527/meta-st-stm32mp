@@ -211,7 +211,7 @@ python image_rootfs_image_clean_task(){
 
             # Manifest file of the partition to check packages are in that partition
             manif_file = os.path.join(deploy_image_dir, "images", machine,
-                         _img_partition + "-" + distro + image_machine_suffix + _img_suffix + _img_suffix +".manifest")
+                         _img_partition + "-" + distro + image_machine_suffix + _img_suffix +".manifest")
             try:
                 manifest_content = open(manif_file, "r")
                 contents = manifest_content.read().splitlines()
