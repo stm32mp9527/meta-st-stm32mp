@@ -16,7 +16,7 @@ SRC_URI = "git://github.com/u-boot/u-boot.git;protocol=https;branch=master"
 SRCREV  = "4459ed60cb1e0562bc5b40405e2b4b9bbf766d57"
 
 SRC_URI += "\
-    file://0001-v2023.10-stm32mp-r2.patch \
+    file://0001-v2023.10-stm32mp-r3.patch \
     "
 
 # debug and trace
@@ -29,9 +29,13 @@ SRC_URI += "${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'file://fragment-02-s
 # efi config
 SRC_URI += "${@bb.utils.contains('MACHINE_FEATURES', 'efi', 'file://fragment-03-efi.cfg;subdir=fragments/features', '', d)}"
 
+# M33TD: no splashscreen
+SRC_URI += "${@bb.utils.contains('MACHINE_FEATURES', 'm33td', 'file://fragment-06-m33td-no-splashscreen.cfg;subdir=fragments/features', '', d)}"
+
+
 U_BOOT_VERSION = "v2023.10"
 U_BOOT_SUBVERSION = "stm32mp"
-U_BOOT_RELEASE = "r2"
+U_BOOT_RELEASE = "r3"
 
 PV = "${U_BOOT_VERSION}-${U_BOOT_SUBVERSION}-${U_BOOT_RELEASE}"
 
@@ -48,7 +52,7 @@ S = "${WORKDIR}/git"
 BBCLASSEXTEND = "devupstream:target"
 
 SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/u-boot.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "64beae9fed51f49b53f952d00d9918b9eb3b040b"
+SRCREV:class-devupstream = "7fbc677b5c104eee309fab7c8bb38eaaf83a45a6"
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github
