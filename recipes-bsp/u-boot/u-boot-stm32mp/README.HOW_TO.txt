@@ -177,8 +177,8 @@ There are different targets for U-Boot compilation:
 
 - Generate U-Boot binaries
   Using default configuration, you just need to launch the 'uboot' target:
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## clean
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## uboot
+    $> make -f $PWD/../Makefile.sdk.##MACHINE## clean
+    $> make -f $PWD/../Makefile.sdk.##MACHINE## uboot
   Example below to compile for a specific U-Boot configuration:
     $ make -f $PWD/../Makefile.sdk.##MACHINE## UBOOT_CONFIG=default UBOOT_DEFCONFIG=stm32mp15_defconfig UBOOT_BINARY=u-boot.dtb DEVICE_TREE=stm32mp157f-dk2 clean
     $ make -f $PWD/../Makefile.sdk.##MACHINE## UBOOT_CONFIG=default UBOOT_DEFCONFIG=stm32mp15_defconfig UBOOT_BINARY=u-boot.dtb DEVICE_TREE=stm32mp157f-dk2 uboot
@@ -187,20 +187,10 @@ There are different targets for U-Boot compilation:
 - Generate FIP binaires
   Make sure to have all bootloader binaries (TF-A, U-Boot and optee-os) available in <FIP_DEPLOYDIR_ROOT> folder before launching the build
   Using default configuration, you just need to launch the 'fip' target:
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## fip
+    $> make -f $PWD/../Makefile.sdk.##MACHINE## fip
   Example below to compile for a specific U-Boot configuration:
     $ make -f $PWD/../Makefile.sdk.##MACHINE## UBOOT_CONFIG=default UBOOT_DEFCONFIG=stm32mp15_defconfig UBOOT_BINARY=u-boot.dtb DEVICE_TREE=stm32mp157f-dk2 fip
   The build results for this component are available in <FIP_DEPLOYDIR_ROOT>/fip
-
-- Generate all U-Boot artifacts in a row
-  Make sure to have all other bootloader binaries (TF-A and optee-os) available in <FIP_DEPLOYDIR_ROOT> folder before launching the build
-  Using default configuration, you just need to launch the 'fip' target:
-    $> make -f $PWD/../Makefile.sdk.##MACHINE## clean
-    $> make -f $PWD/../Makefile.sdk.##MACHINE## all
-  Example below to compile for a specific U-Boot configuration:
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## UBOOT_CONFIG=default UBOOT_DEFCONFIG=stm32mp15_defconfig UBOOT_BINARY=u-boot.dtb DEVICE_TREE=stm32mp157f-dk2 clean
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## UBOOT_CONFIG=default UBOOT_DEFCONFIG=stm32mp15_defconfig UBOOT_BINARY=u-boot.dtb DEVICE_TREE=stm32mp157f-dk2 all
-  The build results for this component are available in <DEPLOYDIR> and <FIP_DEPLOYDIR_ROOT>/fip
 
 ---------------------------
 7. Update software on board
