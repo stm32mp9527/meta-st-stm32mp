@@ -13,13 +13,11 @@ PV = "5.4+${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-PACKAGES += "${PN}-userfs"
-
 # Package -dev and -dbg are empty so don't generate them
 ALLOW_EMPTY:${PN}-dev = "0"
 ALLOW_EMPTY:${PN}-dbg = "0"
 
-FILES:${PN}-userfs = "${prefix}/local/Linux-A7-examples"
+FILES:${PN} += "${prefix}/local/Linux-A7-examples"
 
 do_install() {
     # Install scripts and README in userfs:
