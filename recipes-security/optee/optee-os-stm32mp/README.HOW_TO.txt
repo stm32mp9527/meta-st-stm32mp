@@ -153,8 +153,8 @@ There are different targets for optee-os compilation:
 
 - Generate optee-os binaries
   Using default configuration, you just need to launch the 'optee' target:
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## clean
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## optee
+    $> make -f $PWD/../Makefile.sdk.##MACHINE## clean
+    $> make -f $PWD/../Makefile.sdk.##MACHINE## optee
   Example below for a specific config:
     $ make -f $PWD/../Makefile.sdk.##MACHINE## CFG_EMBED_DTB_SOURCE_FILE=stm32mp157c-ev1 clean
     $ make -f $PWD/../Makefile.sdk.##MACHINE## CFG_EMBED_DTB_SOURCE_FILE=stm32mp157c-ev1 optee
@@ -163,20 +163,10 @@ There are different targets for optee-os compilation:
 - Generate FIP binaires
   Make sure to have all bootloader binaries (TF-A, U-Boot and optee-os) available in <FIP_DEPLOYDIR_ROOT> folder before launching the build
   Using default configuration, you just need to launch the 'fip' target:
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## fip
+    $> make -f $PWD/../Makefile.sdk.##MACHINE## fip
   Example below for a specific config:
     $ make -f $PWD/../Makefile.sdk.##MACHINE## CFG_EMBED_DTB_SOURCE_FILE=stm32mp157c-ev1 fip
   The build results for this component are available in <FIP_DEPLOYDIR_ROOT>/fip
-
-- Generate all optee-os artifacts in a row
-  Make sure to have all other bootloader binaries (TF-A and U-Boot) available in <FIP_DEPLOYDIR_ROOT> folder before launching the build
-  Using default configuration, you just need to launch the 'all' target:
-    $> make -f $PWD/../Makefile.sdk.##MACHINE## clean
-    $> make -f $PWD/../Makefile.sdk.##MACHINE## all
-  Example below for a specific config:
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## CFG_EMBED_DTB_SOURCE_FILE=stm32mp157c-ev1 clean
-    $ make -f $PWD/../Makefile.sdk.##MACHINE## CFG_EMBED_DTB_SOURCE_FILE=stm32mp157c-ev1 all
-  The build results for this component are available in <DEPLOYDIR> and <FIP_DEPLOYDIR_ROOT>/fip
 
 ---------------------------
 6. Update software on board
