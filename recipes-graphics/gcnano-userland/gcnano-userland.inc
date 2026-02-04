@@ -47,7 +47,7 @@ GCNANO_FLAVOUR ??= "release"
 GCNANO_TAR_FILENAME ?= "gcnano-userland-${GCNANO_BACKEND}-${GCNANO_MACHINE}-${GCNANO_VERSION}-${GCNANO_DATE}"
 
 # Configure gcnano output library dir
-GCNANO_USERLAND_OUTPUT_LIBDIR ??= "${libdir}"
+ST_SPECIFIC_OUTPUT_LIBDIR ??= "${libdir}"
 
 GCNANO_USERLAND_LDCONF ?= "gcnano.conf"
 GCNANO_OPENCL_ICD ?= "VeriSilicon.icd"
@@ -59,11 +59,11 @@ PKGCONFIG_PREFIX ??= "${exec_prefix}"
 
 do_compile:append() {
     # Generate specific conf file if required
-    if [ "${GCNANO_USERLAND_OUTPUT_LIBDIR}" = "${libdir}" ]; then
+    if [ "${ST_SPECIFIC_OUTPUT_LIBDIR}" = "${libdir}" ]; then
         bbnote "gcnano-userland output libdir is default one (${libdir})"
     else
-        bbnote "gcnano-userland output libdir set to ${GCNANO_USERLAND_OUTPUT_LIBDIR}: generate specific conf file for ldconfig"
-        echo ${GCNANO_USERLAND_OUTPUT_LIBDIR} > ${B}/${GCNANO_USERLAND_LDCONF}
+        bbnote "gcnano-userland output libdir set to ${ST_SPECIFIC_OUTPUT_LIBDIR}: generate specific conf file for ldconfig"
+        echo ${ST_SPECIFIC_OUTPUT_LIBDIR} > ${B}/${GCNANO_USERLAND_LDCONF}
     fi
 }
 
@@ -265,12 +265,12 @@ do_install() {
     done
 
     # Install gcnano libraries
-    gcnano_install_lib  "${B}/${GCNANO_FLAVOUR}/drivers"    "${D}${GCNANO_USERLAND_OUTPUT_LIBDIR}"  \
+    gcnano_install_lib  "${B}/${GCNANO_FLAVOUR}/drivers"    "${D}${ST_SPECIFIC_OUTPUT_LIBDIR}"  \
                         "${B}/${GCNANO_FLAVOUR}/include"    "${D}${includedir}"                     \
                         "${B}/pkgconfig"                    "${D}${libdir}/pkgconfig"
 
     # Manage creation of additional development symlinks to solve missing libs issue on SDK side
-    gcnano_install_symlinks "${D}${GCNANO_USERLAND_OUTPUT_LIBDIR}" "${D}${libdir}"
+    gcnano_install_symlinks "${D}${ST_SPECIFIC_OUTPUT_LIBDIR}" "${D}${libdir}"
 
     if [ -s "${B}/${GCNANO_USERLAND_LDCONF}" ]; then
         install -d ${D}${sysconfdir}/ld.so.conf.d/
@@ -280,12 +280,12 @@ do_install() {
     # Generate OpenCL ICD
     if [ -n "$(echo ${GCNANO_PACKAGECONFIG} | grep 'cl')" ]; then
         install -m 0755 -d "${D}${sysconfdir}/OpenCL/vendors"
-        find "${D}${GCNANO_USERLAND_OUTPUT_LIBDIR}" -type f -name "libOpenCL*.so*" | sed s"%${D}%%" > "${D}${sysconfdir}/OpenCL/vendors/${GCNANO_OPENCL_ICD}"
+        find "${D}${ST_SPECIFIC_OUTPUT_LIBDIR}" -type f -name "libOpenCL*.so*" | sed s"%${D}%%" > "${D}${sysconfdir}/OpenCL/vendors/${GCNANO_OPENCL_ICD}"
     fi
 
     # Generate Vulkan ICD
     if [ -n "$(echo ${GCNANO_PACKAGECONFIG} | grep 'vulkan')" ]; then
-        vklib=$(find "${D}${GCNANO_USERLAND_OUTPUT_LIBDIR}" -type f -name "libvulkan*.so*" | sed s"%${D}%%")
+        vklib=$(find "${D}${ST_SPECIFIC_OUTPUT_LIBDIR}" -type f -name "libvulkan*.so*" | sed s"%${D}%%")
         vkvers=$(echo ${vklib} | awk -F'.so.' '{print $2}')
 
         install -m 0755 -d "${D}${sysconfdir}/vulkan/icd.d"
@@ -300,7 +300,7 @@ do_install() {
     fi
 }
 
-SYSROOT_DIRS:append = " ${GCNANO_USERLAND_OUTPUT_LIBDIR}"
+SYSROOT_DIRS:append = " ${ST_SPECIFIC_OUTPUT_LIBDIR}"
 
 # For the packages that make up the OpenGL interfaces, inject variables so that
 # they don't get Debian-renamed (which would remove the -gcnano suffix), and
@@ -328,7 +328,7 @@ python __anonymous() {
             d.appendVar("RREPLACES:" + fullp, rpkgs)
             d.appendVar("RPROVIDES:" + fullp, rpkgs)
             d.appendVar("RCONFLICTS:" + fullp, rpkgs)
-            if d.getVar("GCNANO_USERLAND_OUTPUT_LIBDIR") != d.getVar("libdir"):
+            if d.getVar("ST_SPECIFIC_OUTPUT_LIBDIR") != d.getVar("libdir"):
                 d.appendVar("RDEPENDS:" + fullp, " gcnano-ldconf")
 
         # For -dev, the first element is both the Debian and original name
@@ -347,30 +347,30 @@ python __anonymous() {
 # because gcnano userland library try to make a dlopen on this library (with specific .so extension)
 FILES:${PN} = ""
 FILES:gcnano-ldconf = "${sysconfdir}/ld.so.conf.d/*"
-FILES:libgal-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libGAL.so"
-FILES:libgal-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libVSC.so"
-FILES:libegl-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libEGL.so.* ${libdir}/libEGL.so*"
-FILES:libgbm-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libgbm.so.* ${libdir}/libgbm.so.*"
-FILES:libgbm-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libgbm_viv.so"
-FILES:libgles1-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libGLESv1_CM.so.* ${libdir}/libGLESv1_CM.so*"
-FILES:libgles2-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libGLESv2.so.* ${libdir}/libGLESv2.so*"
-FILES:libopenvg-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libOpenVG.so.* ${libdir}/libOpenVG.so*"
-FILES:libopenvx-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libOpenVX*.so* ${libdir}/libOpenVX.so.*"
-FILES:libopenvx-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libArchModelSw.so"
-FILES:libopenvx-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libNNArchPerf.so"
-FILES:libopenvx-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libovxlib.so"
+FILES:libgal-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libGAL.so"
+FILES:libgal-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libVSC.so"
+FILES:libegl-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libEGL.so.* ${libdir}/libEGL.so*"
+FILES:libgbm-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libgbm.so.* ${libdir}/libgbm.so.*"
+FILES:libgbm-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libgbm_viv.so"
+FILES:libgles1-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libGLESv1_CM.so.* ${libdir}/libGLESv1_CM.so*"
+FILES:libgles2-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libGLESv2.so.* ${libdir}/libGLESv2.so*"
+FILES:libopenvg-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libOpenVG.so.* ${libdir}/libOpenVG.so*"
+FILES:libopenvx-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libOpenVX*.so* ${libdir}/libOpenVX.so.*"
+FILES:libopenvx-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libArchModelSw.so"
+FILES:libopenvx-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libNNArchPerf.so"
+FILES:libopenvx-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libovxlib.so"
 FILES:libopenvx-gcnano += "${includedir}/CL/cl_viv_vx_ext.h ${sysconfdir}/profile.d/*"
-FILES:libovxkernels-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libNNGPUBinary.so"
-FILES:libovxkernels-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libNNVXCBinary.so"
-FILES:libovxkernels-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libOvx12VXCBinary.so"
-FILES:libovxkernels-gcnano += "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libOvxGPUVXCBinary.so"
-FILES:libopencl-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libOpenCL_VSI.so.* ${libdir}/libOpenCL_VSI.so.*"
+FILES:libovxkernels-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libNNGPUBinary.so"
+FILES:libovxkernels-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libNNVXCBinary.so"
+FILES:libovxkernels-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libOvx12VXCBinary.so"
+FILES:libovxkernels-gcnano += "${ST_SPECIFIC_OUTPUT_LIBDIR}/libOvxGPUVXCBinary.so"
+FILES:libopencl-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libOpenCL_VSI.so.* ${libdir}/libOpenCL_VSI.so.*"
 FILES:libopencl-gcnano += "${sysconfdir}/OpenCL/vendors/*"
-FILES:libvulkan-driver-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libvulkan_VSI.so.* ${libdir}/libvulkan_VSI.so.*"
+FILES:libvulkan-driver-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libvulkan_VSI.so.* ${libdir}/libvulkan_VSI.so.*"
 FILES:libvulkan-driver-gcnano += "${sysconfdir}/vulkan/icd.d/*"
-FILES:libglslc-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libGLSLC.so"
-FILES:libclc-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libCLC.so"
-FILES:libspirv-gcnano = "${GCNANO_USERLAND_OUTPUT_LIBDIR}/libSPIRV_viv.so"
+FILES:libglslc-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libGLSLC.so"
+FILES:libclc-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libCLC.so"
+FILES:libspirv-gcnano = "${ST_SPECIFIC_OUTPUT_LIBDIR}/libSPIRV_viv.so"
 
 FILES:${PN}-dev = ""
 FILES:libgal-gcnano-dev = "${libdir}/libGAL.so ${libdir}/libVSC.so"
