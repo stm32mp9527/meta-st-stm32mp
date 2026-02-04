@@ -112,7 +112,7 @@ If not already done, extract the artifacts from Starter Package tarball, for exa
 
 Update Starter package with just compiled kernel module galcore.ko:
     #> mkdir -p <your_starter_package_dir_path>/rootfs_mounted
-    #> sudo mount -o loop <your_starter_package_dir_path>/images/stm32mp*/st-image-weston-openstlinux-weston-stm32mp*.ext4 <your_starter_package_dir_path>/rootfs_mounted
+    #> sudo mount -o loop <your_starter_package_dir_path>/images/stm32mp*/st-image-weston-openstlinux-weston-stm32mp*.splitted-rootfs.ext4 <your_starter_package_dir_path>/rootfs_mounted
     #> sudo mkdir -p <your_starter_package_dir_path>/rootfs_mounted/lib/modules/##KERNEL_VERSION##/updates
 
 Cleanup Starter Package from original gcnano kernel module artifacts first
