@@ -22,7 +22,7 @@ RRECOMMENDS:${PN}:append:class-nativesdk = " nativesdk-python3-terminaltables "
 do_configure[noexec] = "1"
 do_compile[noexec] = "1"
 
-INSTALL_PATH= "${datadir}/svd-tools"
+INSTALL_PATH = "${datadir}/svd-tools"
 
 do_install () {
     install -d ${D}${INSTALL_PATH}
