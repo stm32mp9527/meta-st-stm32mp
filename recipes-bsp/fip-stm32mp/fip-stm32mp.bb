@@ -97,32 +97,40 @@ do_deploy() {
 
             FIP_PARAM_ddr=""
             if [ -d "${RECIPE_SYSROOT}/${FIP_DIR_TFA_BASE}/${FIP_DIR_FWDDR}" ]; then
-                FIP_PARAM_ddr="--use-ddr"
-                echo "********************************************"
-                bbnote "[fip-utils-stm32mp] FIP DDR command details:\
-                \nFIP_DEPLOYDIR_ROOT=${RECIPE_SYSROOT} \
-                \n${FIP_WRAPPER} \
-                    \n${FIP_PARAM_BLxx} \
-                    \n${FIP_PARAM_SIGN} \
-                    \n${STORAGE_SEARCH} \
-                    \n--use-ddr --generate-only-ddr \
-                    \n--search-configuration ${config}\
-                    \n--search-devicetree ${dt} \
-                    \n${DT_SUFFIX_SEARCH} \
-                    \n--search-soc-name ${soc_suffix} \
-                    \n--output ${DEPLOYDIR}/${FIP_DIR_FIP}"
-                echo "********************************************"
-                FIP_DEPLOYDIR_ROOT="${RECIPE_SYSROOT}" \
-                ${FIP_WRAPPER} \
-                    ${FIP_PARAM_BLxx} \
-                    ${FIP_PARAM_SIGN} \
-                    ${STORAGE_SEARCH} \
-                    --use-ddr --generate-only-ddr \
-                    --search-configuration ${config}\
-                    --search-devicetree ${dt} \
-                    ${DT_SUFFIX_SEARCH} \
-                    --search-soc-name ${soc_suffix} \
-                    --output ${DEPLOYDIR}/${FIP_DIR_FIP}
+                if $(echo ${MACHINE_FEATURES} | grep -q 'm33td') ; then
+                    if [ -n "${device_conf}" ] && $(echo ${device_conf} | grep -qE '(usb|uart)') ; then
+                        FIP_PARAM_ddr="--use-ddr"
+                    fi
+                else
+                    FIP_PARAM_ddr="--use-ddr"
+                fi
+                if [ -n "$FIP_PARAM_ddr" ]; then
+                    echo "********************************************"
+                    bbnote "[fip-utils-stm32mp] FIP DDR command details:\
+                    \nFIP_DEPLOYDIR_ROOT=${RECIPE_SYSROOT} \
+                        \n${FIP_WRAPPER} \
+                        \n${FIP_PARAM_BLxx} \
+                        \n${FIP_PARAM_SIGN} \
+                        \n${STORAGE_SEARCH} \
+                        \n--use-ddr --generate-only-ddr \
+                        \n--search-configuration ${config}\
+                        \n--search-devicetree ${dt} \
+                        \n${DT_SUFFIX_SEARCH} \
+                        \n--search-soc-name ${soc_suffix} \
+                        \n--output ${DEPLOYDIR}/${FIP_DIR_FIP}"
+                    echo "********************************************"
+                    FIP_DEPLOYDIR_ROOT="${RECIPE_SYSROOT}" \
+                    ${FIP_WRAPPER} \
+                        ${FIP_PARAM_BLxx} \
+                        ${FIP_PARAM_SIGN} \
+                        ${STORAGE_SEARCH} \
+                        --use-ddr --generate-only-ddr \
+                        --search-configuration ${config}\
+                        --search-devicetree ${dt} \
+                        ${DT_SUFFIX_SEARCH} \
+                        --search-soc-name ${soc_suffix} \
+                        --output ${DEPLOYDIR}/${FIP_DIR_FIP}
+                fi
             fi
             # Configure secondary config search
             SECOND_CONFSEARCH=""
