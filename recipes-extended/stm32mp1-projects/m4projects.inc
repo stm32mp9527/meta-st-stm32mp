@@ -20,10 +20,6 @@ SRC_URI += "file://shutdown-stm32mp1-m4.sh"
 
 DEPENDS += " gcc-arm-none-eabi-native "
 
-# Create specific userfs package
-M4_PACKAGE_4USERFS ?= "1"
-PACKAGES += "${@bb.utils.contains('M4_PACKAGE_4USERFS', '1', '${PN}-userfs', '', d)}"
-
 # Define default board reference for M4
 M4_BOARDS ?= "STM32MP157C-EV1 STM32MP157C-DK2"
 
@@ -154,11 +150,9 @@ INHIBIT_SYSROOT_STRIP = "1"
 
 FILES:${PN} += "${nonarch_base_libdir}/firmware ${sysconfdir}/init.d ${systemd_unitdir}/system ${systemd_unitdir}/system-shutdown"
 # Configure package split
-FILES:${PN} += "${@bb.utils.contains('M4_PACKAGE_4USERFS', '1', '', '${M4_OUTPUT_4USERFS}', d)}"
-FILES:${PN}-userfs = "${@bb.utils.contains('M4_PACKAGE_4USERFS', '1', '${M4_OUTPUT_4USERFS}', '', d)}"
-RDEPENDS:${PN}-userfs += "busybox"
+FILES:${PN} += "${M4_OUTPUT_4USERFS}"
+RDEPENDS:${PN} += "busybox"
 
 # ---------------------------------------------------------------------
 # Avoid QA Issue: contains reference to TMPDIR [buildpaths]
 INSANE_SKIP:${PN} += "buildpaths"
-INSANE_SKIP:${PN}-userfs += "buildpaths"
