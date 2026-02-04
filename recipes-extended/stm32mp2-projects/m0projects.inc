@@ -1,3 +1,5 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
 COMPATIBLE_MACHINE = "(stm32mp2common)"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -7,25 +9,15 @@ B = "${S}"
 DEPENDS += "gcc-arm-none-eabi-native cmake-native"
 
 # Temporary
-SRC_URI += "file://fw_cortex_m0.sh"
-
-# Create specific userfs package
-M0_PACKAGE_4USERFS ?= "1"
-PACKAGES += "${@bb.utils.contains('M0_PACKAGE_4USERFS', '1', '${PN}-userfs', '', d)}"
+SRC_URI:append = " file://fw_cortex_m0.sh"
 
 # Define default board reference for M0
 M0_BOARDS ?= ""
 
-# list of boards/devitree on which the service must be started
-M33_BOARDS_START_AT_STARTUP ?= ""
-
-BUILD_CONFIG ?= "Debug"
-
 # Init default installation path
 M0_FOLDER ?= "Cube-M0-examples"
-M0_INSTALLDIR ?= "${prefix}local"
-M0_OUTPUT_4USERFS = "${M33_INSTALLDIR}/${M0_FOLDER}"
-
+M0_INSTALLDIR ?= "${prefix}/local"
+M0_OUTPUT_4USERFS = "${M0_INSTALLDIR}/${M0_FOLDER}"
 
 M0_ELF_NOT_STRIPPED ??= "0"
 
@@ -86,7 +78,6 @@ do_install() {
             install -m 0755 ${WORKDIR}/fw_cortex_m0.sh ${D}${M0_OUTPUT_4USERFS}/${INSTALL_PROJ}/
         done
     done
-
 }
 
 # -----------------------------------------------------------
@@ -96,12 +87,10 @@ INHIBIT_SYSROOT_STRIP = "1"
 
 FILES:${PN} += "${nonarch_base_libdir}/firmware ${sysconfdir}/init.d ${systemd_unitdir}/system ${systemd_unitdir}/system-shutdown"
 # Configure package split
-FILES:${PN} += "${@bb.utils.contains('M0_PACKAGE_4USERFS', '1', '', '${M0_OUTPUT_4USERFS}', d)}"
-FILES:${PN}-userfs = "${@bb.utils.contains('M0_PACKAGE_4USERFS', '1', '${M0_OUTPUT_4USERFS}', '', d)}"
-RDEPENDS:${PN}-userfs += "busybox"
+FILES:${PN} += "${M0_OUTPUT_4USERFS}"
+RDEPENDS:${PN} += "busybox"
 
 # Avoid QA issue because binaries are for an Arm architecture but the platform is an AArch64
 INSANE_SKIP = "arch"
 INSANE_SKIP:${PN} = "already-stripped buildpaths"
-INSANE_SKIP:${PN}-userfs = "buildpaths"
 INSANE_SKIP:${PN}-dbg = "buildpaths"
