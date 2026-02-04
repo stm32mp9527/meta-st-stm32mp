@@ -7,13 +7,14 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384
 SRC_URI = " \
     file://bluetooth_brcmfmac_driver.sh \
     file://bluetooth-brcmfmac-sleep.service \
+    file://bluetooth-brcmfmac-reboot.service \
     "
 
 PACKAGE_ARCH:stm32mpcommon = "${MACHINE_ARCH}"
 
 inherit systemd
 SYSTEMD_PACKAGES += "${PN}"
-SYSTEMD_SERVICE:${PN} = "bluetooth-brcmfmac-sleep.service"
+SYSTEMD_SERVICE:${PN} = "bluetooth-brcmfmac-sleep.service bluetooth-brcmfmac-reboot.service"
 
 do_install() {
     install -d ${D}${bindir}
@@ -23,6 +24,7 @@ do_install() {
         install -d ${D}${systemd_unitdir}/system/
 
         install -m 0644 ${WORKDIR}/bluetooth-brcmfmac-sleep.service ${D}${systemd_unitdir}/system/
+        install -m 0644 ${WORKDIR}/bluetooth-brcmfmac-reboot.service ${D}${systemd_unitdir}/system/
     fi
 }
 
