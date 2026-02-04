@@ -98,6 +98,10 @@ do_archiver_git_uri() {
         bbnote "Use ${ARCHIVER_README} file for update from ${ARCHIVER_WORKDIR} (update to ${ARCHIVER_README}.${MACHINE})"
         install -d "${ARCHIVER_OUTDIR}"
         install -m 644 "${ARCHIVER_WORKDIR}/${ARCHIVER_README}" "${ARCHIVER_OUTDIR}/${ARCHIVER_README}.${MACHINE}"
+    elif [ -e "${WORKDIR}/${ARCHIVER_README}" ]; then
+        bbnote "Use ${ARCHIVER_README} file for update from ${WORKDIR} (update to ${ARCHIVER_README}.${MACHINE})"
+        install -d "${ARCHIVER_OUTDIR}"
+        install -m 644 "${WORKDIR}/${ARCHIVER_README}" "${ARCHIVER_OUTDIR}/${ARCHIVER_README}.${MACHINE}"
     else
         bbnote "No ${ARCHIVER_README} file found for update."
         return
