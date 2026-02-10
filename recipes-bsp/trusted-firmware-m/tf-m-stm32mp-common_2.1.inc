@@ -19,17 +19,15 @@ SRC_URI:append = " gitsm://github.com/Mbed-TLS/mbedtls.git;protocol=https;nobran
 SRC_URI:append = " git://github.com/STMicroelectronics/stm32-ddr-phy-binary;protocol=https;branch=main;name=ddr-phy;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_DDR_PHY_BIN_SRC}"
 
 # psa-adac
-SRC_URI:append = " gitsm://gerrit.st.com:29418/mpu/oe/st/psa-adac.git;protocol=ssh;name=psa-adac;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_PSA_ADAC};branch=v1.0-stm32mp-w2606"
+SRC_URI:append = " gitsm://github.com/STMicroelectronics/psa-adac.git;protocol=https;name=psa-adac;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_PSA_ADAC};branch=v1.0-stm32mp"
 # SCP-firmware
-SRC_URI:append = " gitsm://gerrit.st.com:29418/mpu/oe/optee/SCP-firmware.git;protocol=ssh;name=scp-firmware;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_SCP_FW};nobranch=1"
+SRC_URI:append = " gitsm://github.com/STMicroelectronics/SCP-firmware.git;protocol=https;name=scp-firmware;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_SCP_FW};nobranch=1"
 # stm32mp2xx-hal-driver
-SRC_URI:append = " git://gitolite@codex.cro.st.com/stm32cube/hal/stm32mp2xx_hal_driver.git;protocol=ssh;name=stm32mp2haldriver;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_HAL_DRIVER};nobranch=1"
+SRC_URI:append = " git://github.com/STMicroelectronics/stm32mp2xx-hal-driver.git;protocol=https;name=stm32mp2haldriver;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_HAL_DRIVER};nobranch=1"
 # cmsis-device-mp2
-SRC_URI:append = " git://gitolite@codex.cro.st.com/stm32cube/cmsis/cmsis_device_mp2.git;protocol=ssh;name=cmsisdevicemp2;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_CMSIS_DEVICE};nobranch=1"
-# STL
-SRC_URI:append = " git://gerrit.st.com:29418/mpu/oe/st/TF-M/stm32mp2-stl-lib.git;protocol=ssh;name=stm32mp2stllib;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_STL_LIB};nobranch=1"
+SRC_URI:append = " git://github.com/STMicroelectronics/cmsis-device-mp2.git;protocol=https;name=cmsisdevicemp2;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_CMSIS_DEVICE};nobranch=1"
 # stm32mp2-low-power
-SRC_URI:append = " git://gerrit.st.com:29418/mpu/oe/st/TF-M/stm32mp2-low-power.git;protocol=ssh;name=mp2-low-power;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_LOW_POWER};nobranch=1"
+SRC_URI:append = " git://github.com/STMicroelectronics/stm32mp2-low-power.git;protocol=https;name=mp2-low-power;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_LOW_POWER};nobranch=1"
 
 # The required dependencies are documented in tf-m/config/config_base.cmake
 # TF-Mv 2.1.3
@@ -64,32 +62,27 @@ ARCHIVER_REVISION_DDR_PHY_BIN_SRC = "v1.0-stm32mp"
 SRCREV_ddr-phy = "77447cf214eadf128e487fcb10a4a78cd4ab6d56"
 # psa-adac
 TF_M_PATH_PSA_ADAC = "external/psa-adac"
-ARCHIVER_REVISION_PSA_ADAC = "v1.0-stm32mp-r1-rc1"
+ARCHIVER_REVISION_PSA_ADAC = "v1.0-stm32mp-r1"
 SRCREV_psa-adac = "519a66d262882ead7069e308d9f9c24d62178393"
 # scp-firmware
 TF_M_PATH_SCP_FW = "external/scp-firmware"
-ARCHIVER_REVISION_SCP_FW = "v2.13.0-stm32mp-r3-rc5"
+ARCHIVER_REVISION_SCP_FW = "v2.13.0-stm32mp-r3"
 SRCREV_scp-firmware = "f19d90bfeb876496b0ce33483efd0ca4121f09f5"
 # stm32mp2xx_hal_driver
 TF_M_PATH_STM32MP2_HAL_DRIVER = "external/stm32mp2xx_hal_driver"
-ARCHIVER_URL_STM32MP2_HAL_DRIVER = "ssh://gitolite@codex.cro.st.com/stm32cube/hal/stm32mp2xx_hal_driver.git"
-ARCHIVER_REVISION_STM32MP2_DRIVER = "v1.3.0.rc4"
-SRCREV_stm32mp2haldriver = "e99715f8fd6497b080b68d0ac57a1c72cbc434af"
+ARCHIVER_URL_STM32MP2_HAL_DRIVER = "https://github.com/STMicroelectronics/stm32mp2xx-hal-driver.git"
+ARCHIVER_REVISION_STM32MP2_DRIVER = "v1.3.0"
+SRCREV_stm32mp2haldriver = "9ef28328ab57a4ca975beea8690488a8cde8b99c"
 # stm32mp2xx_cmsis_device
 TF_M_PATH_STM32MP2_CMSIS_DEVICE = "external/cmsis_device_mp2"
-ARCHIVER_URL_STM32MP2_CMSIS_DEVICE = "ssh://gitolite@codex.cro.st.com/stm32cube/cmsis/cmsis_device_mp2.git"
-ARCHIVER_REVISION_STM32MP2_CMSIS_DEVICE = "v1.3.0.rc4"
-SRCREV_cmsisdevicemp2 = "123c68b03c477693c90a347a11dff9c9cb4b1ddf"
-# stm32mp2-stl-lib
-TF_M_PATH_STM32MP2_STL_LIB = "external/stm32mp2_stl_lib"
-ARCHIVER_URL_STM32MP2_STL_LIB = "ssh://gerrit.st.com:29418/mpu/oe/st/TF-M/stm32mp2-stl-lib.git"
-ARCHIVER_REVISION_STM32MP2_STL_LIB = "3753aa2d6a4d52350339d91b5da507e202348144"
-SRCREV_stm32mp2stllib = "3753aa2d6a4d52350339d91b5da507e202348144"
+ARCHIVER_URL_STM32MP2_CMSIS_DEVICE = "https://github.com/STMicroelectronics/cmsis-device-mp2.git"
+ARCHIVER_REVISION_STM32MP2_CMSIS_DEVICE = "v1.3.0"
+SRCREV_cmsisdevicemp2 = "9c72257fa9d615420151e7cd615a5d3577fcc3da"
 
 # stm32mp2-low-power
 TF_M_PATH_STM32MP2_LOW_POWER = "external/stm32_lp_fw"
-ARCHIVER_URL_MP2_LOW_POWER = "ssh://gerrit.st.com:29418/mpu/oe/st/TF-M/stm32mp2-low-power.git"
-ARCHIVER_REVISION_MP2_LOW_POWER = "v1.0.0.rc1"
+ARCHIVER_URL_MP2_LOW_POWER = "https://github.com/STMicroelectronics/stm32mp2-low-power.git"
+ARCHIVER_REVISION_MP2_LOW_POWER = "v1.0.0"
 SRCREV_mp2-low-power = "9eab3bbc074e03a0640127776c45ce8f579ae360"
 
 SRCREV_FORMAT = "tfm"
@@ -135,7 +128,6 @@ TF_M_EXTERNAL_SOURCES_OECMAKE += "-DPLATFORM_PSA_ADAC_SOURCE_PATH=${WORKDIR}/${T
 TF_M_EXTERNAL_SOURCES_OECMAKE += "-DSCP_FW_PATH=${WORKDIR}/${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_SCP_FW} "
 TF_M_EXTERNAL_SOURCES_OECMAKE += "-DSTM32MP2XX_HAL_DRIVER_PATH=${WORKDIR}/${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_HAL_DRIVER} "
 TF_M_EXTERNAL_SOURCES_OECMAKE += "-DCMSIS_DEVICE_MP2_PATH=${WORKDIR}/${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_CMSIS_DEVICE} "
-TF_M_EXTERNAL_SOURCES_OECMAKE += "-DSTM32CUBE_STL_PATH=${WORKDIR}/${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_STL_LIB} "
 TF_M_EXTERNAL_SOURCES_OECMAKE += "-DSTM32MP2_LP_PATH=${WORKDIR}/${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_LOW_POWER} "
 
 EXTRA_OECMAKE += "${@bb.utils.contains('TF_M_EXTERNAL_SOURCES', '1', '${TF_M_EXTERNAL_SOURCES_OECMAKE}', '', d)}"
@@ -146,8 +138,8 @@ EXTRA_OECMAKE += "${@bb.utils.contains('TF_M_EXTERNAL_SOURCES', '1', '${TF_M_EXT
 # ---------------------------------
 BBCLASSEXTEND = "devupstream:target"
 
-SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/arm-trusted-firmware-m.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "9cc8533ac9e9e92e6c931966198681cdc1469138"
+SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/arm-trusted-firmware-m.git;protocol=https;nobranch=1"
+SRCREV:class-devupstream = "4410067020b076154edec29644ff7f10853d8dbf"
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github

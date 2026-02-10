@@ -137,9 +137,6 @@ Add external TF-M source code:
     $ cd ##TF_M_PATH_STM32MP2_CMSIS_DEVICE##
     $ git checkout -b WORKING ##ARCHIVER_REVISION_STM32MP2_CMSIS_DEVICE##
     $ cd arm-trusted-firmware-m
-    $ git clone ##ARCHIVER_URL_STM32MP2_STL_LIB## ##TF_M_PATH_STM32MP2_STL_LIB##
-    $ cd ##TF_M_PATH_STM32MP2_STL_LIB##
-    $ git checkout -b WORKING ##ARCHIVER_REVISION_STM32MP2_STL_LIB##
     $ cd arm-trusted-firmware-m
     $ git clone ##ARCHIVER_URL_MP2_LOW_POWER## ##TF_M_PATH_STM32MP2_LOW_POWER##
     $ cd ##TF_M_PATH_STM32MP2_LOW_POWER##

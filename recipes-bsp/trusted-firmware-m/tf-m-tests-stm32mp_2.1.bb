@@ -39,8 +39,8 @@ include ${@oe.utils.ifelse(d.getVar('ST_ARCHIVER_ENABLE') == '1', 'tf-m-tests-st
 # ---------------------------------
 BBCLASSEXTEND = "devupstream:target"
 
-SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/tf-m-tests.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "7577a63e148934721cd88a485dbfe51180fef079"
+SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/tf-m-tests.git;protocol=https;nobranch=1"
+SRCREV:class-devupstream = "e96069fd5c592d94f1db36cc5df602221fad3a86"
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github
