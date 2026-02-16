@@ -1,6 +1,4 @@
-DEPENDS = "hidapi-stm32mp"
-
-RDEPENDS:${PN} += "libusb1 hidapi-stm32mp"
+DEPENDS = "hidapi-stm32mp capstone"
 
 CVE_PRODUCT = "openocd:open_on-chip_debugger"
 
@@ -18,17 +16,16 @@ S = "${WORKDIR}/git"
 
 BBCLASSEXTEND += "native nativesdk"
 
-DEPENDS:class-native = "hidapi-stm32mp-native"
-DEPENDS:class-nativesdk = "nativesdk-hidapi-stm32mp"
+DEPENDS:class-native = "hidapi-stm32mp-native capstone-native"
+DEPENDS:class-nativesdk = "nativesdk-hidapi-stm32mp nativesdk-capstone"
 
-RDEPENDS:${PN} += "libusb1 hidapi-stm32mp"
+RDEPENDS:${PN} += "libusb1 hidapi-stm32mp capstone"
 
 EXTRA_OECONF = " \
     --disable-doxygen-html \
     --disable-werror \
     --enable-stlink \
     --enable-cmsis-dap \
-    --without-capstone \
     MAKEINFO=true \
     HIDAPI_CFLAGS=-I${STAGING_INCDIR}/hidapi \
     HIDAPI_LIBS=-L${STAGING_LIBDIR}\ -lhidapi-libusb \
