@@ -90,7 +90,7 @@ SRCREV_FORMAT = "tfm"
 UPSTREAM_CHECK_GITTAGREGEX = "^TF-Mv(?P<pver>\d+(\.\d+)+)$"
 
 # ST Patches
-SRC_URI:append = "\
+SRC_URI += "\
     file://0001-v2.1.3-stm32mp-r2.patch.gz \
 "
 
@@ -138,7 +138,7 @@ EXTRA_OECMAKE += "${@bb.utils.contains('TF_M_EXTERNAL_SOURCES', '1', '${TF_M_EXT
 # ---------------------------------
 BBCLASSEXTEND = "devupstream:target"
 
-SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/arm-trusted-firmware-m.git;protocol=https;nobranch=1"
+SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/trusted-firmware-m.git;protocol=https;nobranch=1"
 SRCREV:class-devupstream = "4410067020b076154edec29644ff7f10853d8dbf"
 
 # ---------------------------------
