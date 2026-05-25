@@ -1,10 +1,10 @@
 LICENSE = "Apache-2.0 & MIT & BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://License.md;md5=f2f110de9c50e738bfd1e15ef52181c4"
+LIC_FILES_CHKSUM = "file://License.md;md5=012a8d78c6f636371ad889eadb15885c"
 
 SRC_URI = "git://github.com/STMicroelectronics/STM32CubeMP2.git;protocol=https;nobranch=1"
-SRCREV  = "38732d24f8928af2dbcd9491f92390efbaec78d6"
+SRCREV  = "2f7258aa45e916777ffb4f6e1b5590f65304378d"
 
-PV = "1.3.0"
+PV = "1.3.1"
 
 S = "${WORKDIR}/git"
 
