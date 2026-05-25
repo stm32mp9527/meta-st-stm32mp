@@ -62,8 +62,6 @@ BL2_DEPLOYDIR ?= \$(DEPLOYDIR)/bl2
 DDR_DEPLOYDIR ?= \$(DEPLOYDIR)${M33FW_DIR_FWDDR}
 M33FW_DEPLOYDIR ?= \$(DEPLOYDIR)${M33FW_DIR_M33FW}
 
-TFM_TESTS_DIR ?=
-
 EXTDT_DIR_TF_M ?= ${EXTDT_DIR_TF_M}
 EXTDT_DIR_MCU ?= ${EXTDT_DIR_MCU}
 
@@ -252,7 +250,7 @@ tfm-\$(1)-\$(2)-\$(3): chk-conf-\$(1)
 		-DTFM_TOOLCHAIN_FILE="\$(SRC_PATH)/toolchain_GNUARM.cmake" \\
 		\$(if \$(TF_M_EXTRA_OPTFLAGS),\$(TF_M_EXTRA_OPTFLAGS),\$(TF_M_EXTRA_OPTFLAGS_\$(1))) \\
 		\$(if \$(TF_M_PLATFORM_OPTFLAGS),\$(TF_M_PLATFORM_OPTFLAGS),\$(TF_M_PLATFORM_OPTFLAGS_\$(2))) \\
-		-S "\$(TFM_TESTS_DIR)/tests_reg/spe" -B "\$(BLD_PATH)/\$(1)-\$(3)/spe" \\
+		-S "\$(SRC_PATH)" -B "\$(BLD_PATH)/\$(1)-\$(3)/spe" \\
 		-DTFM_PLATFORM="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/pltf_dirpath"\`" \\
 		-DDTS_BOARD_NS="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath"\`\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))-ns.${DTS_SUFFIX}" \\
 		-DDTS_BOARD_S="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath"\`\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))-s.${DTS_SUFFIX}" \\
@@ -341,7 +339,6 @@ help: \$(tfm-check-config)
 	@echo "  EXTDT_DIR = \$(EXTDT_DIR)"
 	@echo "  BL2_DEPLOYDIR = \$(BL2_DEPLOYDIR)"
 	@echo "  DDR_DEPLOYDIR = \$(DDR_DEPLOYDIR)"
-	@echo "  TFM_TESTS_DIR = \$(TFM_TESTS_DIR)"
 	@echo ""
 	@if [ -n  "\$(EXTDT_DIR)" ]; then \\
 		echo "TF-M external dt sub configuration:"; \\

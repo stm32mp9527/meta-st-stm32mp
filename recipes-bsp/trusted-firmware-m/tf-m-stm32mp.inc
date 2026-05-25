@@ -10,10 +10,6 @@ inherit m33fw-utils-stm32mp
 # Include TF-M config definitions
 require tf-m-stm32mp-config.inc
 
-# Include for STAGING_TF_M_TESTS_DIR
-require tf-m-tests-stm32mp-share.inc
-do_compile[depends] += "tf-m-tests-stm32mp:do_configure"
-
 # Baremetal and we bring a compiler below
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -194,7 +190,7 @@ do_compile() {
                 -DTFM_TOOLCHAIN_FILE=${S}/toolchain_GNUARM.cmake \
                 ${EXTRA_OECMAKE} \
                 ${extra_opt} \
-                -S ${STAGING_TF_M_TESTS_DIR}/tests_reg/spe -B ${build_path}/spe \
+                -S ${S} -B ${build_path}/spe \
                 ${extra_oecmake_platform} \
                 ${extra_oecmake_board_s} \
                 ${extra_oecmake_board_ns} \
@@ -206,7 +202,7 @@ do_compile() {
                 -DTFM_TOOLCHAIN_FILE=${S}/toolchain_GNUARM.cmake \
                 ${EXTRA_OECMAKE} \
                 ${extra_opt} \
-                -S ${STAGING_TF_M_TESTS_DIR}/tests_reg/spe -B ${build_path}/spe \
+                -S ${S} -B ${build_path}/spe \
                 ${extra_oecmake_platform} \
                 ${extra_oecmake_board_s} \
                 ${extra_oecmake_board_ns} \

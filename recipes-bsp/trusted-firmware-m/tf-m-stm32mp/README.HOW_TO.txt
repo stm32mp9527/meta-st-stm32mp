@@ -183,9 +183,6 @@ You can now move to section 5.3 [Generating TF-M artifacts].
 To use the external device tree feature, EXTDT_DIR variable must be set to the root location of external DT
 as specified in the README.HOW_TO.txt of external-dt
     $> export EXTDT_DIR=<external DT location>
-Before build, TFM_TESTS_DIR variable must be set to the root location of tf-m-tests-stm32mp source
-as specified in the README.HOW_TO.txt of tf-m-tests-stm32mp
-    $> export TFM_TESTS_DIR=<tf-m-tests-stm32mp location>
 
 The build results for this component are available in DEPLOYDIR (Default: $PWD/../deploy).
 If needed, this deploy directory can be specified by adding "DEPLOYDIR=<your_deploy_dir_path>" compilation option to the build command line below.
