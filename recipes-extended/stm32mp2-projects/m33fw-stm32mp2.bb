@@ -1,6 +1,9 @@
 SUMMARY = "M33 firmware generation"
 LICENSE = "BSD-3-Clause"
 
+inherit features_check
+REQUIRED_MACHINE_FEATURES = "${@bb.utils.contains('MACHINE_FEATURES', 'm33td', 'm33td', 'm33copro', d)}"
+
 COMPATIBLE_MACHINE = "(stm32mp2common)"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -57,6 +60,16 @@ do_deploy() {
             [ -z "${m33_priv_sign_key}" ] || m33_priv_sign_key="--signature-key ${m33_priv_sign_key}"
             [ -z "${m33_pass_sign_key}" ] || m33_pass_sign_key="--signature-key-pass ${m33_pass_sign_key}"
 
+            # Configure signature version
+            ddr_sign_version=""
+            m33_sign_version=""
+            [ -z "${M33FW_SIGN_VERSION_DDR}" ] || ddr_sign_version="--sign-version ${M33FW_SIGN_VERSION_DDR}"
+            [ -z "${M33FW_SIGN_VERSION}" ]     || m33_sign_version="--sign-version ${M33FW_SIGN_VERSION}"
+
+            # Configure image_ok flag setting
+            image_confirm="--image-confirm"
+            [ "${M33FW_IMAGE_CONFIRM}" -eq 1 ] || image_confirm=""
+
             # Override default env for SIGN_COPRO_TOOL
             [ -z "${M33FW_TFM_DEV_KIT_DIR}" ] || export TFM_DEV_KIT_DIR="${M33FW_TFM_DEV_KIT_DIR}"
             [ -z "${M33FW_OPENSSL_MODULES}" ] || export OPENSSL_MODULES="${M33FW_OPENSSL_MODULES}"
@@ -75,6 +88,8 @@ do_deploy() {
                                 \n--bootsuffix-m33 ${suffix_bootm33} \
                                 \n${ddr_priv_sign_key} \
                                 \n${ddr_pass_sign_key} \
+                                \n${ddr_sign_version} \
+                                \n${image_confirm} \
                                 \n--output ${DEPLOYDIR}"
             echo "****************************************"
             ${M33FW_WRAPPER} \
@@ -83,6 +98,8 @@ do_deploy() {
                     --bootsuffix-m33 ${suffix_bootm33} \
                     ${ddr_priv_sign_key} \
                     ${ddr_pass_sign_key} \
+                    ${ddr_sign_version} \
+                    ${image_confirm} \
                     --output ${DEPLOYDIR}
 
             echo "****************************************"
@@ -94,6 +111,8 @@ do_deploy() {
                                 \n--bootsuffix-a35 ${suffix_boota35} \
                                 \n${m33_priv_sign_key} \
                                 \n${m33_pass_sign_key} \
+                                \n${m33_sign_version} \
+                                \n${image_confirm} \
                                 \n--output ${DEPLOYDIR}"
             echo "****************************************"
             ${M33FW_WRAPPER} \
@@ -103,6 +122,8 @@ do_deploy() {
                     --bootsuffix-a35 ${suffix_boota35} \
                     ${m33_priv_sign_key} \
                     ${m33_pass_sign_key} \
+                    ${m33_sign_version} \
+                    ${image_confirm} \
                     --output ${DEPLOYDIR}
 
             # Add default firmware symlink

@@ -75,12 +75,15 @@ do_compile() {
                     break
                 done
             fi
-            # Init project name, path and build config for first loop
-            prj_name=$(echo ${m33fw_project_name} | cut -d':' -f1)
-            prj_path=$(echo ${m33fw_project_path} | cut -d':' -f1)
-            bld_conf=$(echo ${m33fw_bldconf_list} | cut -d':' -f1)
+            # Init loop count
             l=1
-            while [ -n "${prj_path}" ]; do
+            while [ -n "$(echo ${m33fw_project_path} | cut -d':' -f${l})" ]; do
+                prj_name=$(echo ${m33fw_project_name} | cut -d':' -f${l})
+                prj_path=$(echo ${m33fw_project_path} | cut -d':' -f${l})
+                bld_conf=$(echo ${m33fw_bldconf_list} | cut -d':' -f${l})
+                # Update for next loop
+                l=$(expr $l + 1)
+
                 bbnote "config    : ${config}"
                 bbnote "board     : ${board}"
                 bbnote "devicetree: ${dt}"
@@ -100,11 +103,17 @@ do_compile() {
                 done
 
                 # Init cmake source dir
-                m33td_srcdir="${S}/${prj_path}"
                 if [ -e "${STAGING_EXTDT_DIR}/${prj_path}" ]; then
-                    bbnote "M33TD: use external m33td project"
+                    bbnote "Use external m33 project"
                     m33td_srcdir="${STAGING_EXTDT_DIR}/${prj_path}"
+                elif [ -e "${S}/${prj_path}" ]; then
+                    bbnote "Use internal m33 project"
+                    m33td_srcdir="${S}/${prj_path}"
+                else
+                    bbnote "Project ${prj_name} not found for ${prj_path} path: skip action"
+                    continue
                 fi
+
                 # Init build dir
                 m33td_outputdir="${B}/build-${prj_name}-${config}-${dt}-${bld_conf}"
                 rm -rf "${m33td_outputdir}"
@@ -134,7 +143,7 @@ do_compile() {
                     bbfatal "Wrong config: ${m33td_deploy_basename}${M33TD_FW_TYPE}.elf already exists"
                 elif [ -e "${m33td_outputdir}/${prj_name}${M33TD_FW_TYPE}.elf" ]; then
                     cp ${m33td_outputdir}/${prj_name}${M33TD_FW_TYPE}.elf \
-                        ${m33td_outputdir}/${m33td_deploy_basename}${M33FW_NS_TYPE}.elf
+                        ${B}/${m33td_deploy_basename}${M33FW_NS_TYPE}.elf
                 else
                     bbnote "No ${prj_name}${M33TD_FW_TYPE}.elf file to deploy"
                 fi
@@ -146,12 +155,6 @@ do_compile() {
                 else
                     bbnote "No ${m33td_deploy_basename}${M33FW_NS_TYPE}_stripped.elf file to deploy"
                 fi
-
-                # Update for next loop
-                l=$(expr $l + 1)
-                prj_name=$(echo ${m33fw_project_name} | cut -d':' -f${l})
-                prj_path=$(echo ${m33fw_project_path} | cut -d':' -f${l})
-                bld_conf=$(echo ${m33fw_bldconf_list} | cut -d':' -f${l})
             done
         done
     done
@@ -179,11 +182,12 @@ do_deploy() {
             for elf in ${m33td_elf}; do
                 install -m 0644 ${elf} ${DEPLOYDIR}/debug
             done
-            m33td_elf_stripped="$(find "${B}" -name "*-${dt}${suffix_bootm33}${suffix_boota35}${M33FW_NS_TYPE}_stripped.elf" -maxdepth 1)"
-            [ -z "${m33td_elf_stripped}" ] || install -d ${DEPLOYDIR}/debug
-            for elf in ${m33td_elf_stripped}; do
-                install -m 0644 ${elf} ${DEPLOYDIR}/debug
-            done
+            # stripped binaries are not mandatory
+            #m33td_elf_stripped="$(find "${B}" -name "*-${dt}${suffix_bootm33}${suffix_boota35}${M33FW_NS_TYPE}_stripped.elf" -maxdepth 1)"
+            #[ -z "${m33td_elf_stripped}" ] || install -d ${DEPLOYDIR}/debug
+            #for elf in ${m33td_elf_stripped}; do
+            #    install -m 0644 ${elf} ${DEPLOYDIR}/debug
+            #done
         done
     done
 }

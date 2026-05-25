@@ -45,32 +45,43 @@ do_compile() {
         # Init project var name and path list
         m33fw_project_name=$(echo ${M33FW_PROJECT_NAME} | cut -d',' -f${k})
         m33fw_project_path=$(echo ${M33FW_PROJECT_PATH} | cut -d',' -f${k})
-        # Init project name and path for first loop
-        prj_name=$(echo ${m33fw_project_name} | cut -d':' -f1)
-        prj_path=$(echo ${m33fw_project_path} | cut -d':' -f1)
+        # Init loop count
         l=1
-        while [ -n "${prj_path}" ]; do
+        while [ -n "$(echo ${m33fw_project_path} | cut -d':' -f${l})" ]; do
+            # Set project name and path
+            prj_name=$(echo ${m33fw_project_name} | cut -d':' -f${l})
+            prj_path=$(echo ${m33fw_project_path} | cut -d':' -f${l})
+            # Update for next loop
+            l=$(expr $l + 1)
+
             bbnote "board: ${board}"
             bbnote "project name: ${prj_name}"
             bbnote "project path: ${prj_path}"
 
-            [ -d "${S}/${prj_path}" ] || continue
-            [ -e "${S}/${prj_path}/CMakeLists.txt" ] || continue
-            [ "$(basename ${prj_path})" != "bin" ] || continue
+            # Init project source dir
+            if [ -e "${STAGING_EXTDT_DIR}/${prj_path}" ]; then
+                bbnote "Use external m33 project"
+                m33prj_srcdir="${STAGING_EXTDT_DIR}/${prj_path}"
+            elif [ -e "${S}/${prj_path}" ]; then
+                bbnote "Use internal m33 project"
+                m33prj_srcdir="${S}/${prj_path}"
+            else
+                bbnote "Project ${prj_name} not found for ${prj_path} path: skip action"
+                continue
+            fi
+
+            [ -e "${m33prj_srcdir}/CMakeLists.txt" ] || { bbnote "Missing CMakeLists.txt file for project path" ; continue ; }
+            [ "$(basename ${m33prj_srcdir})" != "bin" ] || { bbnote "Project path is a 'bin' one: nothing to compile" ; continue ; }
 
             # Init build dir
-            builddir="${B}/${prj_path}/build"
+            builddir="${m33prj_srcdir}/build"
             rm -rf "${builddir}"
             # Generate Makefile
             export PATH=${STAGING_DATADIR_NATIVE}/gcc-arm-none-eabi/bin:${STAGING_BINDIR_NATIVE}:$PATH
-            ${STAGING_BINDIR_NATIVE}/cmake -G"Unix Makefiles" -S "${S}/${prj_path}" -B "${builddir}"
+            ${STAGING_BINDIR_NATIVE}/cmake -G"Unix Makefiles" -S "${m33prj_srcdir}" -B "${builddir}"
             # Build
             cd ${builddir}
             ${STAGING_BINDIR_NATIVE}/make all
-            # Update for next loop
-            l=$(expr $l + 1)
-            prj_name=$(echo ${m33fw_project_name} | cut -d':' -f${l})
-            prj_path=$(echo ${m33fw_project_path} | cut -d':' -f${l})
         done
     done
 }
@@ -91,23 +102,37 @@ do_install() {
         # Init project var name and path list
         m33fw_project_name=$(echo ${M33FW_PROJECT_NAME} | cut -d',' -f${k})
         m33fw_project_path=$(echo ${M33FW_PROJECT_PATH} | cut -d',' -f${k})
-
-        # Init project name and path for first loop
-        prj_name=$(echo ${m33fw_project_name} | cut -d':' -f1)
+        # Init path for first loop
         prj_path=$(echo ${m33fw_project_path} | cut -d':' -f1)
         l=1
-        while [ -n "${prj_path}" ]; do
+        while [ -n "$(echo ${m33fw_project_path} | cut -d':' -f${l})" ]; do
+            prj_name=$(echo ${m33fw_project_name} | cut -d':' -f${l})
+            prj_path=$(echo ${m33fw_project_path} | cut -d':' -f${l})
+            # Update for next loop
+            l=$(expr $l + 1)
+
             bbnote "board: ${board}"
             bbnote "project name: ${prj_name}"
             bbnote "project path: ${prj_path}"
 
             # Remove '^Projects/' and '/bin$' from path (if any)
             INSTALL_PROJ=$(echo ${prj_path} | sed 's,^Projects/,,;s,/bin$,,')
+            # Init project source dir
+            if [ -e "${STAGING_EXTDT_DIR}/${prj_path}" ] && [ -n "${prj_path}" ]; then
+                bbnote "Use external m33 project"
+                m33prj_srcdir="${STAGING_EXTDT_DIR}/${prj_path}"
+            elif [ -e "${S}/${prj_path}" ] && [ -n "${prj_path}" ]; then
+                bbnote "Use internal m33 project"
+                m33prj_srcdir="${S}/${prj_path}"
+            else
+                bbnote "Project ${prj_name} not found for ${prj_path} path: skip action"
+                continue
+            fi
             # Init output dir
             if [ "$(basename ${prj_path})" != "bin" ] ; then
-                builddir="${B}/${prj_path}/build"
+                builddir="${m33prj_srcdir}/build"
             else
-                builddir="${B}/${prj_path}"
+                builddir="${m33prj_srcdir}"
             fi
 
             # Install M33 firmwares
@@ -129,8 +154,8 @@ do_install() {
             if [ -e ${builddir}/fw_cortex_m33.sh ]; then
                 install -m 0755 ${builddir}/fw_cortex_m33.sh ${D}${M33_OUTPUT_4USERFS}/${INSTALL_PROJ}
             fi
-            if [ -e ${S}/${prj_path}/Remoteproc/README ]; then
-                install -m 0755 ${S}/${prj_path}/Remoteproc/README ${D}${M33_OUTPUT_4USERFS}/${INSTALL_PROJ}
+            if [ -e ${m33prj_srcdir}/Remoteproc/README ]; then
+                install -m 0755 ${m33prj_srcdir}/Remoteproc/README ${D}${M33_OUTPUT_4USERFS}/${INSTALL_PROJ}
             fi
             #FIXME temporary: add firmware to permit to load the project at runtime
             install -m 0755 ${WORKDIR}/fw_cortex_m33.sh ${D}${M33_OUTPUT_4USERFS}/${INSTALL_PROJ}/
@@ -143,10 +168,6 @@ do_install() {
                     fi
                 done
             fi
-            # Update for next loop
-            l=$(expr $l + 1)
-            prj_name=$(echo ${m33fw_project_name} | cut -d':' -f${l})
-            prj_path=$(echo ${m33fw_project_path} | cut -d':' -f${l})
         done
     done
     if [ "${M33_BOARDS_SERVICE}" -eq 1 ]; then
@@ -190,8 +211,15 @@ sign_copro() {
         done
         [ -n "${soc_conf}" ] || continue
 
-        for ns_elf in $(find "${D}${M33_OUTPUT_4USERFS}/$(echo "${board}" | tr '[:lower:]' '[:upper:]')/" -name "*.elf"); do
-            bbnote "Non Secure firmware: $(basename "${ns_elf}")"
+        # Set sub path for Non Secure firmware search
+        if [ "$(echo "${M33FW_BOARDS}" | wc -w)" -eq 1 ]; then
+            ns_subpath=""
+        else
+            ns_subpath="$(echo "${board}" | tr '[:lower:]' '[:upper:]')"
+        fi
+        bbnote "[${board}] Check for non secure firmware under ${M33_OUTPUT_4USERFS}/${ns_subpath}"
+        for ns_elf in $(find "${D}${M33_OUTPUT_4USERFS}/${ns_subpath}" -name "*.elf"); do
+            bbnote "[${board}] Non Secure firmware: $(basename "${ns_elf}")"
             # Get NS elf radix name
             ns_name="$(echo "${ns_elf}" | sed 's#\.elf$##')"
             # Get isr_vectors from elf file
@@ -211,13 +239,16 @@ sign_copro() {
                 fi
                 # Init devicetree list for single M33FW_CONFIG
                 dt_config=$(echo ${M33FW_DEVICETREE} | cut -d',' -f1)
-                bbnote "Use M33FW devicetree list: ${dt_config}"
+                bbnote "[${board}] Use M33FW devicetree list: ${dt_config}"
                 for dt in ${dt_config}; do
-                    [ -n "$(echo ${dt} | grep ${board})" ] || continue
+                    # Select the right device tree if needed
+                    if [ "$(echo "${dt_config}" | wc -w)" -gt 1 ]; then
+                        [ -n "$(echo ${dt} | grep ${board})" ] || continue
+                    fi
                     # Get S elf
                     [ -e "${RECIPE_SYSROOT}${M33FW_SYSROOT_S}" ] || { bbwarn "[${board}][NonSecure+Secure] Missing secure firmware folder"; continue; }
                     s_elf=$(find "${RECIPE_SYSROOT}${M33FW_SYSROOT_S}" -name "${M33FW_S_PREFIX}-${dt}${M33FW_S_TYPE}.elf")
-                    bbnote "Secure firmware: $(basename "${s_elf}")"
+                    bbnote "[${board}] Secure firmware: $(basename "${s_elf}")"
                     [ -n "${s_elf}" ] || continue
                     (
                         export NSBOOTADDR=0x${elf_NSBOOTADDR}
