@@ -301,10 +301,6 @@ FLASHLAYOUT_PARTITION_ENABLE:sdcard:${STM32MP_SSBL1_NAME} = "${@bb.utils.contain
 FLASHLAYOUT_PARTITION_ENABLE:emmc:${STM32MP_SSBL1_NAME} = "${@bb.utils.contains('ENABLE_FLASHLAYOUT_CONFIG_FWUP', '1', '', 'PD', d)}"
 FLASHLAYOUT_PARTITION_ENABLE:${STM32MP_METADATA_NAME} = "${@bb.utils.contains('MACHINE_FEATURES', 'fw-update', 'PD', 'PED', d)}"
 
-# Second partition for A/B update: delete is skipped to decrease flashing time (never used)
-FLASHLAYOUT_PARTITION_ENABLE:${STM32MP_M33DDRB_NAME} = "PE"
-FLASHLAYOUT_PARTITION_ENABLE:${STM32MP_M33FWB_NAME} = "PE"
-
 # -----------------------------------------------------------------------------
 # Partition ID
 # -----------------------------------------------------------------------------
