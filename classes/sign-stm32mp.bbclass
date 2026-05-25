@@ -33,6 +33,14 @@ SIGN_COPRO_RSA_INFOKEY ??= ""
 
 SIGN_TOOL ??= ""
 
+# Specific HEARDER_VERSION configuration
+SIGN_HEADER_VERSION ??= "1"
+SIGN_HEADER_VERSION_stm32mp13 = "2"
+SIGN_HEADER_VERSION_stm32mp15 = "1"
+SIGN_HEADER_VERSION_stm32mp21 = "2.3"
+SIGN_HEADER_VERSION_stm32mp23 = "2.2"
+SIGN_HEADER_VERSION_stm32mp25 = "2.2"
+
 def search_path(file_search, d):
     """
     Check for <file_search> path availability from BBPATH
