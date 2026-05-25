@@ -385,7 +385,7 @@ Update Starter Package bootfs with new generated dtb and uImage or Image.gz
     #> mkdir -p <your_starter_package_dir_path>/bootfs_mounted
     #> sudo mount -o loop <your_starter_package_dir_path>/images/stm32mp*/st-image-weston-openstlinux-weston-stm32mp*.splitted-bootfs.ext4 <your_starter_package_dir_path>/bootfs_mounted
     #> sudo cp -vf ${OUTPUT_BUILD_DIR}/install_artifact/boot/${IMAGE_KERNEL}  <your_starter_package_dir_path>/bootfs_mounted/
-    #> sudo cp -vf ${OUTPUT_BUILD_DIR}/install_artifact/boot/st*.dtb <your_starter_package_dir_path>/bootfs_mounted/
+    #> for dtb in ${OUTPUT_BUILD_DIR}/install_artifact/boot/st*.dtb; do [ ! -e <your_starter_package_dir_path>/bootfs_mounted/$(echo $dtb | sed "s|${OUTPUT_BUILD_DIR}/install_artifact/boot/||") ] || sudo cp -vf $dtb <your_starter_package_dir_path>/bootfs_mounted/; done
     #> sudo umount <your_starter_package_dir_path>/bootfs_mounted
     #> rmdir <your_starter_package_dir_path>/bootfs_mounted
 
