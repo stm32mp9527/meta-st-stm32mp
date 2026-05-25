@@ -340,12 +340,12 @@ ST_EXTLINUX_PACKAGE ??= "${@bb.utils.contains('MACHINE_FEATURES', 'efi', 'stm32m
 ST_EXTLINUX_SPLASH_PACKAGE ??= "${@bb.utils.contains('MACHINE_FEATURES', 'splashscreen', 'u-boot-stm32mp-splash', '', d)}"
 
 # populate boot directory
-MACHINE_EXTRA_RRECOMMENDS += "${ST_KERNEL_IMAGE_PACKAGE}"
-MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
-MACHINE_EXTRA_RRECOMMENDS += "kernel-devicetree"
-MACHINE_EXTRA_RRECOMMENDS += "${ST_EXTLINUX_PACKAGE}"
-MACHINE_EXTRA_RRECOMMENDS += "${ST_EXTLINUX_SPLASH_PACKAGE}"
-MACHINE_EXTRA_RRECOMMENDS += "${ST_DEVICE_OVERLAY_ADDONS}"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "${ST_KERNEL_IMAGE_PACKAGE}"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "kernel-modules"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "kernel-devicetree"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "${ST_EXTLINUX_PACKAGE}"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "${ST_EXTLINUX_SPLASH_PACKAGE}"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "${ST_DEVICE_OVERLAY_ADDONS}"
 
 # =========================================================================
 # u-boot
@@ -384,9 +384,9 @@ UBOOT_CONFIG:append:stm32mp25common = " ${@bb.utils.contains_any('BOOTSCHEME_LAB
 UBOOT_SPLASH_PORTRAIT_IMAGE = "splash_portrait"
 UBOOT_SPLASH_LANDSCAPE_IMAGE = "splash_landscape"
 
-PREFERRED_PROVIDER_u-boot-fw-utils:stm32mp1common ??= "libubootenv"
+PREFERRED_PROVIDER_u-boot-fw-utils ??= "libubootenv"
 
-MACHINE_EXTRA_RRECOMMENDS:append:stm32mp1common = " \
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS:append = " \
     u-boot-fw-config-stm32mp \
 "
 
@@ -478,7 +478,7 @@ EXTRA_IMAGEDEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'm33td', 'm33fw-
 M33PROJECT_TF_M_TRUSTZONE ??= "${@bb.utils.contains('MACHINE_FEATURES', 'm33td', '0', '1', d)}"
 
 # Configure m33fw build
-M33FW_CONFIG += "${@bb.utils.contains('M33PROJECT_TF_M_TRUSTZONE', '1', 'm33copro', '', d)}"
+M33FW_CONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'm33copro', 'm33copro', '', d)}"
 M33FW_CONFIG += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'emmc', bb.utils.contains('MACHINE_FEATURES', 'm33td', 'm33td_emmc', '', d), '', d)}"
 M33FW_CONFIG += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', 'nor-nor-emmc nor-nor-sdcard', bb.utils.contains('MACHINE_FEATURES', 'm33td', 'm33td_nor', '', d), '', d)}"
 M33FW_CONFIG += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'nor-emmc', bb.utils.contains('MACHINE_FEATURES', 'm33td', 'm33td_nor-emmc', '', d), '', d)}"
@@ -580,7 +580,8 @@ FIP_CONFIG[fastboot-opteemin-sdcard] ?= "optee,${STM32MP_DT_FILES_SDCARD},,fastb
 # RPMSG
 # =========================================================================
 # install tools on file system
-MACHINE_EXTRA_RRECOMMENDS:append = " rpmsg-tools"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += " rpmsg-tools"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += " ${@bb.utils.contains('MACHINE_FEATURES', 'm33td', 'm33rpfwu', '', d)} "
 
 # =========================================================================
 # Xserver

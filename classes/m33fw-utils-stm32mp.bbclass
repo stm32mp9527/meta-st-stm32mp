@@ -30,6 +30,11 @@ M33FW_SUFFIX ?= "bin"
 #M33FW_ENCRYPT_SUFFIX ??= "${@bb.utils.contains('ENCRYPT_ENABLE', '1', '${ENCRYPT_SUFFIX}', '', d)}"
 M33FW_SIGN_SUFFIX ??= "${SIGN_SUFFIX}"
 
+M33FW_SIGN_VERSION ??= ""
+M33FW_SIGN_VERSION_DDR ??= ""
+
+M33FW_IMAGE_CONFIRM ??= "1"
+
 # Set default name for buid configuration
 M33FW_BUILDCONF ??= ""
 M33FW_PROJECT_DEFAULT_BUILDCONF ??= "no_build_conf"
@@ -67,8 +72,6 @@ python () {
     m33fwconfigflags.pop('doc', None)
     m33fwconfig = (d.getVar('M33FW_CONFIG') or "").split()
 
-    if not m33fwconfig:
-        raise bb.parse.SkipRecipe("M33FW_CONFIG must be set in the %s machine configuration." % d.getVar("MACHINE"))
     if (d.getVar('M33FW_DEVICETREE') or "").split():
         raise bb.parse.SkipRecipe("You cannot use M33FW_DEVICETREE as it is internal to M33FW_CONFIG var expansion.")
     if (d.getVar('M33FW_DEVICETREE_EXTERNAL') or "").split():
@@ -126,7 +129,8 @@ python () {
                     break
             if not found:
                 raise bb.parse.SkipRecipe('[M33FW_CONFIG] The selected M33FW_CONFIG key %s has no match in %s' % (config, m33fwconfigflags.keys()))
-
+    else:
+        bb.debug(1, "[M33FW_CONFIG] Empty configuration for M33FW_CONFIG")
 
     # Configure M33FW_FIRMWARE
     m33fwboards = (d.getVar('M33FW_BOARDS') or "").split()
@@ -403,6 +407,10 @@ M33FW_TYPE="\${M33FW_TYPE:-${M33FW_TYPE}}"
 M33FW_SIGN_SUFFIX="\${M33FW_SIGN_SUFFIX:-${M33FW_SIGN_SUFFIX}}"
 M33FW_SUFFIX="\${M33FW_SUFFIX:-${M33FW_SUFFIX}}"
 
+M33FW_IMAGE_CONFIRM="\${M33FW_IMAGE_CONFIRM:-${M33FW_IMAGE_CONFIRM}}"
+M33FW_SIGN_VERSION="\${M33FW_SIGN_VERSION:-${M33FW_SIGN_VERSION}}"
+M33FW_SIGN_VERSION_DDR="\${M33FW_SIGN_VERSION_DDR:-${M33FW_SIGN_VERSION_DDR}}"
+
 echo ""
 echo "${M33FW_TOOL_WRAPPER} config:"
 for config in \$M33FW_CONFIG; do
@@ -428,6 +436,19 @@ echo "  M33FW_TYPE       : \$M33FW_TYPE"
 echo "  M33FW_SIGN_SUFFIX: \$M33FW_SIGN_SUFFIX"
 echo "  M33FW_SUFFIX     : \$M33FW_SUFFIX"
 echo ""
+echo "Default signing config"
+echo "  M33FW_IMAGE_CONFIRM   : \$M33FW_IMAGE_CONFIRM"
+echo "  M33FW_SIGN_VERSION    : \$M33FW_SIGN_VERSION"
+echo "  M33FW_SIGN_VERSION_DDR: \$M33FW_SIGN_VERSION_DDR"
+echo ""
+# Configure signature version
+ddr_sign_version=""
+m33_sign_version=""
+[ -z "\$M33FW_SIGN_VERSION_DDR" ] || ddr_sign_version="--sign-version \$M33FW_SIGN_VERSION_DDR"
+[ -z "\$M33FW_SIGN_VERSION" ]     || m33_sign_version="--sign-version \$M33FW_SIGN_VERSION"
+# Configure image_ok flag setting
+image_confirm="--image-confirm"
+[ "\$M33FW_IMAGE_CONFIRM" -eq 1 ] || image_confirm=""
 unset i
 for config in \$M33FW_CONFIG; do
     i=\$(expr \$i + 1)
@@ -449,11 +470,15 @@ for config in \$M33FW_CONFIG; do
                 --ddrfw \\
                 --devicetree \${dt} \\
                 --bootsuffix-m33 \${suffix_bootm33} \\
+                \${ddr_sign_version} \\
+                \${image_confirm} \\
                 --output \$M33FW_DEPLOYDIR_M33FW"
         \$M33FW_WRAPPER \\
                 --ddrfw \\
                 --devicetree \${dt} \\
                 --bootsuffix-m33 \${suffix_bootm33} \\
+                \${ddr_sign_version} \\
+                \${image_confirm} \\
                 --output \$M33FW_DEPLOYDIR_M33FW
 
         echo "\$M33FW_WRAPPER \\
@@ -461,12 +486,16 @@ for config in \$M33FW_CONFIG; do
                 --devicetree \${dt} \\
                 --bootsuffix-m33 \${suffix_bootm33} \\
                 --bootsuffix-a35 \${suffix_boota35} \\
+                \${m33_sign_version} \\
+                \${image_confirm} \\
                 --output \$M33FW_DEPLOYDIR_M33FW"
         \$M33FW_WRAPPER \\
                 --m33fw \\
                 --devicetree \${dt} \\
                 --bootsuffix-m33 \${suffix_bootm33} \\
                 --bootsuffix-a35 \${suffix_boota35} \\
+                \${m33_sign_version} \\
+                \${image_confirm} \\
                 --output \$M33FW_DEPLOYDIR_M33FW
 
         # Add default firmware symlink
