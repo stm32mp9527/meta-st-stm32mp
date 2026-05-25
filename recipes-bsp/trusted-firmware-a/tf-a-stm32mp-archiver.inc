@@ -71,6 +71,28 @@ EOF
     extra_oemake_for_cross_compile=$(echo ${EXTRA_OEMAKE} | sed 's|CROSS_COMPILE='"${STAGING_DATADIR_NATIVE}/${ST_CROSS_COMPILE_BIN}/"'|CROSS_COMPILE=|' )
     cat << EOF >> ${ARCHIVER_OUTDIR}/Makefile.sdk.${MACHINE}
 
+# Force to Add SUFFIX to devicetree
+# if you call Makefile.sdk with EXTDT_SUFFIX=1, you request to explecitly add storage suffix to devicetree
+# if TF_A_DEVICETREE is not defined on command line of Makefile.sdk, we must force EXTDT_SUFFIX to 1
+EXTDT_SUFFIX ?= 0
+
+# Manage specific devicetree file type suffix
+ifndef EXTDT_SUFFIX
+   ifndef TF_A_DEVICETREE
+        EXTDT_SUFFIX_CONFIG = 1
+    else
+        EXTDT_SUFFIX_CONFIG =
+    endif
+else ifeq (\$(EXTDT_SUFFIX),1)
+    EXTDT_SUFFIX_CONFIG = 1
+else
+    ifndef TF_A_DEVICETREE
+        EXTDT_SUFFIX_CONFIG = 1
+    else
+        EXTDT_SUFFIX_CONFIG =
+    endif
+endif
+
 # Append toolchain path for SDK
 PATH := \$(OECORE_NATIVE_SYSROOT)/usr/share/${ST_CROSS_COMPILE_BIN}:\$(PATH)
 
@@ -91,7 +113,7 @@ EXTRA_OEMAKE ?= $extra_oemake_for_cross_compile
 define tf-configs
 	echo "  \$(1)" ; \\
 	echo "    with device tree : \$(if \$(TF_A_DEVICETREE),\$(TF_A_DEVICETREE),\$(TF_A_DEVICETREE_\$(1)))" ; \\
-	echo "    with suffix      : \$(if \$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX_\$(1)))" ; \\
+	echo "    with suffix      : \$(if \$(EXTDT_SUFFIX_CONFIG),\$(if \$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX_\$(1))))" ; \\
 	echo "    extra optionflags: \$(if \$(TF_A_EXTRA_OPTFLAGS),\$(TF_A_EXTRA_OPTFLAGS),\$(TF_A_EXTRA_OPTFLAGS_\$(1)))" ; \\
 	echo "    binary basename  : \$(if \$(TF_A_BINARY),\$(TF_A_BINARY),\$(TF_A_BINARY_\$(1)))" ; \\
 	echo "    tf-a build target: \$(if \$(TF_A_MAKE_TARGET),\$(TF_A_MAKE_TARGET),\$(TF_A_MAKE_TARGET_\$(1)))" ;
@@ -267,6 +289,9 @@ help: \$(tf-check-config)
 	@echo "  TF_A_BINARY"
 	@echo "  TF_A_MAKE_TARGET"
 	@echo ""
+	@echo "TF-A devicetree suffix configuration:"
+	@echo "  EXTDT_SUFFIX = \$(EXTDT_SUFFIX)"
+	@echo ""
 	@echo "TF-A features configuration:"
 	@echo "  TF_A_ENABLE_BL31 = \$(TF_A_ENABLE_BL31) ('1' to generate bl31 binary)"
 	@echo "  TF_A_ENABLE_DEBUG_WRAPPER = \$(TF_A_ENABLE_DEBUG_WRAPPER) ('1' to generate tf-a for debugging)"
@@ -319,8 +344,8 @@ fip: \$(deploy-targets)
 				FIP_CONFIG="\$\$fipconfig" \\
 				FIP_BL31_ENABLE="\$(TF_A_ENABLE_BL31)" \\
 				\$(if \$(TF_A_DEVICETREE),FIP_DEVICETREE="\$(TF_A_DEVICETREE)") \\
-				\$(if \$(TF_A_DEVICETREE_SUFFIX),FIP_DEVICETREE_SUFFIX="\$(TF_A_DEVICETREE_SUFFIX)") \\
-				\$(FIPTOOLDIR)/fiptool-stm32mp.${MACHINE} || { echo "[FIP BUILD ERROR] FIP_CONFIG=\$\$fipconfig \$(if \$(TF_A_DEVICETREE),FIP_DEVICETREE=\$(TF_A_DEVICETREE)) \$(if \$(TF_A_DEVICETREE_SUFFIX),FIP_DEVICETREE_SUFFIX=\$(TF_A_DEVICETREE_SUFFIX))"; exit 1; }; \\
+				\$(if \$(EXTDT_SUFFIX_CONFIG),\$(if \$(TF_A_DEVICETREE_SUFFIX),FIP_DEVICETREE_SUFFIX="\$(TF_A_DEVICETREE_SUFFIX)")) \\
+				\$(FIPTOOLDIR)/fiptool-stm32mp.${MACHINE} || { echo "[FIP BUILD ERROR] FIP_CONFIG=\$\$fipconfig \$(if \$(TF_A_DEVICETREE),FIP_DEVICETREE=\$(TF_A_DEVICETREE)) \$(if \$(EXTDT_SUFFIX_CONFIG),\$(if \$(TF_A_DEVICETREE_SUFFIX),FIP_DEVICETREE_SUFFIX=\$(TF_A_DEVICETREE_SUFFIX)))"; exit 1; }; \\
 			fi ; \\
 		done ; \\
 	done
@@ -339,20 +364,20 @@ stm32: \$(deploy-targets)
 
 # Set TF-A check config rules
 \$(foreach config, \$(TF_A_CONFIG), \\
-	\$(eval \$(call check-config,\$(config),\$(if \$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX_\$(config))))) \\
+	\$(eval \$(call check-config,\$(config),\$(if \$(EXTDT_SUFFIX_CONFIG),\$(if \$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX_\$(config)))))) \\
 )
 
 # Set TF-A make rules
 \$(foreach config, \$(TF_A_CONFIG), \\
 	\$(foreach soc, ${STM32MP_SOC_NAME}, \\
-		\$(eval \$(call tf-rules,\$(config),\$(soc),\$(if \$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX_\$(config))),host_tools chk-conf-\$(config))) \\
+		\$(eval \$(call tf-rules,\$(config),\$(soc),\$(if \$(EXTDT_SUFFIX_CONFIG),\$(if \$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX_\$(config)))),host_tools chk-conf-\$(config))) \\
 	) \\
 )
 
 # Set TF-A deploy rules
 \$(foreach config, \$(TF_A_CONFIG), \\
 	\$(foreach soc, ${STM32MP_SOC_NAME}, \\
-		\$(eval \$(call deploy-rules,\$(config),\$(soc),\$(if \$(TF_A_BINARY),\$(TF_A_BINARY),\$(TF_A_BINARY_\$(config))),\$(if \$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX_\$(config))))) \\
+		\$(eval \$(call deploy-rules,\$(config),\$(soc),\$(if \$(TF_A_BINARY),\$(TF_A_BINARY),\$(TF_A_BINARY_\$(config))),\$(if \$(EXTDT_SUFFIX_CONFIG),\$(if \$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX),\$(TF_A_DEVICETREE_SUFFIX_\$(config)))))) \\
 	) \\
 )
 EOF
