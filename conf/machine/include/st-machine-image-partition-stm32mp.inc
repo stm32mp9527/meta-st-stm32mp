@@ -14,13 +14,24 @@ def partImage2partConfig(d, config, fstype=None):
         bb.fatal('[partImage2partConfig] Wrong settings for PARTTIONS_IMAGES[%s] : %s' % (config, items))
     overrides = d.getVar('OVERRIDES')
     bin_suffix = '-${MACHINE}'
+    machine =  d.getVar('MACHINE')
     addons_partition = ""
     if (d.getVar('ENABLE_PARTITIONS_IMAGE') or "0") != "0":
         addons_partition = "splitted-"
-    if fstype:
-        bin_name = items[0] + bin_suffix + '.' + addons_partition + items[1] + '.' + fstype
+    if machine in items[0].replace('-','.').split('.'):
+        # items[0] = full name of image with or without fstype
+        bin_name=items[0]
+        image_fstype=items[0].rsplit(".", 1)
+        if len(items[0].rsplit(".", 1)) >= 2:
+            if items[1] in items[0].rsplit(".", 1)[1]:
+                # no fstype specified on image
+                if fstype:
+                    bin_name = items[0] + '.' + fstype
     else:
-        bin_name = items[0] + bin_suffix + '.' + addons_partition + items[1]
+        if fstype:
+            bin_name = items[0] + bin_suffix + '.' + addons_partition + items[1] + '.' + fstype
+        else:
+            bin_name = items[0] + bin_suffix + '.' + addons_partition + items[1]
     if len(items) == 6:
         copy = items[5]
     else:
