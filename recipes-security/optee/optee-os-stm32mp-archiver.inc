@@ -153,7 +153,7 @@ help: \$(optee-check-config)
 	@echo "  DEPLOYDIR = \$(DEPLOYDIR)"
 	@echo "  EXTDT_DIR = \$(EXTDT_DIR)"
 	@echo "Support of TA_arm64 and TA_arm32"
-	@echo "  TA32_64   = \$(TA32_64)
+	@echo "  TA32_64   = \$(TA32_64)"
 	@echo ""
 	@echo "FIP configuration:"
 	@echo "  Do not forget to set FIP deploydir folders (such as FIP_DEPLOYDIR_ROOT) to provide path to needed binaries"
