@@ -10,20 +10,20 @@ LIC_FILES_CHKSUM = " \
 include linux-stm32mp.inc
 
 LINUX_VERSION = "6.6"
-LINUX_SUBVERSION = ".116"
+LINUX_SUBVERSION = ".129"
 LINUX_TARBASE = "linux-${LINUX_VERSION}${LINUX_SUBVERSION}"
 LINUX_TARNAME = "${LINUX_TARBASE}.tar.xz"
 
 SRC_URI = "https://cdn.kernel.org/pub/linux/kernel/v6.x/${LINUX_TARNAME};name=kernel"
 
-SRC_URI[kernel.sha256sum] = "a9a59742c29be284c205dc87cbe9b065f9688488132c8f5a6057a5539230a51d"
+SRC_URI[kernel.sha256sum] = "caa08f0122224fbbfab177e2a37cc2a94a0046bd2e7e87f03f8913f2b812448a"
 
 SRC_URI += " \
-    file://${LINUX_VERSION}/${LINUX_VERSION}${LINUX_SUBVERSION}/0001-v6.6-stm32mp-r3.patch \
+    file://${LINUX_VERSION}/${LINUX_VERSION}${LINUX_SUBVERSION}/0001-v6.6-stm32mp-r3.1.patch \
     "
 
 LINUX_TARGET = "stm32mp"
-LINUX_RELEASE = "r3"
+LINUX_RELEASE = "r3.1"
 
 PV = "${LINUX_VERSION}${LINUX_SUBVERSION}-${LINUX_TARGET}-${LINUX_RELEASE}"
 
@@ -40,7 +40,7 @@ S = "${WORKDIR}/${LINUX_TARBASE}"
 BBCLASSEXTEND = "devupstream:target"
 
 SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/linux.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "80d29586bafa4734bad35a8f063919fdd79f5dec"
+SRCREV:class-devupstream = "548f960c059bc4b9165cb69895fd67551f6061ca"
 #FIXME force the PV to avoid build issue:
 #  do_package: ExpansionError('SRCPV', '${@bb.fetch2.get_srcrev(d)}', FetchError('SRCREV was used yet no valid SCM was found in SRC_URI', None))
 PV:class-devupstream = "${LINUX_VERSION}${LINUX_SUBVERSION}-${LINUX_TARGET}.${SRCPV}"
