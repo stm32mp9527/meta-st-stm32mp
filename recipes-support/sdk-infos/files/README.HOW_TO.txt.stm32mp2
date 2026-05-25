@@ -68,11 +68,11 @@ For stm32mp2 case, external-dt or CubeMX configuration can be generated:
  * stm32mp2-mx: to compile ST board via device tree from components themselves or external board provided by CubeMX device tree
 
 For external-dt configuration (default)
- $> ./generated_build_script-stm32mpx.sh stm32mp2
+ $> ./generated_build_script-stm32mpx.sh stm32mp2 --overwrite
     => generate a script on root directory for all source codes from Developer Package:
        sources/*/sdk_compilation-stm32mp2-my-custom-board.sh
 For CubeMX devicetree configuration (mx)
- $> ./generated_build_script-stm32mpx.sh stm32mp2-mx
+ $> ./generated_build_script-stm32mpx.sh stm32mp2-mx --overwrite
     => generate a script on root directory for all source codes from Developer Package:
        sources/*/sdk_compilation-stm32mp2-mx-my-custom-board.sh
 

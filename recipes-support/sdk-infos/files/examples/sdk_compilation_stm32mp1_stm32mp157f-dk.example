@@ -5,10 +5,10 @@
 ### General configuration
 ##################################################################
 ##################################################################
-
 # Path to SDK environment (where is 'environment-setup-cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi')
 # Usually: /opt/st/stm32mp1/<X.X.X>-openstlinux-<X.X>-yocto-<version_name>-mpu-v<XX.XX.XX>
 sdk_absolute_path=<SDK absolute path>
+
 # Name of environment setup script for sdk
 sdk_env_file="environment-setup-cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi"
 
@@ -25,19 +25,23 @@ your_storage_boot_scheme_security="opteemin"
 #    optee-emmc
 #    optee-sdcard
 #    optee-nor
+#    opteemin-emmc
+#    opteemin-sdcard
+#    opteemin-nor
 #    ... (for other boot storage see ST Yocto BSP)
 your_storage_boot_scheme_cortex_a="opteemin-sdcard"
 
 # Location to store all the binaries generated
 your_deploy_dir_path="$PWD/output-sdk-stm32mp157f-dk"
 
-# Define sub build directory (by default set to ../build)
+# Define build subdirectory (by default set to ../build)
 your_build_subdir_path="../build-stm32mp157f-dk"
 
 PARALLEL_MAKE=-j8
-# paralelle make for linux kernel:
-# ex.: 
+# parallel make for linux kernel:
+# ex.:
 # PARALLEL_MAKE=-j8
+
 # ----------------------------------------------------------------
 # ----------------------------------------------------------------
 ### External DT configuration
@@ -52,8 +56,10 @@ PARALLEL_MAKE=-j8
 
 # ------------------------------
 # Via external dt
-# force external dt path to externaldt env path
-externaldt_path=
+# force external dt path to external-dt env path
+# (EXTDT_DIR can be changed by overwriting the path on external-dt_set funcion)
+externaldt_path=<externaldt_path>
+
 # external dt subpath for Optee
 externaldt_optee_path=stm32mp1/optee
 externaldt_optee_programmer_path=stm32mp1/optee
@@ -68,20 +74,21 @@ externaldt_linux_path=stm32mp1/linux
 
 # Name of devicetree to use
 # Optee dt name
-optee_dt_name=$your_board_name
-optee_dt_programmer_name=$your_board_name
+optee_dt_name=${your_board_name}
+optee_dt_programmer_name=${your_board_name}
 # U-boot dt name
 uboot_defconfig=${your_soc_name}_defconfig
-uboot_dt_name=$your_board_name
-uboot_programmer_dt_name=your_board_name
+uboot_dt_name=${your_board_name}
+uboot_programmer_dt_name=${your_board_name}
 # TF-A dt name
-tfa_dt_name=$your_board_name
-tfa_dt_programmer_name=$your_board_name
+tfa_dt_name=${your_board_name}
+tfa_dt_programmer_name=${your_board_name}
 # Linux kernel dt name
-# linux
-linux_dtb_name=$your_board_name
+linux_dtb_name=${your_board_name}
+
 ##################################################################
 ##################################################################
+### End of general configuration
 ##################################################################
 ##################################################################
 

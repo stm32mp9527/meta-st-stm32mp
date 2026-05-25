@@ -102,18 +102,17 @@ function config_stm32mp1_externaldt() {
     echo ""
     echo "# Name of devicetree to use"
     echo "# Optee dt name"
-    echo "optee_dt_name=\$your_board_name"
-    echo "optee_dt_programmer_name=\$your_board_name"
+    echo "optee_dt_name=\${your_board_name}"
+    echo "optee_dt_programmer_name=\${your_board_name}"
     echo "# U-boot dt name"
     echo "uboot_defconfig=\${your_soc_name}_defconfig"
-    echo "uboot_dt_name=\$your_board_name"
-    echo "uboot_programmer_dt_name=\$your_board_name"
+    echo "uboot_dt_name=\${your_board_name}"
+    echo "uboot_programmer_dt_name=\${your_board_name}"
     echo "# TF-A dt name"
-    echo "tfa_dt_name=\$your_board_name"
-    echo "tfa_dt_programmer_name=\$your_board_name"
+    echo "tfa_dt_name=\${your_board_name}"
+    echo "tfa_dt_programmer_name=\${your_board_name}"
     echo "# Linux kernel dt name"
-    echo "# linux"
-    echo "linux_dtb_name=\$your_board_name"
+    echo "linux_dtb_name=\${your_board_name}"
 }
 function config_stm32mp1_mx() {
     echo "# define the cube mx project name"
@@ -155,18 +154,17 @@ function config_stm32mp1_mx() {
     echo ""
     echo "# Name of devicetree to use"
     echo "# Optee dt name"
-    echo "optee_dt_name=\$your_board_name"
-    echo "optee_dt_programmer_name=\$your_board_name"
+    echo "optee_dt_name=\${your_board_name}"
+    echo "optee_dt_programmer_name=\${your_board_name}"
     echo "# U-boot dt name"
     echo "uboot_defconfig=\${your_soc_name}_defconfig"
-    echo "uboot_dt_name=\$your_board_name"
-    echo "uboot_programmer_dt_name=\$your_board_name"
+    echo "uboot_dt_name=\${your_board_name}"
+    echo "uboot_programmer_dt_name=\${your_board_name}"
     echo "# TF-A dt name"
-    echo "tfa_dt_name=\$your_board_name"
-    echo "tfa_dt_programmer_name=\$your_board_name"
+    echo "tfa_dt_name=\${your_board_name}"
+    echo "tfa_dt_programmer_name=\${your_board_name}"
     echo "# Linux kernel dt name"
-    echo "# linux"
-    echo "linux_dtb_name=\$your_board_name"
+    echo "linux_dtb_name=\${your_board_name}"
 }
 function config_stm32mp1() {
     local mx=$1
@@ -222,7 +220,7 @@ function config_stm32mp2_common() {
     echo "# your_soc_name can be stm32mp21, stm32mp23, stm32mp25"
     echo "your_soc_name=\"<Your soc name>\""
     echo ""
-    echo "# Type of securityType of security can be 'optee' or 'opteemin' ('optee' is recommended)"
+    echo "# Type of security can be 'optee' or 'opteemin' ('optee' is recommended)"
     echo "your_storage_boot_scheme_security=\"<your_storage_boot_scheme_security>\""
     echo ""
     echo "# Type of boot scheme storage used for A35 part, ex.:"
@@ -236,7 +234,7 @@ function config_stm32mp2_common() {
     echo "# An absolute path is required"
     echo "your_deploy_dir_path=\"<your_deploy_dir_path>\""
     echo ""
-    echo "# Define build subdirectory  (by default set to ../build)"
+    echo "# Define build subdirectory (by default set to ../build)"
     echo "your_build_subdir_path=\"<your_build_subdir_path>\""
     echo ""
     echo "PARALLEL_MAKE="
@@ -280,18 +278,17 @@ function config_stm32mp2_externaldt() {
     echo ""
     echo "# Name of devicetree to use"
     echo "# Optee dt name"
-    echo "optee_dt_name=\$your_board_name"
-    echo "optee_dt_programmer_name=\$your_board_name"
+    echo "optee_dt_name=\${your_board_name}"
+    echo "optee_dt_programmer_name=\${your_board_name}"
     echo "# U-boot dt name"
     echo "uboot_defconfig=\${your_soc_name}_defconfig"
-    echo "uboot_dt_name=\$your_board_name"
-    echo "uboot_programmer_dt_name=\$your_board_name"
+    echo "uboot_dt_name=\${your_board_name}"
+    echo "uboot_programmer_dt_name=\${your_board_name}"
     echo "# TF-A dt name"
-    echo "tfa_dt_name=\$your_board_name"
-    echo "tfa_dt_programmer_name=\$your_board_name"
+    echo "tfa_dt_name=\${your_board_name}"
+    echo "tfa_dt_programmer_name=\${your_board_name}"
     echo "# Linux kernel dt name"
-    echo "# linux"
-    echo "linux_dtb_name=\$your_board_name"
+    echo "linux_dtb_name=\${your_board_name}"
 }
 function config_stm32mp2_mx() {
     echo "# define the cube mx project name"
@@ -331,18 +328,17 @@ function config_stm32mp2_mx() {
     echo ""
     echo "# Name of devicetree to use"
     echo "# Optee dt name"
-    echo "optee_dt_name=\$your_board_name"
-    echo "optee_dt_programmer_name=\$your_board_name"
+    echo "optee_dt_name=\${your_board_name}"
+    echo "optee_dt_programmer_name=\${your_board_name}"
     echo "# U-boot dt name"
     echo "uboot_defconfig=\${your_soc_name}_defconfig"
-    echo "uboot_dt_name=\$your_board_name"
-    echo "uboot_programmer_dt_name=\$your_board_name"
+    echo "uboot_dt_name=\${your_board_name}"
+    echo "uboot_programmer_dt_name=\${your_board_name}"
     echo "# TF-A dt name"
-    echo "tfa_dt_name=\$your_board_name"
-    echo "tfa_dt_programmer_name=\$your_board_name"
+    echo "tfa_dt_name=\${your_board_name}"
+    echo "tfa_dt_programmer_name=\${your_board_name}"
     echo "# Linux kernel dt name"
-    echo "# linux"
-    echo "linux_dtb_name=\$your_board_name"
+    echo "linux_dtb_name=\${your_board_name}"
 }
 function config_stm32mp2() {
     local mx=$1
@@ -392,7 +388,6 @@ function config_stm32mp2-m33td_common() {
     echo "### General configuration"
     echo "##################################################################"
     echo "##################################################################"
-    echo ""
 
     echo "# Path to SDK environment (where is 'environment-setup-cortexa35-ostl-linux')"
     echo "# Usually: /opt/st/stm32mp2/<X.X.X>-openstlinux-<X.X>-yocto-<version_name>-mpu-v<XX.XX.XX>/"
@@ -406,7 +401,7 @@ function config_stm32mp2-m33td_common() {
     echo "# your_soc_name can be stm32mp21, stm32mp25"
     echo "your_soc_name=\"<Your soc name>\""
     echo ""
-    echo "# Type of securityType of security can be 'optee' or 'opteemin' ('optee' is recommended)"
+    echo "# Type of security can be 'optee' or 'opteemin' ('optee' is recommended)"
     echo "your_storage_boot_scheme_security=\"<your_storage_boot_scheme_security>\""
     echo ""
     echo "# Type of boot scheme storage used for A35 part, ex.:"
@@ -436,6 +431,8 @@ function config_stm32mp2-m33td_common() {
     echo ""
     echo "# Path for project used on M33 processor, ex.:"
     echo "#       Projects/STM32MP215F-DK/Demonstrations/StarterApp_M33TD"
+    echo "#       Projects/STM32MP235F-DK/Demonstrations/StarterApp_M33TD"
+    echo "#       Projects/STM32MP257F-DK/Demonstrations/StarterApp_M33TD"
     echo "#       Projects/STM32MP257F-EV1/Demonstrations/StarterApp_M33TD"
     echo "your_cube_m33td_project_path=\"<your_cube_m33td_project_path>\""
     echo ""
@@ -502,10 +499,15 @@ function config_stm32mp2-m33td_externaldt() {
     echo "uboot_dt_name=\${your_board_name}-cm33tdcid-ostl\${DEVICETREE_SUFFIX_ARRAY[\${your_storage_boot_scheme_cortex_a}]}"
     echo "uboot_programmer_dt_name=\${your_board_name}-cm33tdcid-ostl-serial-ca35tdcid"
     echo "# TF-A dt name"
-    echo "tfa_dt_name=\${your_board_name}-cm33tdcid-ostl"
+    echo "tfa_dt_name=\${your_board_name}-cm33tdcid-ostl\${DEVICETREE_SUFFIX_ARRAY[\${your_storage_boot_scheme_cortex_a}]}"
     echo "tfa_dt_programmer_name=\${your_board_name}-cm33tdcid-ostl-serial-ca35tdcid"
+    echo "# Linux kernel dt name"
+    echo "linux_dtb_name=\${your_board_name}-cm33tdcid-ostl\${DEVICETREE_SUFFIX_ARRAY[\${your_storage_boot_scheme_cortex_a}]}"
     echo "# TF-M dt name"
     echo "tfm_dt_name=\${your_board_name}-cm33tdcid-ostl"
+    echo ""
+    echo "# Use externaldt suffix (defined via DEVICETREE_SUFFIX_ARRAY)"
+    echo "use_externaldt_suffix=1"
 }
 function config_stm32mp2-m33td_mx() {
     echo "# define the cube mx project name"
@@ -549,7 +551,7 @@ function config_stm32mp2-m33td_mx() {
     echo "externaldt_tfa_path=CA35/DeviceTree/\${your_cubemx_project_name}/tf-a"
     echo "externaldt_tfa_programmer_path=ExtMemLoader/DeviceTree/tf-a"
     echo "# TF-M"
-    echo "externaldt_tfm_path=CM33/DeviceTree/\${your_cubemx_project_name}/tfm"
+    echo "externaldt_tfm_path=CM33/DeviceTree/\${your_cubemx_project_name}/tf-m"
     echo "externaldt_mcuboot_path=CM33/DeviceTree/\${your_cubemx_project_name}/mcuboot"
     echo "# Kernel linux"
     echo "externaldt_linux_path=CA35/DeviceTree/\${your_cubemx_project_name}/kernel"
@@ -565,8 +567,15 @@ function config_stm32mp2-m33td_mx() {
     echo "# TF-A dt name"
     echo "tfa_dt_name=\${your_board_name}"
     echo "tfa_dt_programmer_name=\${your_board_name}"
+    echo "# Linux kernel dt name"
+    echo "linux_dtb_name=\${your_board_name}"
     echo "# TF-M dt name"
     echo "tfm_dt_name=\${your_board_name}"
+    echo ""
+    echo "# Do not use externaldt suffix (Mx doesn't generate devicetree with sotorage suffix)"
+    echo "use_externaldt_suffix=0"
+    echo ""
+
 }
 function config_stm32mp2-m33td() {
     local mx=$1
@@ -602,7 +611,7 @@ function dump_stm32mp2-m33td_config() {
     echo "echo \"     your_cubemx_project_name          = \${your_cubemx_project_name}\""
     fi
     echo "echo \"     externaldt_path                   = \${externaldt_path}\""
-
+    echo "echo \"     use_externaldt_suffix             = \${use_externaldt_suffix}\""
     echo "echo \"\""
 }
 
@@ -696,9 +705,13 @@ function process_data() {
     if $(echo $localdata | grep -q your_m33_profile) ; then
         localdata=$(echo $localdata |sed "s|<your_m33_profile>|\${your_m33_profile}|g")
     fi
-    # your_m33_profile
+    # your_deploy_dir_path
     if $(echo $localdata | grep -q your_deploy_dir_path) ; then
         localdata=$(echo $localdata |sed "s|<your_deploy_dir_path>|\${your_deploy_dir_path}|g")
+    fi
+    # use_externaldt_suffix
+    if $(echo $localdata | grep -q use_externaldt_suffix) ; then
+        localdata=$(echo $localdata |sed "s|<use_externaldt_suffix>|\${use_externaldt_suffix}|g")
     fi
     # your build sub path
     if $(echo $localdata | grep -q your_build_subdir_path) ; then
@@ -1094,7 +1107,8 @@ function generate_component_function() {
             echo "    cmd    export BLD_PATH=\$(realpath \${your_build_subdir_path})"
             echo "    [ \$local_DRY_RUN -eq 0 ] && export BLD_PATH=\$(realpath \${your_build_subdir_path})"
             if $(echo ${c} | grep -q "linux-stm32mp") ; then
-                echo "    if [ ! -e ../source_code_configured-${c}-for-\${your_board_name} ]; then"
+                echo "        build_dir=\$(basename \${your_build_subdir_path})"
+                echo "    if [ ! -e ../source_code_configured-${c}-for-\${your_board_name}-\${build_dir} ]; then"
             fi
             for d in ${data};
             do
@@ -1104,7 +1118,7 @@ function generate_component_function() {
                 fi
             done
             if $(echo ${c} | grep -q "linux-stm32mp") ; then
-                echo "        [ \$local_DRY_RUN -eq 0 ] && touch ../source_code_configured-${c}-for-\${your_board_name}"
+                echo "        [ \$local_DRY_RUN -eq 0 ] && touch ../source_code_configured-${c}-for-\${your_board_name}-\${build_dir}"
                 echo "    fi"
             fi
 
@@ -1266,8 +1280,11 @@ function generate_component_function() {
                 echo "        dir=\$(find .. -maxdepth 1 -type d | grep ${c} | tail -n 1)"
             fi
             echo "        # remove configured file step"
+            echo "        build_dir=\$(basename \${your_build_subdir_path})"
             echo "        [ -e ../source_code_configured-${c}-for-\${your_board_name} ] && cmd rm ../source_code_configured-${c}-for-\${your_board_name}"
+            echo "        [ -e ../source_code_configured-${c}-for-\${your_board_name}-\${build_dir} ] && cmd rm ../source_code_configured-${c}-for-\${your_board_name}-\${build_dir}"
             echo "        [ \$local_DRY_RUN -eq 0 ] && [ -e ../source_code_configured-${c}-for-\${your_board_name} ] && rm ../source_code_configured-${c}-for-\${your_board_name}"
+            echo "        [ \$local_DRY_RUN -eq 0 ] && [ -e ../source_code_configured-${c}-for-\${your_board_name}-\${build_dir} ] && rm ../source_code_configured-${c}-for-\${your_board_name}-\${build_dir}"
 
             echo "        # remove build directory"
             echo "        [ -d \${your_build_subdir_path} ] && cmd rm -rf \${your_build_subdir_path}"
@@ -1482,9 +1499,10 @@ if [ $# -eq 0 ]; then
     usage
     exit 1
 fi
+GLOBAL_CONFIGURATION=""
 MX_NAME=""
+OVERWRITE_GENERATED_FILE=0
 while [[ $# -gt 0 ]]; do
-  GLOBAL_CONFIGURATION=$1
   case $1 in
     help)
       usage
@@ -1494,33 +1512,43 @@ while [[ $# -gt 0 ]]; do
       MACHINE=stm32mp1
       MX=1
       MX_NAME="-mx"
+      GLOBAL_CONFIGURATION=$1
       shift
       ;;
     stm32mp1)
       MACHINE=stm32mp1
       MX=0
+      GLOBAL_CONFIGURATION=$1
       shift;
       ;;
     stm32mp2-mx)
       MACHINE=stm32mp2
       MX=1
       MX_NAME="-mx"
+      GLOBAL_CONFIGURATION=$1
       shift
       ;;
     stm32mp2)
       MACHINE=stm32mp2
       MX=0
+      GLOBAL_CONFIGURATION=$1
       shift
       ;;
     stm32mp2-m33td-mx)
       MACHINE=stm32mp2-m33td
       MX=1
       MX_NAME="-mx"
+      GLOBAL_CONFIGURATION=$1
       shift
       ;;
     stm32mp2-m33td)
       MACHINE=stm32mp2-m33td
       MX=0
+      GLOBAL_CONFIGURATION=$1
+      shift
+      ;;
+    --overwrite)
+      OVERWRITE_GENERATED_FILE=1
       shift
       ;;
     *)
@@ -1530,6 +1558,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [ "X$GLOBAL_CONFIGURATION" = "X" ]; then
+    usage
+    exit 1
+fi
 if [ $MX -eq 1 ]; then
     info "MACHINE=$MACHINE MX"
 else
@@ -1550,9 +1582,25 @@ OUTPUT_SCRIPT=${SCRIPT_PATH}/../sdk_compilation-${MACHINE}${MX_NAME}-my-custom-b
 COMMON_SCRIPT_NAME=sdk_action-common-for-${GLOBAL_CONFIGURATION}.source
 OUTPUT_COMMON_SCRIPT=${SCRIPT_PATH}/../${COMMON_SCRIPT_NAME}
 
+# Verify if a precedent version of script generated exist
+if [ ${OVERWRITE_GENERATED_FILE} -eq 0 -a -f "${OUTPUT_COMMON_SCRIPT}" ];
+then
+    echo ""
+    echo "[WARNING]: A previous version of generated script exist on directory"
+    echo "[WARNING]:    '${OUTPUT_COMMON_SCRIPT}'"
+    echo "[WARNING]: would you like to continue and overwrite it: [Y/n]"
+    read -r answer
+    if [[ "$answer" =~ ^[Yy]+[ESes]* ]]; then
+        echo "[INFO] Overwrite previous version of ${OUTPUT_COMMON_SCRIPT}"
+        echo ""
+    else
+        echo "[INFO] Please save or rename generated script before to relaunch script"
+        exit 0
+    fi
+fi
+
 debug "Machine $MACHINE"
 debug "is MX machine = $MX"
-
 
 cat << EOF > $OUTPUT_SCRIPT
 #!/bin/bash

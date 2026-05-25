@@ -47,7 +47,6 @@ Information about usage of stm32mp2-m33td developer package
 @F optee-os-stm32mp
 @F u-boot-stm32mp
 @F tf-a-stm32mp
-@ tf-m-tests-stm32mp
 @M tf-m-stm32mp
 @M m33tdprojects-starter-stm32mp2
 @ linux-stm32mp
@@ -77,11 +76,11 @@ For stm32mp2-m33td case, external-dt or CubeMX configuration can be generated:
  * stm32mp2-m33td-mx: to compile ST board via device tree from components themselves or external board provided by CubeMX device tree
 
 For external-dt configuration (default)
- $> ./generated_build_script-stm32mpx.sh stm32mp2-m33td
+ $> ./generated_build_script-stm32mpx.sh stm32mp2-m33td --overwrite
     => generate a script on root directory for all source codes from Developer Package:
        sources/*/sdk_compilation-stm32mp2-m33td-my-custom-board.sh
 For CubeMX devicetree configuration (mx)
- $> ./generated_build_script-stm32mpx.sh stm32mp2-m33td-mx
+ $> ./generated_build_script-stm32mpx.sh stm32mp2-m33td-mx --overwrite
     => generate a script on root directory for all source codes from Developer Package:
        sources/*/sdk_compilation-stm32mp2-m33td-mx-my-custom-board.sh
 
