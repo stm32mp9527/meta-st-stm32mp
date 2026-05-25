@@ -102,6 +102,8 @@ SRC_URI:class-devupstream += "file://${LINUX_VERSION}/optional-fragment-07-efi.c
 SRC_URI:append:arm = " file://stm32mp1-snd.conf;subdir=modprobe.d/"
 SRC_URI:append:aarch32 = " file://stm32mp2_ucsi.conf;subdir=modprobe.d/"
 SRC_URI:append:aarch64 = " file://stm32mp2_ucsi.conf;subdir=modprobe.d/"
+SRC_URI:append:aarch32 = " file://stm32mp2_uio.conf;subdir=modprobe.d/"
+SRC_URI:append:aarch64 = " file://stm32mp2_uio.conf;subdir=modprobe.d/"
 
 # -------------------------------------------------------------
 # Kernel Args
