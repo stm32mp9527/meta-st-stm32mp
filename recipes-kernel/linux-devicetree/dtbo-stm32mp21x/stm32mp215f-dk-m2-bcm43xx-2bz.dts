@@ -11,7 +11,7 @@
 #include <dt-bindings/input/input.h>
 
 /* STM32MP215F-DK connector M2 */
-/* add combo wifi/bluetooth BCM4373 1EA */
+/* add combo wifi/bluetooth BCM4373 2BZ */
 
 / {
 	compatible = "st,stm32mp215-dk";

@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
 "
 COMPATIBLE_MACHINE = "(stm32mp2common)"
 SRC_URI = " \
-    file://stm32mp215f-dk-m2-bcm43xx-2ae.dts \
+    file://stm32mp215f-dk-m2-bcm43xx-2bz.dts \
 "
 
 inherit devicetree
