@@ -38,9 +38,11 @@ M33FW_DEPLOYDIR_M33FW="${M33FW_DEPLOYDIR_M33FW:-$M33FW_DEPLOYDIR_ROOT/${DEFAULT_
 DDR_FW="0"
 DRY_RUN="0"
 DT_CONFIG=""
+IMAGE_CONFIRM=""
 INPUT_DIR=""
 SIGN_KEY_FILE=""
 SIGN_KEY_PASS=""
+SIGN_VERSION=""
 SUFFIX_BOOTA35=""
 SUFFIX_BOOTM33=""
 
@@ -95,10 +97,14 @@ function usage() {
     echo "    -O <M33FW_DEPLOYDIR_M33FW> | --output <M33FW_DEPLOYDIR_M33FW>:"
     echo "          CM33 firmware output directory"
     echo "    Signature parameters:"
+    echo "    -C | --image-confirm:"
+    echo "          enable the setting of image_ok flag on firmware"
     echo "    -K <signature key file> | --signature-key <signature key file>:"
     echo "          signature key file for signature"
     echo "    -P <signature pass> | --signature-key-pass <signature pass>:"
     echo "          signature key pass for signature"
+    echo "    -V <signing version> | --sign-version <signing version>:"
+    echo "          signing version to use for signature"
     echo "    Search parameters:"
     echo "    -A <boot suffix for a35> | --bootsuffix-a35 <boot suffix for a35>"
     echo "          boot suffix for a35 for finding file"
@@ -220,6 +226,9 @@ function process_args() {
                 shift
             fi
             ;;
+        -C|--image-confirm)
+            IMAGE_CONFIRM="YES"
+            ;;
         -D|--devicetree)
             if [ $# -gt 1 ]; then
                 DT_CONFIG=$2
@@ -253,6 +262,12 @@ function process_args() {
         -P|--signature-key-pass)
             if [ $# -gt 1 ]; then
                 SIGN_KEY_PASS=$2
+                shift
+            fi
+            ;;
+        -V|--sign-version)
+            if [ $# -gt 1 ]; then
+                SIGN_VERSION=$2
                 shift
             fi
             ;;
@@ -355,6 +370,8 @@ for output_prefix in ${m33fw_output_prefix}; do
     # Handle signature configuration
     [ -z "${SIGN_KEY_FILE}" ] || m33fwtool_opt="${m33fwtool_opt} --signature-key ${SIGN_KEY_FILE}"
     [ -z "${SIGN_KEY_PASS}" ] || m33fwtool_opt="${m33fwtool_opt} --signature-pass ${SIGN_KEY_PASS}"
+    [ -z "${SIGN_VERSION}" ]  || m33fwtool_opt="${m33fwtool_opt} --signing-version ${SIGN_VERSION}"
+    [ -z "${IMAGE_CONFIRM}" ] || m33fwtool_opt="${m33fwtool_opt} --enable-confirm"
 
     # dump information about files
     echo "------------------------------------"
@@ -373,7 +390,7 @@ for output_prefix in ${m33fw_output_prefix}; do
 
     echo "M33FW tool command:" | tee -a "${m33fw_output_file_dump}"
     echo "CMD> ${TOOLS_M33FWTOOL} ${m33fwtool_opt} --output ${m33fw_output_file}" | sed "s|--|\\\ \n\t--|g" | tee -a "${m33fw_output_file_dump}"
-    sed -i "s|${M33FW_DEPLOYDIR_ROOT}|<${!M33FW_DEPLOYDIR_ROOT@}>|g" "${m33fw_output_file_dump}"
+    sed -i "s|${M33FW_DEPLOYDIR_ROOT}|<${!M33FW_DEPLOYDIR_ROOT@}>|g;s|${M33FW_DEPLOYDIR_M33FW}|<${!M33FW_DEPLOYDIR_M33FW@}>|g" "${m33fw_output_file_dump}"
 
     if [ "${DRY_RUN}" -eq 0 ]; then
         ${TOOLS_M33FWTOOL} ${m33fwtool_opt} --output "${m33fw_output_file}" || die "[$(basename "${TOOLS_M33FWTOOL}")] Failed to generate $(basename "${m33fw_output_file}")"

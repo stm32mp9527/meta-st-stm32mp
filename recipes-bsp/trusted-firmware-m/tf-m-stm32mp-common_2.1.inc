@@ -12,14 +12,14 @@ SRC_URI:append = " gitsm://github.com/mcu-tools/mcuboot.git;protocol=https;branc
 # cmsis
 SRC_URI:append = " git://github.com/ARM-software/CMSIS_6.git;protocol=https;nobranch=1;name=cmsis;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_CMSIS}"
 # cmsis core
-SRC_URI:append = " git://github.com/STMicroelectronics/cmsis-core.git;protocol=ssh;name=cmsiscore;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_CMSIS_CORE};nobranch=1"
+SRC_URI:append = " git://github.com/STMicroelectronics/cmsis-core.git;protocol=https;name=cmsiscore;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_CMSIS_CORE};nobranch=1"
 # mbedcrypto
 SRC_URI:append = " gitsm://github.com/Mbed-TLS/mbedtls.git;protocol=https;nobranch=1;name=mbedtls;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_MBEDCRYPTO}"
 # ddr firmware
 SRC_URI:append = " git://github.com/STMicroelectronics/stm32-ddr-phy-binary;protocol=https;branch=main;name=ddr-phy;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_DDR_PHY_BIN_SRC}"
 
 # psa-adac
-SRC_URI:append = " gitsm://github.com/STMicroelectronics/psa-adac.git;protocol=https;name=psa-adac;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_PSA_ADAC};branch=v1.0-stm32mp"
+SRC_URI:append = " gitsm://github.com/STMicroelectronics/psa-adac.git;protocol=https;name=psa-adac;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_PSA_ADAC};nobranch=1"
 # SCP-firmware
 SRC_URI:append = " gitsm://github.com/STMicroelectronics/SCP-firmware.git;protocol=https;name=scp-firmware;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_SCP_FW};nobranch=1"
 # stm32mp2xx-hal-driver
@@ -30,8 +30,8 @@ SRC_URI:append = " git://github.com/STMicroelectronics/cmsis-device-mp2.git;prot
 SRC_URI:append = " git://github.com/STMicroelectronics/stm32mp2-low-power.git;protocol=https;name=mp2-low-power;destsuffix=${TF_M_EXTERNAL_SOURCES_ROOTDIR}/${TF_M_PATH_STM32MP2_LOW_POWER};nobranch=1"
 
 # The required dependencies are documented in tf-m/config/config_base.cmake
-# TF-Mv 2.1.3
-SRCREV_tfm = "b5634f109f63e64fe48ea3cd926a97eeaef06b7a"
+# TF-Mv 2.1.4
+SRCREV_tfm = "03d02d6feed02583c41acfe7147d1117678797a3"
 
 TF_M_PATH_EXTERNAL = "external"
 # qcbor
@@ -54,8 +54,8 @@ ARCHIVER_REVISION_STM32MP2_CMSIS_CORE = "v5.9.0"
 SRCREV_cmsiscore = "1a2f783395dd72778a98ebe7771f36ca1c30a35e"
 # mbedtls
 TF_M_PATH_MBEDCRYPTO = "external/mbedtls"
-ARCHIVER_REVISION_MBEDCRYPTO = "v3.6.4"
-SRCREV_mbedtls = "c765c831e5c2a0971410692f92f7a81d6ec65ec2"
+ARCHIVER_REVISION_MBEDCRYPTO = "v3.6.5"
+SRCREV_mbedtls = "e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df"
 # ddr-phy
 TF_M_PATH_DDR_PHY_BIN_SRC = "external/stm32-ddr-phy-binary"
 ARCHIVER_REVISION_DDR_PHY_BIN_SRC = "v1.0-stm32mp"
@@ -66,24 +66,24 @@ ARCHIVER_REVISION_PSA_ADAC = "v1.0-stm32mp-r1"
 SRCREV_psa-adac = "519a66d262882ead7069e308d9f9c24d62178393"
 # scp-firmware
 TF_M_PATH_SCP_FW = "external/scp-firmware"
-ARCHIVER_REVISION_SCP_FW = "v2.13.0-stm32mp-r3"
-SRCREV_scp-firmware = "f19d90bfeb876496b0ce33483efd0ca4121f09f5"
+ARCHIVER_REVISION_SCP_FW = "v2.13.0-stm32mp-r3.1"
+SRCREV_scp-firmware = "35c0ea144a02c08ec30bb4deea40adc7ecbfe511"
 # stm32mp2xx_hal_driver
 TF_M_PATH_STM32MP2_HAL_DRIVER = "external/stm32mp2xx_hal_driver"
 ARCHIVER_URL_STM32MP2_HAL_DRIVER = "https://github.com/STMicroelectronics/stm32mp2xx-hal-driver.git"
-ARCHIVER_REVISION_STM32MP2_DRIVER = "v1.3.0"
-SRCREV_stm32mp2haldriver = "9ef28328ab57a4ca975beea8690488a8cde8b99c"
+ARCHIVER_REVISION_STM32MP2_DRIVER = "v1.3.1"
+SRCREV_stm32mp2haldriver = "a5e4d92ae2983d315b496fae282d22f6c30b4964"
 # stm32mp2xx_cmsis_device
 TF_M_PATH_STM32MP2_CMSIS_DEVICE = "external/cmsis_device_mp2"
 ARCHIVER_URL_STM32MP2_CMSIS_DEVICE = "https://github.com/STMicroelectronics/cmsis-device-mp2.git"
-ARCHIVER_REVISION_STM32MP2_CMSIS_DEVICE = "v1.3.0"
-SRCREV_cmsisdevicemp2 = "9c72257fa9d615420151e7cd615a5d3577fcc3da"
+ARCHIVER_REVISION_STM32MP2_CMSIS_DEVICE = "v1.3.1"
+SRCREV_cmsisdevicemp2 = "dbda522fd850568d48e7ac2768825c4a23743302"
 
 # stm32mp2-low-power
 TF_M_PATH_STM32MP2_LOW_POWER = "external/stm32_lp_fw"
-ARCHIVER_URL_MP2_LOW_POWER = "https://github.com/STMicroelectronics/stm32mp2-low-power.git"
-ARCHIVER_REVISION_MP2_LOW_POWER = "v1.0.0"
-SRCREV_mp2-low-power = "9eab3bbc074e03a0640127776c45ce8f579ae360"
+ARCHIVER_URL_MP2_LOW_POWER = "https://github.com/STMicroelectronics/stm32mp2-low-power/"
+ARCHIVER_REVISION_MP2_LOW_POWER = "v1.1.0"
+SRCREV_mp2-low-power = "4dec370354b45bc6f6badc118b418426bea1d98d"
 
 SRCREV_FORMAT = "tfm"
 
@@ -91,12 +91,12 @@ UPSTREAM_CHECK_GITTAGREGEX = "^TF-Mv(?P<pver>\d+(\.\d+)+)$"
 
 # ST Patches
 SRC_URI += "\
-    file://0001-v2.1.3-stm32mp-r2.patch.gz \
+    file://0001-v2.1.4-stm32mp-r2.1.patch.gz \
 "
 
-TF_M_VERSION = "2.1.3"
+TF_M_VERSION = "2.1.4"
 TF_M_SUBVERSION = "stm32mp"
-TF_M_RELEASE = "r2"
+TF_M_RELEASE = "r2.1"
 PV = "v${TF_M_VERSION}-${TF_M_SUBVERSION}-${TF_M_RELEASE}"
 
 #ARCHIVER_ST_BRANCH = "v${TF_M_VERSION}-${TF_M_SUBVERSION}"
@@ -139,7 +139,7 @@ EXTRA_OECMAKE += "${@bb.utils.contains('TF_M_EXTERNAL_SOURCES', '1', '${TF_M_EXT
 BBCLASSEXTEND = "devupstream:target"
 
 SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/trusted-firmware-m.git;protocol=https;nobranch=1"
-SRCREV:class-devupstream = "4410067020b076154edec29644ff7f10853d8dbf"
+SRCREV:class-devupstream = "4603997f315947feec89fc674b87b49a5d55655f"
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github

@@ -22,7 +22,7 @@ do_install() {
     install -m 755 ${WORKDIR}/scripts/create_st_m33fw_binary.sh ${D}${bindir}
     install -m 755 ${WORKDIR}/scripts/st_m33td_firmware_signature.sh ${D}${bindir}
     # Update version
-    sed 's/^SIGN_VERSION=.*$/SIGN_VERSION='"${TF_M_VERSION}"'/' -i ${D}${bindir}/st_m33td_firmware_signature.sh
+    sed 's/^SIGN_VERSION=.*$/SIGN_VERSION=${SIGN_VERSION:-'"${TF_M_VERSION}"'}/' -i ${D}${bindir}/st_m33td_firmware_signature.sh
     # Install default MCUBOOT keys
     install -d ${D}${datadir}/tf-m/keys
     install -m 0644 ${S}/bl2/ext/mcuboot/root-EC-P256.pem ${D}${datadir}/tf-m/keys/root-ec-p256.pem

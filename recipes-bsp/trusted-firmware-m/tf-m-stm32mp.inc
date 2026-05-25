@@ -263,6 +263,9 @@ tf_m_sysroot_populate() {
                     cp -ar ${output_path}/spe/api_ns/interface/* ${output_path_config}/spe/api_ns/interface
                     install -d ${output_path_config}/spe/api_ns/common
                     cp -ar ${output_path}/spe/api_ns/common/* ${output_path_config}/spe/api_ns/common
+                    install -d ${output_path_config}/spe/generated/devicetree/platform_s
+                    [ -e ${output_path}/spe/generated/devicetree/platform_s/devicetree_generated.h ] && cp -ar ${output_path}/spe/generated/devicetree/platform_s/devicetree_generated.h ${output_path_config}/spe/generated/devicetree/platform_s/
+                    [ -e ${output_path}/spe/build-spe/generated/devicetree/platform_s/devicetree_generated.h ] && cp -ar ${output_path}/spe/build-spe/generated/devicetree/platform_s/devicetree_generated.h ${output_path_config}/spe/generated/devicetree/platform_s/
                     install -d ${output_path_config}/spe/api_ns/image_signing/
                     cp -ar ${output_path}/spe/api_ns/image_signing/* ${output_path_config}/spe/api_ns/image_signing/
                     install -d ${output_path_config}/spe/api_ns/bin
@@ -310,6 +313,11 @@ do_deploy() {
                     install -d ${DEPLOYDIR}/bl2/debug
                     install -m 0644 ${output_path}/spe/build-spe/generated/devicetree/platform_bl2/out.${DTS_SUFFIX} ${DEPLOYDIR}/bl2/debug/${dt}${suffix_bootm33}-${BL2_NAME}.${DTS_SUFFIX}
                 fi
+                # Add device tree for debug
+                if [ -e "${output_path}/spe/generated/devicetree/platform_bl2/out.${DTS_SUFFIX}" ]; then
+                    install -d ${DEPLOYDIR}/bl2/debug
+                    install -m 0644 ${output_path}/spe/generated/devicetree/platform_bl2/out.${DTS_SUFFIX} ${DEPLOYDIR}/bl2/debug/${dt}${suffix_bootm33}-${BL2_NAME}.${DTS_SUFFIX}
+                fi
                 if [ -n "${ELF_DEBUG_ENABLE}" ]; then
                     if [ -e "${output_path}/spe/bin/${BL2_NAME}.${TF_M_ELF_SUFFIX}" ]; then
                         install -d ${DEPLOYDIR}/bl2/debug
@@ -337,6 +345,11 @@ do_deploy() {
                 install -d ${DEPLOYDIR}/debug
                 install -m 0644 ${output_path}/spe/build-spe/generated/devicetree/platform_s/out.${DTS_SUFFIX} ${DEPLOYDIR}/debug/${dt}${suffix_bootm33}${suffix_boota35}-${TF_M_NAME}${TF_M_TYPE_S}.${DTS_SUFFIX}
             fi
+            if [ -e "${output_path}/spe/generated/devicetree/platform_s/out.${DTS_SUFFIX}" ]; then
+                install -d ${DEPLOYDIR}/debug
+                install -m 0644 ${output_path}/spe/generated/devicetree/platform_s/out.${DTS_SUFFIX} ${DEPLOYDIR}/debug/${dt}${suffix_bootm33}${suffix_boota35}-${TF_M_NAME}${TF_M_TYPE_S}.${DTS_SUFFIX}
+            fi
+
             if [ -e "${output_path}/spe/bin/${TF_M_NAME}${TF_M_TYPE_S}.hex" ]; then
                 install -d ${DEPLOYDIR}/debug
                 install -m 0644 ${output_path}/spe/bin/${TF_M_NAME}${TF_M_TYPE_S}.hex ${DEPLOYDIR}/debug/${TF_M_NAME}-${dt}${suffix_bootm33}${suffix_boota35}${TF_M_TYPE_S}.hex

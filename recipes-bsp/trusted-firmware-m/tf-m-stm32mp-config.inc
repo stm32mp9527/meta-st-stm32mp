@@ -102,13 +102,13 @@ TF_M_CONFIG[m33td_nor] = "\
     ${EXTDT_SUFFIX_NOR} \
     "
 TF_M_CONFIG[m33td_nor-emmc] = "\
-    ${TF_M_CONFIG_OPTS_m33td}, \
+    ${TF_M_CONFIG_OPTS_m33td} -DSTM32_FWU_STORAGE_ACCESS=ON, \
     ospi, \
     ${EXTDT_SUFFIX_NOR}, \
     ${EXTDT_SUFFIX_EMMC} \
     "
 TF_M_CONFIG[m33td_nor-sdcard] = "\
-    ${TF_M_CONFIG_OPTS_m33td}, \
+    ${TF_M_CONFIG_OPTS_m33td} -DSTM32_FWU_STORAGE_ACCESS=ON, \
     ospi, \
     ${EXTDT_SUFFIX_NOR}, \
     ${EXTDT_SUFFIX_SDCARD} \

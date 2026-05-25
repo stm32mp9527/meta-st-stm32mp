@@ -83,6 +83,20 @@ TF_M_BOOTDEV ?=
 TF_M_DT_BL2_SUFFIX ?=
 TF_M_DT_TFM_SUFFIX ?=
 
+# Add SUFFIX to devicetree
+EXTDT_SUFFIX ?= 1
+
+# Manage specific devicetree file type suffix
+ifeq (\$(EXTDT_SUFFIX),1)
+    BL2_TYPE ?= ${BL2_TYPE}
+    DTS_TYPE_NS ?= ${DTS_TYPE_NS}
+    DTS_TYPE_S  ?= ${DTS_TYPE_S}
+else
+    BL2_TYPE ?=
+    DTS_TYPE_NS ?=
+    DTS_TYPE_S  ?=
+endif
+
 # Init default config settings
 EOF
     unset i
@@ -194,7 +208,10 @@ define tfm-configs
 	echo "    extra optionflags    : \$(if \$(TF_M_EXTRA_OPTFLAGS),\$(TF_M_EXTRA_OPTFLAGS),\$(TF_M_EXTRA_OPTFLAGS_\$(1)))" ; \\
 	echo "    bootdevice target    : \$(if \$(TF_M_BOOTDEV),\$(TF_M_BOOTDEV),\$(TF_M_BOOTDEV_\$(1)))" ; \\
 	echo "    bl2 devicetree suffix: \$(if \$(TF_M_DT_BL2_SUFFIX),\$(TF_M_DT_BL2_SUFFIX),\$(TF_M_DT_BL2_SUFFIX_\$(1)))" ; \\
-	echo "    tfm devicetree suffix: \$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))" ;
+	echo "    bl2 dt type suffix   : \$(BL2_TYPE)" ; \\
+	echo "    tfm devicetree suffix: \$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))" ; \\
+	echo "    tfm dt type NS suffix: \$(DTS_TYPE_NS)" ; \\
+	echo "    tfm dt type S suffix : \$(DTS_TYPE_S)" ;
 endef
 
 # Display TF-M plateform config details (tfm-plt-configs <BOARD>)
@@ -229,16 +246,32 @@ endef
 define tfm-rules-by-dt
 tfm-\$(1)-\$(2)-\$(3): chk-conf-\$(1)
 	@mkdir -p "\$(BLD_PATH)/\$(1)-\$(3)"; \\
-	if [ -e "\$(SRC_PATH)/${DTS_SUB_PATH}/\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))-s.${DTS_SUFFIX}" ]; then \\
-		echo "\$(SRC_PATH)/${DTS_SUB_PATH}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_dirpath"; \\
-		touch "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath"; \\
-		touch "\$(BLD_PATH)/\$(1)-\$(3)/dt_bl2_subdirpath"; \\
-	elif [ -e "\$(EXTDT_DIR)/\$(EXTDT_DIR_TF_M)/\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))-s.${DTS_SUFFIX}" ]; then \\
-		echo "\$(EXTDT_DIR)" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_dirpath"; \\
-		echo "\$(EXTDT_DIR_TF_M)/" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath"; \\
-		echo "\$(EXTDT_DIR_MCU)/" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_bl2_subdirpath"; \\
-	fi;
-	if ! [ -e "\$(BLD_PATH)/\$(1)-\$(3)/dt_dirpath" ]; then \\
+	if [ \$(EXTDT_SUFFIX) -eq 1 ]; then \\
+		if [ -e "\$(SRC_PATH)/platform/ext/target/stm/common/devicetree/dts/arm/stm/\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))\$(DTS_TYPE_S).dts" ]; then \\
+			echo "\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))\$(DTS_TYPE_NS).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_ns"; \\
+			echo "\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))\$(DTS_TYPE_S).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_s"; \\
+			echo "\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_BL2_SUFFIX_\$(1)))\$(BL2_TYPE).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_bl2_subdirpath_bl2"; \\
+			echo "\$(SRC_PATH)/${DTS_SUB_PATH}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_dirpath"; \\
+		elif [ -e "\$(EXTDT_DIR)/\$(EXTDT_DIR_TF_M)/\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))\$(DTS_TYPE_S).dts" ]; then \\
+			echo "\$(EXTDT_DIR_TF_M)/\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))\$(DTS_TYPE_NS).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_ns"; \\
+			echo "\$(EXTDT_DIR_TF_M)/\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))\$(DTS_TYPE_S).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_s"; \\
+			echo "\$(EXTDT_DIR_MCU)/\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_BL2_SUFFIX_\$(1)))\$(BL2_TYPE).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_bl2_subdirpath_bl2"; \\
+			echo "\$(EXTDT_DIR)" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_dirpath"; \\
+		fi; \\
+	else \\
+		if [ -e "\$(SRC_PATH)/platform/ext/target/stm/common/devicetree/dts/arm/stm/\$(3)\$(DTS_TYPE_S).dts" ]; then \\
+			echo "\$(3)\$(DTS_TYPE_NS).${DTS_SUFFIX}" > "$\(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_ns"; \\
+			echo "\$(3)\$(DTS_TYPE_S).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_s"; \\
+			echo "\$(3)\$(BL2_TYPE).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_bl2_subdirpath_bl2"; \\
+			echo "\$(SRC_PATH)/${DTS_SUB_PATH}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_dirpath"; \\
+		elif [ -e "\$(EXTDT_DIR)/\$(EXTDT_DIR_TF_M)/\$(3)\$(DTS_TYPE_S).dts" ]; then \\
+			echo "\$(EXTDT_DIR_TF_M)/\$(3)\$(DTS_TYPE_NS).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_ns"; \\
+			echo "\$(EXTDT_DIR_TF_M)/\$(3)\$(DTS_TYPE_S).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_s"; \\
+			echo "\$(EXTDT_DIR_MCU)/\$(3)\$(BL2_TYPE).${DTS_SUFFIX}" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_bl2_subdirpath_bl2"; \\
+			echo "\$(EXTDT_DIR)" > "\$(BLD_PATH)/\$(1)-\$(3)/dt_dirpath"; \\
+		fi; \\
+	fi
+	if ! [ -e "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_s" ]; then \\
 		echo "[TF-M CONFIG ERROR] Not able to find \$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))-s.dts devicetree file" ; \\
 		exit 1 ; \\
 	fi
@@ -252,10 +285,10 @@ tfm-\$(1)-\$(2)-\$(3): chk-conf-\$(1)
 		\$(if \$(TF_M_PLATFORM_OPTFLAGS),\$(TF_M_PLATFORM_OPTFLAGS),\$(TF_M_PLATFORM_OPTFLAGS_\$(2))) \\
 		-S "\$(SRC_PATH)" -B "\$(BLD_PATH)/\$(1)-\$(3)/spe" \\
 		-DTFM_PLATFORM="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/pltf_dirpath"\`" \\
-		-DDTS_BOARD_NS="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath"\`\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))-ns.${DTS_SUFFIX}" \\
-		-DDTS_BOARD_S="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath"\`\$(3)\$(if \$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX),\$(TF_M_DT_TFM_SUFFIX_\$(1)))-s.${DTS_SUFFIX}" \\
+		-DDTS_BOARD_NS="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_ns"\`" \\
+		-DDTS_BOARD_S="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_tfm_subdirpath_s"\`" \\
 		-DSTM32_BOOT_DEV=\$(if \$(TF_M_BOOTDEV),\$(TF_M_BOOTDEV),\$(TF_M_BOOTDEV_\$(1))) \\
-		-DDTS_BOARD_BL2="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_bl2_subdirpath"\`\$(3)\$(if \$(TF_M_DT_BL2_SUFFIX),\$(TF_M_DT_BL2_SUFFIX),\$(TF_M_DT_BL2_SUFFIX_\$(1)))-${BL2_NAME}.${DTS_SUFFIX}" \\
+		-DDTS_BOARD_BL2="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_bl2_subdirpath_bl2"\`" \\
 		-DDTS_EXT_DIR="\`cat "\$(BLD_PATH)/\$(1)-\$(3)/dt_dirpath"\`" \\
 		${PACKAGECONFIG_CONFARGS} || { echo "[TF-M CMAKE ERROR] TF_M_CONFIG=\$(1), devicetree=\$(3)"; exit 1; } ; \\
 	cmake --build "\$(BLD_PATH)/\$(1)-\$(3)/spe" -- install || { echo "[TF-M INSTALL ERROR] TF_M_CONFIG=\$(1), devicetree=\$(3)"; exit 1; }
@@ -283,7 +316,7 @@ deploy-\$(1)-\$(2)-\$(3): tfm-\$(1)-\$(2)-\$(3)
 	fi;
 	if [ -e "\$(BLD_PATH)/\$(1)-\$(3)/spe/bin/${TF_M_NAME}${TF_M_TYPE_S}.${TF_M_SUFFIX}" ]; then \\
 		cp -f "\$(BLD_PATH)/\$(1)-\$(3)/spe/bin/${TF_M_NAME}${TF_M_TYPE_S}.${TF_M_SUFFIX}" \\
-			"\$(DEPLOYDIR)/${TF_M_NAME}-\$(3)\$(if \$(M33FW_BOOT_SUFFIX_M33),-\$(M33FW_BOOT_SUFFIX_M33),-\$(M33FW_BOOT_SUFFIX_M33_\$(1)))\$(if \$(M33FW_BOOT_SUFFIX_A35),\-$(M33FW_BOOT_SUFFIX_A35),-\$(M33FW_BOOT_SUFFIX_A35_\$(1)))${TF_M_TYPE_S}.${TF_M_SUFFIX}" ; \\
+			"\$(DEPLOYDIR)/${TF_M_NAME}-\$(3)\$(if \$(M33FW_BOOT_SUFFIX_M33),-\$(M33FW_BOOT_SUFFIX_M33),-\$(M33FW_BOOT_SUFFIX_M33_\$(1)))\$(if \$(M33FW_BOOT_SUFFIX_A35),-\$(M33FW_BOOT_SUFFIX_A35),-\$(M33FW_BOOT_SUFFIX_A35_\$(1)))${TF_M_TYPE_S}.${TF_M_SUFFIX}" ; \\
 	fi;
 	if [ -e "\$(BLD_PATH)/\$(1)-\$(3)/spe/api_ns/image_signing/layout_files/${TF_M_LAYOUT_NAME}${TF_M_TYPE_S}${TF_M_TYPE_NS}.${TF_M_LAYOUT_SUFFIX}" ]; then \\
 		cp -f "\$(BLD_PATH)/\$(1)-\$(3)/spe/api_ns/image_signing/layout_files/${TF_M_LAYOUT_NAME}${TF_M_TYPE_S}${TF_M_TYPE_NS}.${TF_M_LAYOUT_SUFFIX}" \\
@@ -329,8 +362,14 @@ help: \$(tfm-check-config)
 	@echo "  TF_M_BOOTDEV"
 	@echo "  TF_M_DT_BL2_SUFFIX"
 	@echo "  TF_M_DT_TFM_SUFFIX"
+	@echo "  BL2_TYPE"
+	@echo "  DTS_TYPE_NS"
+	@echo "  DTS_TYPE_S"
 	@echo "  TF_M_PLATFORM"
 	@echo "  TF_M_PLATFORM_OPTFLAGS"
+	@echo ""
+	@echo "TF-M devicetree suffix configuration:"
+	@echo "  EXTDT_SUFFIX = \$(EXTDT_SUFFIX)"
 	@echo ""
 	@echo "TF-M folder configuration:"
 	@echo "  SRC_PATH  = \$(SRC_PATH)"

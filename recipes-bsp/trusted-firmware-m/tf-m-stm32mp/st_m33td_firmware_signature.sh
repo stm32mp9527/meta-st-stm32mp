@@ -15,6 +15,7 @@ DEFAULT_ENCKEY_LENGHT="${DEFAULT_ENCKEY_LENGHT:-128}"
 DEFAULT_SECURITYCOUNT="${DEFAULT_SECURITYCOUNT:-1}"
 DEFAULT_HEADER_SIZE="${DEFAULT_HEADER_SIZE:-0x800}"
 DEFAULT_PADDINGOPTS="${DEFAULT_PADDINGOPTS:---align 1 --pad --pad-header}"
+DEFAULT_CONFIRM="${DEFAULT_CONFIRM:---confirm}"
 
 SIGN_VERSION=${SIGN_VERSION:-0.1}
 
@@ -26,6 +27,7 @@ TFM_KEYS_SCND="${TFM_KEYS_SCND:-$TFM_DEV_KIT_DIR/keys/root-ec-p256_1.pem}"
 
 # Variable
 DEFAULT_KEYS="${TFM_KEYS_FRST}"
+ENABLE_CONFIRM=0
 INPUT_SIGNING=""
 INPUT_NSECURE=""
 INPUT_SECURE=""
@@ -62,6 +64,7 @@ function usage() {
     echo "    --security-counter <value>    : Specify the value of security counter (default: ${DEFAULT_SECURITYCOUNT})"
     echo "    --encrypt-lenght <size>       : Specify the value of encrypt key length (default: ${DEFAULT_ENCKEY_LENGHT})"
     echo "    --padding-opts <OPTS>         : Options for alignment and padding (default: ${DEFAULT_PADDINGOPTS})"
+    echo "    --enable-confirm              : Enable the ${DEFAULT_CONFIRM} option to set 'image_ok' flag on firmware"
     echo ""
     echo "Example:"
     echo "  $0 --layout tfm_s.signing_layout \
@@ -232,6 +235,9 @@ function process_args() {
         -n|--no-signing)
             SIGNING=0
             ;;
+        --enable-confirm)
+            ENABLE_CONFIRM="1"
+            ;;
         --signing-version)
             if [ $# -gt 1 ]; then
                 SIGN_VERSION=$2
@@ -317,6 +323,8 @@ if [ "${SIGNING}" -eq 1 ]; then
     # Manage SIGNATURE_KEY_PASS
     signature_key_pass=""
     [ -z "${SIGNATURE_KEY_PASS}" ] || signature_key_pass="--key-pswd ${SIGNATURE_KEY_PASS}"
+    # Manage confirm option
+    [ "${ENABLE_CONFIRM}" -eq "1" ] || DEFAULT_CONFIRM=""
 
     echo "[M33FW SIGNING CMD] ${M33FW_SIGN} \\
         --version "${SIGN_VERSION}" \\
@@ -328,6 +336,7 @@ if [ "${SIGNING}" -eq 1 ]; then
         -s ${DEFAULT_SECURITYCOUNT} \\
         -L ${DEFAULT_ENCKEY_LENGHT} \\
         ${DEFAULT_PADDINGOPTS} \\
+        ${DEFAULT_CONFIRM} \\
         --measured-boot-record ${filename} \\
         ${OUTPUT_FILE}"
     ${M33FW_SIGN} \
@@ -340,6 +349,7 @@ if [ "${SIGNING}" -eq 1 ]; then
         -s "${DEFAULT_SECURITYCOUNT}" \
         -L "${DEFAULT_ENCKEY_LENGHT}" \
         ${DEFAULT_PADDINGOPTS} \
+        ${DEFAULT_CONFIRM} \
         --measured-boot-record "${filename}" \
         "${OUTPUT_FILE}" || { EXIT_STATUS=$? ; echo "[ERROR]: failed to generate ${OUTPUT_FILE}" ; }
 else
