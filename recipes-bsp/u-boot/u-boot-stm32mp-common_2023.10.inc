@@ -16,7 +16,7 @@ SRC_URI = "git://github.com/u-boot/u-boot.git;protocol=https;branch=master"
 SRCREV  = "4459ed60cb1e0562bc5b40405e2b4b9bbf766d57"
 
 SRC_URI += "\
-    file://0001-v2023.10-stm32mp-r3.patch \
+    file://0001-v2023.10-stm32mp-r3.1.patch \
     "
 
 # debug and trace
@@ -35,7 +35,7 @@ SRC_URI += "${@bb.utils.contains('MACHINE_FEATURES', 'm33td', 'file://fragment-0
 
 U_BOOT_VERSION = "v2023.10"
 U_BOOT_SUBVERSION = "stm32mp"
-U_BOOT_RELEASE = "r3"
+U_BOOT_RELEASE = "r3.1"
 
 PV = "${U_BOOT_VERSION}-${U_BOOT_SUBVERSION}-${U_BOOT_RELEASE}"
 
@@ -52,7 +52,7 @@ S = "${WORKDIR}/git"
 BBCLASSEXTEND = "devupstream:target"
 
 SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/u-boot.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "7fbc677b5c104eee309fab7c8bb38eaaf83a45a6"
+SRCREV:class-devupstream = "f8917a01b48e0f3bc4595cb39e2d5431774004d5"
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github
