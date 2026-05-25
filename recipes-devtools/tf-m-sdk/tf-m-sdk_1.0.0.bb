@@ -1,7 +1,7 @@
 SUMMARY = "Development kit built from tf-m, needed to sign assemble and sign m33 firmware"
 
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=239470281779fbddbda48518a3eeb5be"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI:append:class-nativesdk = " file://environment.d-tf-m-sdk.sh"
 
