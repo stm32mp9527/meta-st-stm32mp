@@ -4,7 +4,7 @@ LICENSE = "GPL-1.0-only & MIT"
 LIC_FILES_CHKSUM = "file://Makefile;endline=19;md5=9b60522ab24b25fa2833058e76c41216"
 
 SRC_URI = "git://github.com/STMicroelectronics/gcnano-binaries.git;protocol=https;branch=gcnano-${GCNANO_VERSION}-binaries"
-SRCREV = "dc7084b153d26087c12c1b08256cedf17fa12b06"
+SRCREV = "36c58f64e9e9512a4aead194f47bee9b26615ee5"
 
 GCNANO_VERSION = "6.4.21"
 GCNANO_RELEASE = "r1"
