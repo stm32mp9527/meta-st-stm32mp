@@ -24,6 +24,9 @@ FEATURE_PACKAGES_hwcodecs = ""
 CORE_IMAGE_BASE_INSTALL = '\
     packagegroup-shuhe-minimal \
     '
+
+# 安装机器必备的启动包(内核镜像/设备树/extlinux), 确保 /boot 有内容可启动
+IMAGE_INSTALL:append = " ${MACHINE_ESSENTIAL_EXTRA_RDEPENDS}"
     
 IMAGE_LINGUAS = "en-us"
 
