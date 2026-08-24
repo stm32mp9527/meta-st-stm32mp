@@ -27,7 +27,8 @@ LINUX_RELEASE = "r3.1"
 
 PV = "${LINUX_VERSION}${LINUX_SUBVERSION}-${LINUX_TARGET}-${LINUX_RELEASE}"
 
-ARCHIVER_ST_BRANCH = "v${LINUX_VERSION}-${LINUX_TARGET}"
+#ARCHIVER_ST_BRANCH = "v${LINUX_VERSION}-${LINUX_TARGET}"
+ARCHIVER_ST_BRANCH = "shuhe-dev"
 ARCHIVER_ST_REVISION = "v${LINUX_VERSION}-${LINUX_TARGET}-${LINUX_RELEASE}"
 ARCHIVER_COMMUNITY_BRANCH = "linux-${LINUX_VERSION}.y"
 ARCHIVER_COMMUNITY_REVISION = "v${LINUX_VERSION}${LINUX_SUBVERSION}"
@@ -39,8 +40,8 @@ S = "${WORKDIR}/${LINUX_TARBASE}"
 # ---------------------------------
 BBCLASSEXTEND = "devupstream:target"
 
-SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/linux.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "548f960c059bc4b9165cb69895fd67551f6061ca"
+SRC_URI:class-devupstream = "git://github.com/stm32mp9527/linux.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
+SRCREV:class-devupstream = "f47a4d57bc58901984f0c45054628d1cb8e0d81c"
 #FIXME force the PV to avoid build issue:
 #  do_package: ExpansionError('SRCPV', '${@bb.fetch2.get_srcrev(d)}', FetchError('SRCREV was used yet no valid SCM was found in SRC_URI', None))
 PV:class-devupstream = "${LINUX_VERSION}${LINUX_SUBVERSION}-${LINUX_TARGET}.${SRCPV}"

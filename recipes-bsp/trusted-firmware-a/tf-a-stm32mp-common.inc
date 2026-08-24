@@ -22,7 +22,8 @@ TF_A_TARGET = "stm32mp"
 TF_A_RELEASE = "r3.1"
 PV = "${TF_A_VERSION}${TF_A_SUBVERSION}-${TF_A_TARGET}-${TF_A_RELEASE}"
 
-ARCHIVER_ST_BRANCH = "${TF_A_VERSION}-${TF_A_TARGET}"
+#ARCHIVER_ST_BRANCH = "${TF_A_VERSION}-${TF_A_TARGET}"
+ARCHIVER_ST_BRANCH="shuhe-dev"
 ARCHIVER_ST_REVISION = "${TF_A_VERSION}-${TF_A_TARGET}-${TF_A_RELEASE}"
 ARCHIVER_COMMUNITY_BRANCH = "lts-${TF_A_VERSION}"
 ARCHIVER_COMMUNITY_REVISION = "lts-${TF_A_VERSION}${TF_A_SUBVERSION}"
@@ -34,8 +35,8 @@ S = "${WORKDIR}/git"
 # ---------------------------------
 BBCLASSEXTEND = "devupstream:target"
 
-SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/arm-trusted-firmware.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "104df6534404c5edf1dc1cd24e4d9ea939cfdd08"
+SRC_URI:class-devupstream = "git://github.com/stm32mp9527/arm-trusted-firmware.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
+SRCREV:class-devupstream = "8e5c3d9025b32905fcd90cbbf56a7d9604e14ce7"
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github

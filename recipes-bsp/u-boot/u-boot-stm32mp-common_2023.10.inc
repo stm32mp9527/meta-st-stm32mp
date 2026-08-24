@@ -39,7 +39,8 @@ U_BOOT_RELEASE = "r3.1"
 
 PV = "${U_BOOT_VERSION}-${U_BOOT_SUBVERSION}-${U_BOOT_RELEASE}"
 
-ARCHIVER_ST_BRANCH = "${U_BOOT_VERSION}-${U_BOOT_SUBVERSION}"
+#ARCHIVER_ST_BRANCH = "${U_BOOT_VERSION}-${U_BOOT_SUBVERSION}"
+ARCHIVER_ST_BRANCH="shuhe-dev"
 ARCHIVER_ST_REVISION = "${PV}"
 ARCHIVER_COMMUNITY_BRANCH = "master"
 ARCHIVER_COMMUNITY_REVISION = "${U_BOOT_VERSION}"
@@ -51,8 +52,8 @@ S = "${WORKDIR}/git"
 # ---------------------------------
 BBCLASSEXTEND = "devupstream:target"
 
-SRC_URI:class-devupstream = "git://github.com/STMicroelectronics/u-boot.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "f8917a01b48e0f3bc4595cb39e2d5431774004d5"
+SRC_URI:class-devupstream = "git://github.com/stm32mp9527/u-boot.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
+SRCREV:class-devupstream = "3f2bc2ef4d9f5cea9e8546feaef80f0bd7061a59"
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github
