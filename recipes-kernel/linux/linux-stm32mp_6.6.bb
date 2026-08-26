@@ -41,7 +41,7 @@ S = "${WORKDIR}/${LINUX_TARBASE}"
 BBCLASSEXTEND = "devupstream:target"
 
 SRC_URI:class-devupstream = "git://github.com/stm32mp9527/linux.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "f47a4d57bc58901984f0c45054628d1cb8e0d81c"
+SRCREV:class-devupstream = "a6d3e9cd96b651acebf1928dbaa700ff74d2cb94"
 #FIXME force the PV to avoid build issue:
 #  do_package: ExpansionError('SRCPV', '${@bb.fetch2.get_srcrev(d)}', FetchError('SRCREV was used yet no valid SCM was found in SRC_URI', None))
 PV:class-devupstream = "${LINUX_VERSION}${LINUX_SUBVERSION}-${LINUX_TARGET}.${SRCPV}"
