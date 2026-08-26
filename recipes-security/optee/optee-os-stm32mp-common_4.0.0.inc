@@ -33,7 +33,7 @@ S = "${WORKDIR}/git"
 BBCLASSEXTEND = "devupstream:target"
 
 SRC_URI:class-devupstream = "git://github.com/stm32mp9527/optee_os.git;protocol=https;branch=${ARCHIVER_ST_BRANCH}"
-SRCREV:class-devupstream = "ae5ee15beffeab4e08ca48916a6a7b05de33c76d"
+SRCREV:class-devupstream = "ca77602a3dd0fbe5880a45c1de26fd0bddbcdf49"
 
 # ---------------------------------
 # Configure default preference to manage dynamic selection between tarball and github
