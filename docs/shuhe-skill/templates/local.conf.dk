@@ -1,0 +1,57 @@
+# =========================================================================
+# shuhe-ostl-deploy: 官方板(STM32MP135F-DK, 512MB, SD 卡启动)配置模板
+# 追加到 build-openstlinuxweston-stm32mp13-disco-dk/conf/local.conf 末尾
+# =========================================================================
+
+# =========================================================================
+# MACHINE / DISTRO
+# =========================================================================
+MACHINE = "stm32mp13-disco-dk"
+DISTRO = "openstlinux-weston"
+
+# =========================================================================
+# 接受 ST EULA
+# =========================================================================
+ACCEPT_EULA_stm32mp13-disco-dk = "1"
+
+# =========================================================================
+# 下载缓存目录(可选: 指向已有 downloads 可加速首次构建)
+# =========================================================================
+# DL_DIR = "/path/to/shared/downloads"
+
+# =========================================================================
+# 跳过版本回退检查
+# =========================================================================
+ERROR_QA:remove = "version-going-backwards"
+
+# =========================================================================
+# 从 GitHub 拉取 BSP 源码(shuhe fork, 含全部板卡定制)
+# =========================================================================
+STM32MP_SOURCE_SELECTION:pn-linux-stm32mp = "github"
+STM32MP_SOURCE_SELECTION:pn-optee-os-stm32mp = "github"
+STM32MP_SOURCE_SELECTION:pn-tf-a-stm32mp = "github"
+STM32MP_SOURCE_SELECTION:pn-u-boot-stm32mp = "github"
+
+# =========================================================================
+# 镜像内置工具/应用(与自定义板一致)
+# =========================================================================
+IMAGE_INSTALL:append = " dropbear dpkg lrzsz kernel-modules fbset lvgl lvgl-demo-fb edid-decode"
+
+# =========================================================================
+# TF-A: SD 卡 + OP-TEE 启动配置
+# stm32mp13-disco-dk 机器已从 BOOTDEVICE_LABELS=sdcard 自动派生
+# TF_A_CONFIG[optee-sdcard](默认即 STM32MP_SDMMC=1, 无需覆盖)
+# =========================================================================
+# TF_A_CONFIG[optee-sdcard] = "\
+#     ${STM32MP_DT_FILES_SDCARD},\
+#     ${TF_A_CONFIG_OPTS_optee} ${TF_A_CONFIG_OPTS_EXTDT} ${TF_A_CONFIG_OPTS_features} ${TF_A_CONFIG_OPTS_fwupdate} STM32MP_SDMMC=1,\
+#     ${TF_A_CONFIG_BASENAME_BIN},\
+#     ${TF_A_CONFIG_MAKE_TARGET},\
+#     ${TF_A_CONFIG_DEPLOY_FTYPE} ${TF_A_CONFIG_DEPLOY_EXTRA},\
+#     ${EXTDT_SUFFIX_SDCARD}"
+
+# =========================================================================
+# 生成 SD 卡 wic 镜像(烧录到 SD 卡)
+# =========================================================================
+WKS_IMAGE_FSTYPES += "wic"
+WKS_FILE = "sdcard-stm32mp135f-dk-optee-example.wks.in"

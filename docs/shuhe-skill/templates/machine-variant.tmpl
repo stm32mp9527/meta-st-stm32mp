@@ -1,0 +1,51 @@
+# =========================================================================
+# shuhe-ostl-deploy: 新自定义板 local.conf 片段模板(纯配置,AI 替换占位符后追加到 local.conf 末尾)
+# 变量: __MACHINE_NAME__  __IMAGE_NAME__  __TF_A_CONFIG__  __WKS_FILE__
+# 追加到 build-*/conf/local.conf 末尾(envsetup 生成 build 目录后)
+# =========================================================================
+
+# =========================================================================
+# MACHINE / DISTRO
+# =========================================================================
+MACHINE = "__MACHINE_NAME__"
+DISTRO = "openstlinux-weston"
+
+# =========================================================================
+# 接受 ST EULA
+# =========================================================================
+ACCEPT_EULA___MACHINE_NAME__ = "1"
+
+# =========================================================================
+# 跳过版本回退检查
+# =========================================================================
+ERROR_QA:remove = "version-going-backwards"
+
+# =========================================================================
+# 从 GitHub 拉取 BSP 源码(shuhe fork, 含全部板卡定制)
+# =========================================================================
+STM32MP_SOURCE_SELECTION:pn-linux-stm32mp = "github"
+STM32MP_SOURCE_SELECTION:pn-optee-os-stm32mp = "github"
+STM32MP_SOURCE_SELECTION:pn-tf-a-stm32mp = "github"
+STM32MP_SOURCE_SELECTION:pn-u-boot-stm32mp = "github"
+
+# =========================================================================
+# 镜像内置工具/应用(与自定义板一致)
+# =========================================================================
+IMAGE_INSTALL:append = " dropbear dpkg lrzsz kernel-modules fbset lvgl lvgl-demo-fb edid-decode"
+
+# =========================================================================
+# TF-A: __TF_A_CONFIG__ 启动配置(与机器 conf 的 BOOTDEVICE_LABELS 一致)
+# =========================================================================
+# TF_A_CONFIG[__TF_A_CONFIG__] = "\
+#     ${STM32MP_DT_FILES_<EMMC|SDCARD>},\
+#     ${TF_A_CONFIG_OPTS_optee} ${TF_A_CONFIG_OPTS_EXTDT} ${TF_A_CONFIG_OPTS_features} ${TF_A_CONFIG_OPTS_fwupdate} <STM32MP_EMMC_BOOT=1|STM32MP_SDMMC=1>,\
+#     ${TF_A_CONFIG_BASENAME_BIN},\
+#     ${TF_A_CONFIG_MAKE_TARGET},\
+#     ${TF_A_CONFIG_DEPLOY_FTYPE} ${TF_A_CONFIG_DEPLOY_EXTRA},\
+#     ${EXTDT_SUFFIX_<EMMC|SDCARD>}"
+
+# =========================================================================
+# SD 卡 wic 镜像(仅 SD 卡介质时启用)
+# =========================================================================
+# WKS_IMAGE_FSTYPES += "wic"
+# WKS_FILE = "__WKS_FILE__"
