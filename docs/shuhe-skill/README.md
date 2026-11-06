@@ -25,3 +25,13 @@
 - 手册内容改动**只改本目录**(唯一真相源),改完在 `ROLLBACK.md` 记录原状与回滚方式
 - 版本历史见 oe-manifest / meta-st-stm32mp 的 git 提交(v2.x 系列)
 - stub 与安装说明在 oe-manifest 仓库 `skill/README.md`,不在本目录
+
+## MP2 / STM32MP257F-DK
+
+257F-DK 请读隔壁 `docs/shuhe-skill-mp2/SKILL.md`，不要混用 MP1 的引脚/节点。
+
+## 上层应用开发（type 2 客户）
+
+只做 app（网络/显示/开机自启），不改 kernel/uboot/dts → 读
+`meta-st-openstlinux` 层的 `docs/shuhe-skill-app/SKILL.md`（`shuhe-ostl-app`）。
+本目录是 BSP/部署手册。
