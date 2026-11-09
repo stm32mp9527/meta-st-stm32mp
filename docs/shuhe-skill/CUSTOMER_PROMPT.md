@@ -31,6 +31,16 @@ MP2 BSP:
 `<ROOT>` 是包含 `.repo/` 或 `layers/meta-st/meta-st-stm32mp` 的目录。
 找不到就问客户路径；不要自行 clone 未知仓库。
 
+如果还没有项目（**AI 执行，不要让客户做**）：
+
+```bash
+mkdir -p <ROOT> && cd <ROOT>
+repo init -u https://github.com/stm32mp9527/oe-manifest.git -b shuhe-dev -m default.xml
+repo sync -j8
+```
+
+sync 完再读对应 skill。
+
 ---
 
 ## 交付方式：repo 为主，VM 可选
