@@ -35,3 +35,9 @@
 只做 app（网络/显示/开机自启），不改 kernel/uboot/dts → 读
 `meta-st-openstlinux` 层的 `docs/shuhe-skill-app/SKILL.md`（`shuhe-ostl-app`）。
 本目录是 BSP/部署手册。
+
+## 交付方式（repo 为主，VM 可选）
+
+- 主交付：客户在 Linux 服务器/PC 上 `repo sync`，AI 读本目录/BSP skill 构建；**不需要虚拟机**。
+- 可选：没有 Linux 环境、需要隔离或展会演示时，才用 VM/Docker。
+- 统一客户入口：同目录 `CUSTOMER_PROMPT.md`，按 app / BSP / MP1 / MP2 自动分流。
