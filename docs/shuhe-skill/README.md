@@ -1,14 +1,18 @@
 # shuhe-ostl-deploy — 完整手册(唯一真相源)
 
-本目录是 shuhe OpenSTLinux(STM32MP135F 双板型)项目的 AI 工作手册**完整版**,
+本目录是 shuhe OpenSTLinux(STM32MP135F 多板型 / meta-mp135)项目的 AI 工作手册**完整版**,
 随本层(meta-st-stm32mp)的 `repo sync` 自动分发,无需单独安装。
+
+> 2026-11 起，新板优先走 `layers/meta-mp135`；烧录前必须按
+> `MULTIBOARD_MAP.md` §4.2 验包（TSV 引用的文件必须存在且非空）。
 
 ## 文件清单
 
 | 文件 | 内容 |
 |------|------|
 | `SKILL.md` | 手册正文:铁律 / 部署流程 / 本地改源码 / 板卡适配 / 新板生成 / SRCREV 指向表 / 排错 |
-| `CUSTOM_MAP.md` | 现有双板型外设修改点(行号级定位 + 验证命令) |
+| `MULTIBOARD_MAP.md` | **meta-mp135 新板建层 / 微调 / 烧录包完整性（2026-11 起首选）** |
+| `CUSTOM_MAP.md` | 旧 test 体系外设修改点(历史参考,行号级定位 + 验证命令) |
 | `HARDWARE_MAP.md` | 硬件参数 → 修改点映射(板卡适配问答库) |
 | `ROLLBACK.md` | 历史改动原状与回滚方式(铁律 #5,每次改动必须更新) |
 | `templates/` | local.conf.shuhe / local.conf.dk / machine-variant.tmpl |

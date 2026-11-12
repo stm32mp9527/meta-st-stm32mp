@@ -34,3 +34,18 @@
 - 注册入口(agent skills 目录)= oe-manifest `skill/` stub(短描述,省 token)
 - 完整手册唯一真相源 = `meta-st-stm32mp/docs/shuhe-skill/`(随 repo sync 分发)
 - openstlinux 层 = 指针;迁移前完整版 = oe-manifest `556b30f`
+
+## 2026-11-12 批次(meta-mp135 多板 skill + 烧录包检查)
+
+| # | 改动 | 原状 | 回滚方式 |
+|---|------|------|---------|
+| 1 | 新增 `MULTIBOARD_MAP.md`;`SKILL.md`/`README.md`/`CUSTOMER_PROMPT.md` 增补 meta-mp135 建层、PHY/LCD 微调、烧录包完整性 | 旧版 SKILL/README/CUSTOMER_PROMPT,无 MULTIBOARD_MAP | 删除 `MULTIBOARD_MAP.md`;从 `/home/lanyang/work/shuhe/backup-pre-skill-20261112/` 恢复 SKILL/README/CUSTOMER_PROMPT/ROLLBACK |
+| 2 | 安装 stub 增补 `meta-mp135`/建层/烧录包触发词与 MULTIBOARD_MAP 指针 | 旧 stub | 从 `~/.config/opencode/skills/shuhe-ostl-deploy.bak-20261112/` 恢复;manifest 仓库 `skill/SKILL.md` 回滚 |
+| 3 | `meta-mp135` 层同步到 shuhe(新增 phy-tune/network-config/mp13-dashboard;更新 kernel.dts/pinctrl/README) | `layers/meta-mp135.bak-20261112-sync` | `rm -rf layers/meta-mp135 && cp -a layers/meta-mp135.bak-20261112-sync layers/meta-mp135` |
+
+### 当前状态
+
+- `meta-mp135` = 本地 git `5288a58`(最新) + shuhe 纯拷贝同步
+- 技能手册 = `docs/shuhe-skill/{SKILL,MULTIBOARD_MAP,CUSTOMER_PROMPT,README,ROLLBACK}.md`
+- 安装 stub = `~/.config/opencode/skills/shuhe-ostl-deploy/SKILL.md`(已更新)
+- 层备份 = `layers/meta-mp135.bak-20261112-sync`;skill 备份 = `backup-pre-skill-20261112/`

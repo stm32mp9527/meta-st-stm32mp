@@ -79,6 +79,8 @@ sync 完再读对应 skill。
 ## BSP 客户
 
 - MP1：读 `docs/shuhe-skill/SKILL.md`，按它的铁律/环境/构建/烧录流程。
+- **新板建层 / PHY/LCD 微调 / 烧录包检查（MP1）**：先读
+  `docs/shuhe-skill/MULTIBOARD_MAP.md`（`meta-mp135` 多板层，2026-11 起首选）。
 - MP2：读 `docs/shuhe-skill-mp2/SKILL.md`，按 257F-DK 的 boot switch、flashlayout、
   external-dt、RIF 等章节。
 - 不要用 app skill 改 dts/驱动/分区；也不要让 app 客户看到 BSP 的 Yocto 细节。

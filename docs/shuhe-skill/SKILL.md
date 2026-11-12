@@ -1,20 +1,24 @@
 ---
 name: shuhe-ostl-deploy
 description: |
-  OpenSTLinux shuhe 定制项目(STM32MP135F 双板型)的 AI 工作手册。
+  OpenSTLinux shuhe 定制项目(STM32MP135F 多板型 / meta-mp135)的 AI 工作手册。
   触发词:"一键部署"、"复刻到新电脑"、"新环境构建 OpenSTLinux"、"shuhe 部署"、
   "客户机器搭建"、"bitbake 全流程"、"出个镜像"、"构建镜像"、"调网口/HDMI/USB/
-  摄像头"、"改外设"、"新增外设"、"新板子适配"、"板卡适配"、"本地改 dts"。
-  本 skill 是纯知识库:除 envsetup.sh 外零脚本,AI 读取本手册后用自身工具完成
-  部署、构建、板卡适配(dts/dtsi)、新板生成与验证。(shuhe)
+  摄像头/PHY/LCD"、"改外设"、"新增外设"、"新板子适配"、"板卡适配"、"新板建层"、
+  "meta-mp135"、"本地改 dts"、"烧录包检查"。
+  本 skill 是知识库:官方 BSP 流程除 envsetup.sh 外不塞临时脚本;
+  meta-mp135/tools/*.sh 与已评审 recipe 脚本是层资产。AI 读取本手册后用自身
+  工具完成部署、构建、板卡适配(dts/dtsi)、新板建层与验证。(shuhe)
 ---
 
 # /shuhe-ostl-deploy — OpenSTLinux shuhe 项目 AI 工作手册
 
 ## 0. 铁律(AI 每次会话必读,违反任何一条都算事故)
 
-1. **零脚本**:除 `source layers/meta-st/scripts/envsetup.sh` 这一个 ST 官方脚本外,
-   **禁止引用/调用/编写任何 .sh**。所有步骤由 AI 用自身工具(shell/file 编辑)直接执行。
+1. **脚本边界**:官方 BSP 流程除 `source layers/meta-st/scripts/envsetup.sh` 外,
+   不引用/编写临时 `.sh`;`meta-mp135/tools/*.sh` 和已评审 recipe 内的
+   `phy-tune.sh`/`time-sync.sh` 是层资产,允许使用和维护。禁止往产品仓库、
+   官方 `meta-st` 或临时目录塞一次性脚本。
 2. **dts 优先**:修改/新增外设**尽量只改 dts/dtsi**(+pinctrl 引脚组、内核 config fragment)。
    **任何 C 代码与非配置文件不得随意修改** —— 必须先向用户说明理由并获得明确批准。
 3. **test 体系保护区**:带 `-test` 后缀的一切资产(dts/dtsi/pinctrl/defconfig/conf/DDR 参数)
@@ -30,8 +34,12 @@ description: |
 
 | 板型 | 机器 | 镜像 | 内存 | 介质 | 设备树 |
 |------|------|------|------|------|--------|
-| 自定义板(现役) | `stm32mp13-disco-test` | `shuhe-test-image-core` | 256MB | eMMC | `-test` 体系 |
+| 自研多板层(推荐) | `mp13xsip-v10` | `shuhe-test-image-core` | 256MB | eMMC | `layers/meta-mp135` |
+| 旧 test 体系(历史) | `stm32mp13-disco-test` | `shuhe-test-image-core` | 256MB | eMMC | `-test` 体系 |
 | 官方板(附录) | `stm32mp13-disco-dk` | `shuhe-image-core` | 512MB | SD | 官方 `stm32mp135f-dk` |
+
+> 2026-11 起，新板优先走 `layers/meta-mp135`（一板一 machine conf + 一板一
+> board-dts 目录），不要再复制 test 体系。详见 §5.5 与 `MULTIBOARD_MAP.md`。
 
 - manifest:`github.com/stm32mp9527/oe-manifest`(branch `shuhe-dev`)
 - fork 全部在 `github.com/stm32mp9527/`(linux / u-boot / optee_os / arm-trusted-firmware /
@@ -159,7 +167,11 @@ devtool modify tf-a-stm32mp
 
 > 详细映射表见 **HARDWARE_MAP.md**;板级差异定位见 **CUSTOM_MAP.md**。
 
-## 5. 新板生成流程(以 test 体系为蓝本,四层复制改名)
+## 5. 新板生成流程(legacy,仅历史板)
+
+> **2026-11 起,新板优先走 `layers/meta-mp135` 多板层**,见 §5.5 与
+> `MULTIBOARD_MAP.md`。本节只保留给必须沿用 test 体系的历史板;
+> 新板不要把官方 `meta-st`/test 体系再复制一份。
 
 领导给一块新核心板/底板时,以 test 体系为模板生成全套骨架(**首次构建即可启动**,
 再按第 4 节适配外设差异):
@@ -174,6 +186,25 @@ devtool modify tf-a-stm32mp
 
 提交到试验分支,push,构建验证后按分支纪律合入。
 
+## 5.5 新板首选:meta-mp135 多板层(2026-11 起)
+
+- 层:`/home/lanyang/work/shuhe/layers/meta-mp135`;每块自研板 =
+  `conf/machine/<machine>.conf` + `recipes-bsp/board-dts/<machine>/`;
+  新板只加文件,不改已有板,不改官方 `meta-st`。
+- 生成:`cd layers/meta-mp135 && tools/new-board.sh <machine> --from mp13xsip-v10 --desc "..."`。
+- 四层仍要改:`kernel.dts` / `tf-a.dts`(+fw-config/ddr) / `optee.dts` /
+  `u-boot.dts`(+dtsi/defconfig);外加 pinctrl、machine conf、U-Boot defconfig。
+- 构建:`tools/build-board.sh <machine>`(临时改 local.conf 的 `MACHINE`,
+  结束自动恢复;不要用 `bitbake -R` 假切换)。
+- 官方隔离:bbappend 全部带 `MP135_DTS` 守卫;构建前复核
+  `bitbake -e stm32mp13-disco | grep MP135_` → `MP135_ACTIVE=0`、`MP135_DTS` 空。
+- 已验证要点:PD3/TIM2_CH1=**AF3**;`panel-backlight`/`panel-rgb` 电源用
+  `v3v3_ao`;YT8531 由 `recipes-core/phy-tune` 写 `0xA003=0x20F8`
+  (内核 YT8531 分支不读 `rx/tx-internal-delay-ps`);extlinux 用
+  `root=PARTLABEL=rootfs` + 显式 `FDT /...dtb`;eMMC 设备名可能
+  `mmcblk0/mmcblk1` 变化;默认亮度 3。
+- **详细步骤 / 微调表 / 烧录包完整性检查见 `MULTIBOARD_MAP.md`**。
+
 ## 6. 网络说明(实测经验,直接引用)
 
 - **接口命名是 `end0`/`end1`**,不是 eth0/eth1(end0=5800a000=ethernet1;end1=5800e000=ethernet2)
@@ -184,6 +215,9 @@ devtool modify tf-a-stm32mp
   `setenv ethaddr <本地管理MAC>; saveenv` 永久修改;每台板要唯一)
 - 双网口排错顺序:① `ip a` 看接口与链路(LOWER_UP=物理通)② `ping -I endX <目标>`
   (**必须加 -I**,否则可能走另一个口)③ `cat /proc/net/dev | grep end` 看 TX/RX 计数变化
+- **meta-mp135 新 rootfs** 用 systemd-networkd 静态 IP:`end0 10.0.0.101/24`、
+  `end1 10.0.1.102/24`、`DHCP=no`、不设默认网关(`recipes-core/network-config`)。
+  不要再同时跑 `udhcpc`,否则会多出 10.0.0.14x 地址,iperf/源地址选错。
 
 ## 7. 官方板(附录,不维护)
 
@@ -202,10 +236,20 @@ devtool modify tf-a-stm32mp
 | ping 不通但另一口通 | ping 没加 -I,走了别的口 | `ping -I end0 ...` |
 | github https 拉取失败 | 网络不稳 | 用 ssh 协议;或本地建 git 镜像到 `downloads/git2/` 离线 fetch |
 | locale 报错 | 非 en_US.UTF-8 | `sudo locale-gen en_US.UTF-8` |
+| 烧录报 file not found | TSV 引用的 TF-A/FIP/optee/kernel 文件缺失/空 | 跑 `MULTIBOARD_MAP.md` §4.2 验包;重编 |
+| `arm-trusted-firmware/`、`optee/`、`kernel/` 空 | 构建/部署未完成(fetch 失败/增量) | 复用 test workspace/downloads/sstate 重编 |
+| GitHub timeout 且 URL 出现 `/git/` | 原始 fetch 失败 + MIRRORS 回退 | 复用本地 mirror;取消强制 github |
+| WIC 与 TSV 的 vendorfs/rootfs 偏移不一致 | TSV/WIC 来自不同配方 | 用匹配的 TSV/WIC 或重新生成 |
+| link 1000M 但 rx_packets 不增长/ARP incomplete | YT8531 `0xA003` RX tap 被清 0 | `phy-tune` 写 `0xA003=0x20F8` |
+| `invalid function 2 on pin 51` | PD3 写 AF1/AF2 | 改 AF3 |
+| panel-backlight deferred 原因为空 | `v3v3_sw` 未注册 | `power-supply` 改 `v3v3_ao` |
+| LCD 高亮度整屏黑闪 | RT9293 最大电流/升压打嗝 | 默认亮度 3;旧板 ≤5 |
+| `root ... doesn't exist` | extlinux 旧 PARTUUID/FDTDIR | `PARTLABEL` + 显式 `FDT` |
 
 ## 9. 知识文件索引
 
-- `CUSTOM_MAP.md` —— 现有双板型外设修改点(行号级定位 + 验证命令)
-- `HARDWARE_MAP.md` —— 硬件参数 → 修改点映射(板卡适配问答库)
+- `MULTIBOARD_MAP.md` —— **meta-mp135 新板建层/微调/烧录包完整性(2026-11 起首选)**
+- `CUSTOM_MAP.md` —— 旧 test 体系外设修改点(历史参考,行号级定位 + 验证命令)
+- `HARDWARE_MAP.md` —— 硬件参数 → 修改点映射(板卡适配问答库;新板结合 MULTIBOARD_MAP)
 - `templates/local.conf.shuhe` / `local.conf.dk` / `machine-variant.tmpl` —— local.conf 内容源
 - `ROLLBACK.md` —— 历史改动的原状与还原方式(铁律 #5,每次改动必须更新)
