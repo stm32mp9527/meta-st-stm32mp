@@ -84,7 +84,14 @@ MP135_OPTEE_STPMIC1 = "n"              # 无 PMIC
 
 # 自研板沿用旧 test U-Boot（bootfs/bootcmd 与分区布局匹配）
 UBOOT_CONFIG[default_stm32mp13] := "stm32mp13_test_defconfig,,u-boot.dtb"
+
+# 板级运行时组件（按板安装；mp13xsip-v10 的已验证组合）
+IMAGE_INSTALL:append = " phy-tune network-config mp13-dashboard"
 ```
+
+- `phy-tune`/`network-config`/`mp13-dashboard` 是已评审 recipe：
+  YT8531 用 `phy-tune`；LCD UI/开机对时用 `mp13-dashboard`；静态 IP 用
+  `network-config`。不用的板子不要硬装（尤其 `phy-tune` 只适配本板 YT8531）。
 
 - `MP135_ACTIVE` / `MP135_DTS` 是官方隔离开关：官方 machine 下必须为
   `0` / 空；构建前用 `bitbake -e <machine> | grep MP135_` 复核。
