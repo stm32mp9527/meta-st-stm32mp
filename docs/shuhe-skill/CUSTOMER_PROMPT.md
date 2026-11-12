@@ -11,6 +11,7 @@
 |----------|----------|
 | 只做上层 app：网络/显示/电池/电机/传感器/数据采集/工业协议；**不改** kernel/uboot/dts/pinctrl/分区/启动介质 | `shuhe-ostl-app` |
 | 改底层/驱动/dts/内存/uboot/分区/重编镜像，**MP1** | `shuhe-ostl-deploy` |
+| 新板建层 / PHY/LCD 微调 / 烧录包检查，**MP1** | `shuhe-ostl-deploy` + `MULTIBOARD_MAP.md` |
 | 改底层/驱动/dts/内存/uboot/分区/重编镜像，**MP2 / 257F-DK** | `shuhe-ostl-mp2` |
 | 不确定 | 先问客户：板子是 MP1 还是 MP2？是只写 app，还是要改底层/重烧镜像？ |
 
@@ -23,6 +24,7 @@
 
 MP1 BSP:
   <ROOT>/layers/meta-st/meta-st-stm32mp/docs/shuhe-skill/SKILL.md
+  <ROOT>/layers/meta-st/meta-st-stm32mp/docs/shuhe-skill/MULTIBOARD_MAP.md
 
 MP2 BSP:
   <ROOT>/layers/meta-st/meta-st-stm32mp/docs/shuhe-skill-mp2/SKILL.md
@@ -87,6 +89,23 @@ sync 完再读对应 skill。
 
 ---
 
+## BSP 新板 / 烧录包（MP1）
+
+- **新板优先走 `layers/meta-mp135`**：一板一 `conf/machine/<machine>.conf` +
+  一板一 `recipes-bsp/board-dts/<machine>/`。不要复制 test 体系、不要改官方
+  `meta-st`。
+- 生成：`tools/new-board.sh <machine> --from mp13xsip-v10 --desc "..."`；
+  构建：`tools/build-board.sh <machine>`。
+- 微调先看板级 `README.md` 和 `MULTIBOARD_MAP.md`：PLL4、YT8531 PHY tap、
+  LCD/背光、extlinux、eMMC 分区、官方隔离。
+- **烧录前必须验包**：TSV 引用的每个文件都要存在且非空；
+  `arm-trusted-firmware/`、`fip/`、`optee/`、`kernel/` 空目录 = 构建失败，
+  不要烧、不要交付。检查命令见 `MULTIBOARD_MAP.md` §4.2。
+- 构建缺文件时，优先复用 test 构建的 `workspace`/`downloads`/`sstate` 重编；
+  不要靠改 `.../git/...` 镜像 URL 硬绕。
+
+---
+
 ## 铁律
 
 1. 纯 app 不改 kernel/uboot/dts/pinctrl/分区；需要改就转 BSP skill。
@@ -97,6 +116,8 @@ sync 完再读对应 skill。
 6. 烧录/擦除/改 boot switch 前先确认。
 7. 如果 `<BUILD>` 含 `-test`，先取得客户逐项批准，或新建独立 app build。
 8. 客户不需要学 Yocto；所有构建/部署由 AI 完成。
+9. 新板优先 `meta-mp135`；不要复制 test 体系，不要改官方 `meta-st`。
+10. 烧录前按 `MULTIBOARD_MAP.md` §4.2 验包；空目录/缺文件不要烧、不要交付。
 
 ---
 
@@ -130,6 +151,21 @@ sync 完再读对应 skill。
 
 ```text
 使用 shuhe-ostl-deploy 帮我改 MP1 的 DTS/驱动，并重编镜像。
+```
+
+### BSP（新板建层 / 微调）
+
+```text
+使用 shuhe-ostl-deploy，按 meta-mp135 给我建一块新板：
+SoC/内存/存储/网口/屏幕/...，先出建层和 DTS 修改计划，我批准后再改。
+```
+
+### BSP（烧录包检查）
+
+```text
+使用 shuhe-ostl-deploy 检查这个 flash 包能不能烧：
+TSV 引用的文件是否齐全、bootfs/rootfs 是否非空、WIC/TSV 分区是否一致；
+缺文件先别烧，告诉我怎么重编。
 ```
 
 ### BSP（MP2/257F-DK）
